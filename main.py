@@ -42,6 +42,8 @@ while running:
             if event.key == pygame.K_ESCAPE:
                 sys.exit()
 
+    screen.fill((0, 0, 0))
+
     sceneManager.scene.input(events, pygame.key.get_pressed())
     sceneManager.scene.update()
     sceneManager.scene.render(screen)

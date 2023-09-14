@@ -24,3 +24,6 @@ class SplashScreen(Scene):
         print("Splash")
 
         self.sceneManager.set_scene("mainMenu")
+
+    def render(self, screen: pygame.Surface):
+        screen.fill(())

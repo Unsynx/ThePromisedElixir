@@ -33,5 +33,5 @@ class Scene:
     def update(self):
         pass
 
-    def render(self, screen):
+    def render(self, screen: pygame.Surface):
         pass

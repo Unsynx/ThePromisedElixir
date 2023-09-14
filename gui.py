@@ -23,7 +23,8 @@ class GuiBase:
 
     # This function should contain all the graphics
     def draw(self):
-        pass
+        self.surface.fill((25, 100, 7))
+        # pass
 
     def render(self):
         self.draw()
@@ -31,22 +32,21 @@ class GuiBase:
         for child in self.children:
             child.render()
 
-            # todo: change these to adjust for the size of the surface
             if child.align_w == Align.W_LEFT:
                 x = 0
             elif child.align_w == Align.W_MIDDLE:
-                x = child.surface.get_width() * 0.5
+                x = int((self.surface.get_width() - child.surface.get_width()) * 0.5)
             elif child.align_w == Align.W_RIGHT:
-                x = child.surface.get_width()
+                x = int(self.surface.get_width() - child.surface.get_width())
             else:
                 raise "Invalid alignment in GUI Element"
 
             if child.align_h == Align.H_TOP:
                 y = 0
-            elif child.align_w == Align.W_MIDDLE:
-                y = child.surface.get_height() * 0.5
-            elif child.align_w == Align.W_RIGHT:
-                y = child.surface.get_height()
+            elif child.align_h == Align.H_MIDDLE:
+                y = int((self.surface.get_height() - child.surface.get_height()) * 0.5)
+            elif child.align_h == Align.H_BOTTOM:
+                y = int(self.surface.get_height() - child.surface.get_height())
             else:
                 raise "Invalid alignment in GUI Element"
 
@@ -54,11 +54,18 @@ class GuiBase:
 
     def __iadd__(self, other):
         self.children.append(other)
+        return self
+
+    def __setitem__(self, key, value):
+        pass
+
+    def __getitem__(self, item):
+        return self.children[item]
 
     def add_container(self, width_percentage, height_percentage, align_w, align_h):
-        container_surface = pygame.Surface(self.surface.get_width() * width_percentage, self.surface.get_height() * height_percentage)
-        self.children.append(GuiBase(container_surface, align_w, align_h))
-        return len(self.children)
+        container_surface = pygame.Surface((self.surface.get_width() * width_percentage, self.surface.get_height() * height_percentage))
+        self.children.append(GuiBase(container_surface, 0, 0, align_w, align_h))
+        return len(self.children) - 1
 
     def remove_element(self):
         pass # todo: implement
@@ -68,6 +75,16 @@ class GuiManager(GuiBase):
     def __init__(self, screen: pygame.Surface):
         super().__init__(screen, 0, 0)
 
+    def draw(self):
+        pass
 
 
+class Square(GuiBase):
+    def __init__(self, width, height, color, x, y):
+        super().__init__(pygame.Surface((width, height)), x, y)
+        self.color = color
+        self.width = width
+        self.height = height
 
+    def render(self):
+        pygame.draw.rect(self.surface, self.color, (0, 0, self.width, self.height))

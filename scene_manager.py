@@ -1,12 +1,13 @@
-import pygame.event
+import pygame
 
 
 class SceneManager:
-    def __init__(self):
+    def __init__(self, screen: pygame.Surface):
         self.scene = None
         self.sceneDict = {}
 
         self.dt = None
+        self.screen = screen
 
     def add_scene(self, scene):
         self.sceneDict[scene.name] = scene

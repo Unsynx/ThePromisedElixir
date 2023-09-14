@@ -19,7 +19,7 @@ clock = pygame.time.Clock()
 
 
 # ---- Scene Manager ---- #
-sceneManager = SceneManager()
+sceneManager = SceneManager(screen)
 
 mainMenu = MainMenu(sceneManager)
 splashScreen = SplashScreen(sceneManager)

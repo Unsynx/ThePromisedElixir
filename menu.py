@@ -1,5 +1,5 @@
 from scene_manager import Scene, SceneManager
-from gui import GuiManager, Align, Square
+from gui import GuiManager, Align, Square, Image
 import pygame
 
 
@@ -9,8 +9,9 @@ class MainMenu(Scene):
         self.sceneManager = manager
         self.guiManager = GuiManager(self.sceneManager.screen)
 
-        self.block_id = self.guiManager.add_container(0.5, 0.5, Align.W_MIDDLE, Align.H_MIDDLE)
-        self.guiManager[self.block_id] += Square(100, 100, (100, 100, 100), 0, 0)
+        self.image = self.guiManager.add_element(Image("assets/test.jpg"))
+        self.container = self.guiManager.add_container(0.5, 0.5, Align.W_MIDDLE, Align.H_MIDDLE)
+        self.container += Square(100, 100, (100, 100, 100), 0, 0)
 
     def update(self):
         # This is runs every frame

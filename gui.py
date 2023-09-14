@@ -23,8 +23,7 @@ class GuiBase:
 
     # This function should contain all the graphics
     def draw(self):
-        self.surface.fill((25, 100, 7))
-        # pass
+        pass
 
     def render(self):
         self.draw()
@@ -64,8 +63,13 @@ class GuiBase:
 
     def add_container(self, width_percentage, height_percentage, align_w, align_h):
         container_surface = pygame.Surface((self.surface.get_width() * width_percentage, self.surface.get_height() * height_percentage))
-        self.children.append(GuiBase(container_surface, 0, 0, align_w, align_h))
-        return len(self.children) - 1
+        container = GuiBase(container_surface, 0, 0, align_w, align_h)
+        self.children.append(container)
+        return container
+
+    def add_element(self, other):
+        self.children.append(other)
+        return other
 
     def remove_element(self):
         pass # todo: implement
@@ -88,3 +92,9 @@ class Square(GuiBase):
 
     def render(self):
         pygame.draw.rect(self.surface, self.color, (0, 0, self.width, self.height))
+
+
+class Image(GuiBase):
+    def __init__(self, path: str):
+        self.image = pygame.image.load(path)
+        super().__init__(self.image, 0, 0)

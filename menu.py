@@ -15,7 +15,8 @@ class MainMenu(Scene):
 
     def update(self):
         # This is runs every frame
-        print("Menu")
+        mouse_pos_x, mouse_pos_y = pygame.mouse.get_pos()
+        self.guiManager.hover_check(mouse_pos_x, mouse_pos_y)
 
     def render(self, screen):
         self.guiManager.render()

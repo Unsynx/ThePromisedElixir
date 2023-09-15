@@ -25,6 +25,16 @@ class GuiBase:
     def draw(self):
         pass
 
+    def hover_check(self, mouse_x, mouse_y):
+        if self.x < mouse_x < self.surface.get_width() + self.x:
+            if self.y < mouse_y < self.surface.get_height() + self.y:
+                for child in self.children:
+                    child.hover_check(mouse_x, mouse_y)
+                self.on_hover()
+
+    def on_hover(self):
+        pass
+
     def render(self):
         self.draw()
 
@@ -93,8 +103,14 @@ class Square(GuiBase):
     def render(self):
         pygame.draw.rect(self.surface, self.color, (0, 0, self.width, self.height))
 
+    def on_hover(self):
+        print("hovering square")
+
 
 class Image(GuiBase):
     def __init__(self, path: str):
         self.image = pygame.image.load(path)
         super().__init__(self.image, 0, 0)
+
+    def on_hover(self):
+        print("hovering image")

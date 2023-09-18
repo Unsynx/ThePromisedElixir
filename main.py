@@ -10,8 +10,9 @@ pygame.init()
 
 FRAMERATE = 60
 infoObject = pygame.display.Info()
+# (infoObject.current_w, infoObject.current_h), pygame.FULLSCREEN
 
-screen = pygame.display.set_mode((infoObject.current_w, infoObject.current_h), pygame.FULLSCREEN)
+screen = pygame.display.set_mode((1280, 720))
 pygame.display.set_caption("Game")
 # pygame.display.set_icon()
 

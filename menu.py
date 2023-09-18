@@ -1,5 +1,5 @@
 from scene_manager import Scene, SceneManager
-from gui import GuiManager, Align, Square, Image
+from gui import GuiManager, GuideLine, ColorSquare
 import pygame
 
 
@@ -8,18 +8,14 @@ class MainMenu(Scene):
         super().__init__(manager, "mainMenu")
         self.sceneManager = manager
         self.guiManager = GuiManager(self.sceneManager.screen)
-
-        self.image = self.guiManager.add_element(Image("assets/test.jpg"))
-        self.container = self.guiManager.add_container(0.5, 0.5, Align.W_MIDDLE, Align.H_MIDDLE)
-        self.container += Square(100, 100, (100, 100, 100), 0, 0)
+        self.test = self.guiManager.add_guideline("test", GuideLine.GL_HORIZONTAL, 1.0, 0.5, alignment=GuideLine.ALIGN_RIGHT, rel_alignment=GuideLine.REL_ALIGN_CENTER)
 
     def update(self):
         # This is runs every frame
-        mouse_pos_x, mouse_pos_y = pygame.mouse.get_pos()
-        self.guiManager.hover_check(mouse_pos_x, mouse_pos_y)
+        pass
 
     def render(self, screen):
-        self.guiManager.render()
+        self.guiManager.render_guidelines()
 
 
 class SplashScreen(Scene):

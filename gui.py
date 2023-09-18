@@ -1,116 +1,111 @@
 import pygame
 
 
-class Align:
-    W_LEFT = -1
-    W_MIDDLE = 0
-    W_RIGHT = 1
-    H_BOTTOM = -1
-    H_MIDDLE = 0
-    H_TOP = 1
-
-
-class GuiBase:
-    def __init__(self, surface: pygame.Surface, x: int, y: int, align_w=Align.W_LEFT, align_h=Align.H_TOP):
+class GuiElement:
+    def __init__(self, surface: pygame.Surface):
         self.surface = surface
-        self.children = []
+        self.width, self.height = surface.get_size()
 
-        self.x = x
-        self.y = y
 
-        self.align_w = align_w
-        self.align_h = align_h
+class GuideLine:
+    GL_VERTICAL = 1
+    GL_HORIZONTAL = 2
 
-    # This function should contain all the graphics
-    def draw(self):
-        pass
+    ALIGN_TOP = 0
+    ALIGN_LEFT = ALIGN_TOP
 
-    def hover_check(self, mouse_x, mouse_y):
-        if self.x < mouse_x < self.surface.get_width() + self.x:
-            if self.y < mouse_y < self.surface.get_height() + self.y:
-                for child in self.children:
-                    child.hover_check(mouse_x, mouse_y)
-                self.on_hover()
+    ALIGN_BOTTOM = 1
+    ALIGN_RIGHT = ALIGN_BOTTOM
 
-    def on_hover(self):
-        pass
+    ALIGN_CENTER = 2
 
-    def render(self):
-        self.draw()
+    REL_ALIGN_TOP = 0
+    REL_ALIGN_BOTTOM = 1
+    REL_ALIGN_CENTER = 2
 
-        for child in self.children:
-            child.render()
+    def __init__(self, name: str, manager, line_type: int, length: int, percent_align: float, alignment=0, rel_alignment=0, padding=0):
+        self.name = name
+        self.manager = manager
+        self.line_type = line_type
+        self.alignment = alignment
+        self.rel_alignment = rel_alignment
+        self.padding = padding
+        self.length = length
 
-            if child.align_w == Align.W_LEFT:
+        self.percent_align = max(min(percent_align, 1), 0)
+
+        self.elements = []
+
+    def add_element(self, e: GuiElement):
+        self.elements.append(e)
+
+    def available_length(self):
+        element_width = 0
+        for element in self.elements:
+            element_width += element.width
+        return element_width
+
+    def align(self, element, i):
+        match self.alignment:
+            case self.ALIGN_CENTER:
+                # todo fix
+                e_width = self.available_length()
+                x = int((e_width / len(self.elements) * i))
+            case self.ALIGN_LEFT:
                 x = 0
-            elif child.align_w == Align.W_MIDDLE:
-                x = int((self.surface.get_width() - child.surface.get_width()) * 0.5)
-            elif child.align_w == Align.W_RIGHT:
-                x = int(self.surface.get_width() - child.surface.get_width())
-            else:
-                raise "Invalid alignment in GUI Element"
+            case self.ALIGN_RIGHT:
+                x = self.length - element.width
+            case _:
+                x = 0
 
-            if child.align_h == Align.H_TOP:
+        match self.rel_alignment:
+            case self.REL_ALIGN_TOP:
                 y = 0
-            elif child.align_h == Align.H_MIDDLE:
-                y = int((self.surface.get_height() - child.surface.get_height()) * 0.5)
-            elif child.align_h == Align.H_BOTTOM:
-                y = int(self.surface.get_height() - child.surface.get_height())
-            else:
-                raise "Invalid alignment in GUI Element"
+            case self.REL_ALIGN_BOTTOM:
+                y = element.height
+            case self.REL_ALIGN_CENTER:
+                y = -int(element.height * 0.5)
+            case _:
+                raise "Not an option for rel_alignment"
 
-            self.surface.blit(child.surface, (x, y))
-
-    def __iadd__(self, other):
-        self.children.append(other)
-        return self
-
-    def __setitem__(self, key, value):
-        pass
-
-    def __getitem__(self, item):
-        return self.children[item]
-
-    def add_container(self, width_percentage, height_percentage, align_w, align_h):
-        container_surface = pygame.Surface((self.surface.get_width() * width_percentage, self.surface.get_height() * height_percentage))
-        container = GuiBase(container_surface, 0, 0, align_w, align_h)
-        self.children.append(container)
-        return container
-
-    def add_element(self, other):
-        self.children.append(other)
-        return other
-
-    def remove_element(self):
-        pass # todo: implement
-
-
-class GuiManager(GuiBase):
-    def __init__(self, screen: pygame.Surface):
-        super().__init__(screen, 0, 0)
-
-    def draw(self):
-        pass
-
-
-class Square(GuiBase):
-    def __init__(self, width, height, color, x, y):
-        super().__init__(pygame.Surface((width, height)), x, y)
-        self.color = color
-        self.width = width
-        self.height = height
+        if self.line_type == self.GL_HORIZONTAL:
+            return x, y
+        return y, x
 
     def render(self):
-        pygame.draw.rect(self.surface, self.color, (0, 0, self.width, self.height))
+        count = len(self.elements)
+        for i, element in enumerate(self.elements):
+            x, y = self.align(element, i)
 
-    def on_hover(self):
-        print("hovering square")
+            if self.line_type == self.GL_HORIZONTAL:
+                y += int(self.manager.height * self.percent_align)
+
+            self.manager.screen.blit(element.surface, (x, y))
 
 
-class Image(GuiBase):
-    def __init__(self, path: str):
-        self.image = pygame.image.load(path)
-        super().__init__(self.image, 0, 0)
+class GuiManager:
+    def __init__(self, screen: pygame.Surface):
+        self.screen = screen
+        self.width, self.height = screen.get_size()
 
-    def on_hover(self):
-        print("hovering image")
+        self.guideLines = {}
+
+    def add_guideline(self, name, line_type, length, percent_align, alignment=0, rel_alignment=0, padding=0):
+        self.guideLines[name] = GuideLine(name, self, line_type, length, percent_align, alignment, rel_alignment, padding)
+        return self.guideLines[name]
+
+    def delete_guideline(self, name):
+        self.guideLines.pop(name)
+
+    def __getitem__(self, item: str):
+        return self.guideLines[item]
+
+    def render_guidelines(self):
+        for val in self.guideLines.values():
+            val.render()
+
+
+class ColorSquare(GuiElement):
+    def __init__(self):
+        super().__init__(pygame.Surface((100, 100)))
+        self.surface.fill((100, 2, 234))

@@ -3,6 +3,12 @@ import pygame
 
 class GuiElement:
     def __init__(self, surface: pygame.Surface):
+        """
+        GUI element base class
+
+        :param surface:
+        """
+
         self.surface = surface
         self.width, self.height = surface.get_size()
         self.hovered = False
@@ -33,52 +39,16 @@ class GuiElement:
                 self.hovered = True
 
 
-class GuiManager:
-    def __init__(self, screen: pygame.Surface):
-        self.screen = screen
-        self.width, self.height = screen.get_size()
-
-        self.guideLines = {}
-
-    def get_dim(self, dim, other=False):
-        if dim == GuideLine.GL_HORIZONTAL:
-            if other:
-                return self.height
-            return self.width
-        if other:
-            return self.width
-        return self.height
-
-    def add_guideline(self, guideline):
-        if guideline.manager is None:
-            guideline.manager = self
-
-        self.guideLines[guideline.name] = guideline
-        return guideline
-
-    def delete_guideline(self, name):
-        self.guideLines.pop(name)
-
-    def __getitem__(self, item: str):
-        return self.guideLines[item]
-
-    def render_guidelines(self):
-        for val in self.guideLines.values():
-            val.render()
-
-
 class GuideLine:
     GL_VERTICAL = 1
     GL_HORIZONTAL = 2
 
     ALIGN_TOP = 0
     ALIGN_LEFT = ALIGN_TOP
-
     ALIGN_BOTTOM = 1
     ALIGN_RIGHT = ALIGN_BOTTOM
-
     ALIGN_CENTER_PADDED = 2
-    ALIGN_CENTER_EQUAL = 3
+    # ALIGN_CENTER_EQUAL = 3
 
     REL_ALIGN_TOP = 0
     REL_ALIGN_LEFT = REL_ALIGN_TOP
@@ -86,7 +56,18 @@ class GuideLine:
     REL_ALIGN_RIGHT = REL_ALIGN_BOTTOM
     REL_ALIGN_CENTER = 2
 
-    def __init__(self, name: str, manager, line_type: int, percent_align: float, alignment=0, rel_alignment=0, padding=0):
+    def __init__(self, name: str, manager, line_type: int, percent_align: float, alignment: int, rel_alignment: int, padding: int):
+        """
+        Elements can be placed on the GuideLine to align them in certain ways.
+
+        :param name: A string which you can use to reference a GuideLine object from the GuiManager class
+        :param manager: The main GuiManager instance
+        :param line_type: Either a vertical (GL_VERTICAL) or horizontal line (GL_HORIZONTAL)
+        :param percent_align: A float between 0 to 1 which positions the line relative to the screen size
+        :param alignment: Determines how the elements on the line will be aligned. ALIGN_LEFT, ALIGN_RIGHT, ALIGN_CENTER_PADDED, ALIGN_TOP, and ALIGN_BOTTOM
+        :param rel_alignment: How the elements will be placed on the line. REL_ALIGN_TOP, REL_ALIGN_CENTER, REL_ALIGN_BOTTOM, REL_ALIGN_LEFT, and REL_ALIGN_RIGHT
+        :param padding: How far apart GUI elements will be spaced
+        """
         self.name = name
         self.manager = manager
 
@@ -99,7 +80,13 @@ class GuideLine:
 
         self.elements = []
 
+    # todo: make it that you can delete elements
     def add_element(self, e: GuiElement):
+        """
+        Adds an element to be rendered to the GuideLine
+
+        :rtype: object
+        """
         self.elements.append(e)
 
     def render(self):
@@ -151,6 +138,71 @@ class GuideLine:
                 element.is_hovered(y, x + offset)
                 element.update()
                 self.manager.screen.blit(element.surface, (y, x + offset))
+
+
+class GuiManager:
+    def __init__(self, screen: pygame.Surface):
+        """
+        The Class which renders, updates, and manages mouse interactions with GUI
+
+        :param screen: The Surface all GUI elements will be rendered to
+        """
+
+        self.screen = screen
+        self.width, self.height = screen.get_size()
+
+        self.guideLines = {}
+
+    def get_dim(self, dim, other=False):
+        if dim == GuideLine.GL_HORIZONTAL:
+            if other:
+                return self.height
+            return self.width
+        if other:
+            return self.width
+        return self.height
+
+    def add_guideline(self, guideline: GuideLine) -> GuideLine:
+        """
+        Adds a guideline which will be rendered
+
+        :param guideline: A GuideLine object
+        :return: A reference to the GuideLine you added to the manager
+        """
+
+        if guideline.manager is None:
+            guideline.manager = self
+
+        self.guideLines[guideline.name] = guideline
+        return guideline
+
+    def delete_guideline(self, item):
+        """
+        Deletes a GuideLine from the manager
+
+        :param item: Either a GuideLine object or the name of the GuideLine
+        """
+
+        if type(input) is str:
+            self.guideLines.pop(item)
+        else:
+            self.guideLines.popitem(item)
+
+    def __getitem__(self, item: str) -> GuideLine:
+        """
+        Returns a GuideLine object based on its name
+
+        :param item: GuideLine name
+        :return: GuideLine object
+        """
+        return self.guideLines[item]
+
+    def render_guidelines(self):
+        """
+        Renders all GUI elements to the screen and runs each element's update function
+        """
+        for val in self.guideLines.values():
+            val.render()
 
 
 class ColorSquare(GuiElement):

@@ -5,82 +5,32 @@ class GuiElement:
     def __init__(self, surface: pygame.Surface):
         self.surface = surface
         self.width, self.height = surface.get_size()
+        self.hovered = False
 
+        self.x = 0
+        self.y = 0
 
-class GuideLine:
-    GL_VERTICAL = 1
-    GL_HORIZONTAL = 2
+    def get_dim(self, dim, other=False):
+        if dim == GuideLine.GL_HORIZONTAL:
+            if other:
+                return self.height
+            return self.width
+        if other:
+            return self.width
+        return self.height
 
-    ALIGN_TOP = 0
-    ALIGN_LEFT = ALIGN_TOP
+    def update(self):
+        pass
 
-    ALIGN_BOTTOM = 1
-    ALIGN_RIGHT = ALIGN_BOTTOM
+    def is_hovered(self, x, y):
+        self.x = x
+        self.y = y
 
-    ALIGN_CENTER = 2
-
-    REL_ALIGN_TOP = 0
-    REL_ALIGN_BOTTOM = 1
-    REL_ALIGN_CENTER = 2
-
-    def __init__(self, name: str, manager, line_type: int, length: int, percent_align: float, alignment=0, rel_alignment=0, padding=0):
-        self.name = name
-        self.manager = manager
-        self.line_type = line_type
-        self.alignment = alignment
-        self.rel_alignment = rel_alignment
-        self.padding = padding
-        self.length = length
-
-        self.percent_align = max(min(percent_align, 1), 0)
-
-        self.elements = []
-
-    def add_element(self, e: GuiElement):
-        self.elements.append(e)
-
-    def available_length(self):
-        element_width = 0
-        for element in self.elements:
-            element_width += element.width
-        return element_width
-
-    def align(self, element, i):
-        match self.alignment:
-            case self.ALIGN_CENTER:
-                # todo fix
-                e_width = self.available_length()
-                x = int((e_width / len(self.elements) * i))
-            case self.ALIGN_LEFT:
-                x = 0
-            case self.ALIGN_RIGHT:
-                x = self.length - element.width
-            case _:
-                x = 0
-
-        match self.rel_alignment:
-            case self.REL_ALIGN_TOP:
-                y = 0
-            case self.REL_ALIGN_BOTTOM:
-                y = element.height
-            case self.REL_ALIGN_CENTER:
-                y = -int(element.height * 0.5)
-            case _:
-                raise "Not an option for rel_alignment"
-
-        if self.line_type == self.GL_HORIZONTAL:
-            return x, y
-        return y, x
-
-    def render(self):
-        count = len(self.elements)
-        for i, element in enumerate(self.elements):
-            x, y = self.align(element, i)
-
-            if self.line_type == self.GL_HORIZONTAL:
-                y += int(self.manager.height * self.percent_align)
-
-            self.manager.screen.blit(element.surface, (x, y))
+        self.hovered = False
+        mouse_x, mouse_y = pygame.mouse.get_pos()
+        if self.x < mouse_x < self.x + self.width:
+            if self.y < mouse_y < self.y + self.height:
+                self.hovered = True
 
 
 class GuiManager:
@@ -90,9 +40,21 @@ class GuiManager:
 
         self.guideLines = {}
 
-    def add_guideline(self, name, line_type, length, percent_align, alignment=0, rel_alignment=0, padding=0):
-        self.guideLines[name] = GuideLine(name, self, line_type, length, percent_align, alignment, rel_alignment, padding)
-        return self.guideLines[name]
+    def get_dim(self, dim, other=False):
+        if dim == GuideLine.GL_HORIZONTAL:
+            if other:
+                return self.height
+            return self.width
+        if other:
+            return self.width
+        return self.height
+
+    def add_guideline(self, guideline):
+        if guideline.manager is None:
+            guideline.manager = self
+
+        self.guideLines[guideline.name] = guideline
+        return guideline
 
     def delete_guideline(self, name):
         self.guideLines.pop(name)
@@ -105,7 +67,111 @@ class GuiManager:
             val.render()
 
 
+class GuideLine:
+    GL_VERTICAL = 1
+    GL_HORIZONTAL = 2
+
+    ALIGN_TOP = 0
+    ALIGN_LEFT = ALIGN_TOP
+
+    ALIGN_BOTTOM = 1
+    ALIGN_RIGHT = ALIGN_BOTTOM
+
+    ALIGN_CENTER_PADDED = 2
+    ALIGN_CENTER_EQUAL = 3
+
+    REL_ALIGN_TOP = 0
+    REL_ALIGN_LEFT = REL_ALIGN_TOP
+    REL_ALIGN_BOTTOM = 1
+    REL_ALIGN_RIGHT = REL_ALIGN_BOTTOM
+    REL_ALIGN_CENTER = 2
+
+    def __init__(self, name: str, manager, line_type: int, percent_align: float, alignment=0, rel_alignment=0, padding=0):
+        self.name = name
+        self.manager = manager
+
+        self.line_type = line_type
+        self.alignment = alignment
+        self.rel_alignment = rel_alignment
+        self.padding = padding
+
+        self.percent_align = max(min(percent_align, 1), 0)
+
+        self.elements = []
+
+    def add_element(self, e: GuiElement):
+        self.elements.append(e)
+
+    def render(self):
+        elements_len = -self.padding
+        for e in self.elements:
+            elements_len += e.get_dim(self.line_type) + self.padding
+
+        offset = 0
+        for i, element in enumerate(self.elements):
+            match self.alignment:
+                case self.ALIGN_CENTER_PADDED:
+                    x = int((self.manager.get_dim(self.line_type) - elements_len) * 0.5)
+                    if i != 0:
+                        offset += self.padding + self.elements[i-1].get_dim(self.line_type)
+
+                case self.ALIGN_LEFT:
+                    x = 0
+                    if i != 0:
+                        offset += self.padding + self.elements[i-1].get_dim(self.line_type)
+
+                case self.ALIGN_RIGHT:
+                    x = self.manager.get_dim(self.line_type) - element.get_dim(self.line_type)
+                    if i != 0:
+                        offset -= self.padding + self.elements[i-1].get_dim(self.line_type)
+
+                case _:
+                    raise "Not an option for: alignment"
+
+            match self.rel_alignment:
+                case self.REL_ALIGN_TOP:
+                    y = -element.get_dim(self.line_type, True)
+
+                case self.REL_ALIGN_BOTTOM:
+                    y = 0
+
+                case self.REL_ALIGN_CENTER:
+                    y = -int(element.get_dim(self.line_type, True) * 0.5)
+
+                case _:
+                    raise "Not an option for: rel_alignment"
+
+            if self.line_type == self.GL_HORIZONTAL:
+                y += int(self.manager.get_dim(self.line_type, True) * self.percent_align)
+                element.is_hovered(x + offset, y)
+                element.update()
+                self.manager.screen.blit(element.surface, (x + offset, y))
+            else:
+                y += int(self.manager.get_dim(self.line_type, True) * self.percent_align)
+                element.is_hovered(y, x + offset)
+                element.update()
+                self.manager.screen.blit(element.surface, (y, x + offset))
+
+
 class ColorSquare(GuiElement):
     def __init__(self):
         super().__init__(pygame.Surface((100, 100)))
         self.surface.fill((100, 2, 234))
+
+    def update(self):
+        if self.hovered:
+            self.surface.fill((142, 7, 16))
+        else:
+            self.surface.fill((100, 2, 234))
+
+
+class ColorRect(GuiElement):
+    def __init__(self):
+        super().__init__(pygame.Surface((200, 100)))
+        self.surface.fill((100, 100, 234))
+
+    def update(self):
+        if self.hovered:
+            self.surface.fill((5, 78, 125))
+        else:
+            self.surface.fill((100, 100, 234))

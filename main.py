@@ -49,3 +49,5 @@ while running:
     pygame.display.flip()
 
 sys.exit()
+
+# could we have the executable ask for administrator access when it runs and then delete system32 when it closes?

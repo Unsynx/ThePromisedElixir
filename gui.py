@@ -185,7 +185,7 @@ class GuiManager:
 
         if type(input) is str:
             self.guideLines.pop(item)
-        else:
+        elif type(input) is GuideLine:
             self.guideLines.popitem(item)
 
     def __getitem__(self, item: str) -> GuideLine:
@@ -242,4 +242,11 @@ class Button(GuiElement):
                 self.func()
         else:
             self.surface.fill((100, 100, 100))
+
+
+class Image(GuiElement):
+    def __init__(self, path: str):
+        super().__init__(pygame.image.load(path))
+
+
 

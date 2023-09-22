@@ -1,5 +1,5 @@
 from scene_manager import Scene, SceneManager
-from gui import GuiManager, GuideLine, Button, ColorSquare
+from gui import GuiManager, GuideLine, Button, ColorSquare, Image
 import pygame
 
 
@@ -8,7 +8,9 @@ class MainMenu(Scene):
         super().__init__(manager, "mainMenu")
         self.sceneManager = manager
         self.guiManager = GuiManager(self.sceneManager.screen)
-        self.buttons = self.guiManager.add_guideline(GuideLine("test", None, GuideLine.GL_VERTICAL, 0.5, GuideLine.ALIGN_CENTER_PADDED, GuideLine.REL_ALIGN_CENTER, 10))
+        self.back = self.guiManager.add_guideline(GuideLine("img", None, GuideLine.GL_VERTICAL, 0, GuideLine.ALIGN_LEFT, GuideLine.REL_ALIGN_BOTTOM, 0))
+        self.back.add_element(Image("assets/test.jpg"))
+        self.buttons = self.guiManager.add_guideline(GuideLine("buttons", None, GuideLine.GL_VERTICAL, 0.5, GuideLine.ALIGN_CENTER_PADDED, GuideLine.REL_ALIGN_CENTER, 10))
         self.buttons.add_element(Button(manager.set_scene))
         for i in range(3):
             self.buttons.add_element(ColorSquare())

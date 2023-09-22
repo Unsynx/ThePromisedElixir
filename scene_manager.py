@@ -3,6 +3,8 @@ import pygame
 
 class SceneManager:
     def __init__(self, screen: pygame.Surface):
+        self.sceneManager = self
+
         self.scene = None
         self.sceneDict = {}
 
@@ -25,6 +27,7 @@ class Scene:
     def __init__(self, manager: SceneManager, name: str):
         self.sceneManager = manager
         self.name = name
+        self.screen = manager.screen
 
         self.sceneManager.add_scene(self)
 

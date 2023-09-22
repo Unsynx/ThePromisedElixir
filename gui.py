@@ -230,16 +230,17 @@ class ColorRect(GuiElement):
 
 
 class Button(GuiElement):
-    def __init__(self, func):
+    def __init__(self, func, *args):
         super().__init__(pygame.Surface((200, 100)))
 
         self.func = func
+        self.args = args
 
     def update(self):
         if self.hovered:
             self.surface.fill((110, 110, 110))
             if pygame.mouse.get_pressed()[0]:
-                self.func()
+                self.func(*self.args)
         else:
             self.surface.fill((100, 100, 100))
 

@@ -205,44 +205,89 @@ class GuiManager:
             val.render()
 
 
-class ColorSquare(GuiElement):
-    def __init__(self):
-        super().__init__(pygame.Surface((100, 100)))
-        self.surface.fill((100, 2, 234))
+class CornerSquare(GuiElement):
+    STYLE_ORNATE = "assets/gui/corners/StyleOrnateCorner.png"
+    STYLE_SIMPLE = "assets/gui/corners/StyleSimpleCorner.png"
+    STYLE_SIMPLE_HOVERED = "assets/gui/corners/StyleSimpleCornerHovered.png"
 
-    def update(self):
-        if self.hovered:
-            self.surface.fill((142, 7, 16))
+    def __init__(self, width: int, height: int, style: str):
+        super().__init__(pygame.Surface((width, height)))
+        self.corner_size = 0
+
+        self.width = width
+        self.height = height
+
+        self.style = style
+
+        self.draw()
+
+    def draw(self):
+        corner = pygame.image.load(self.style)
+        self.corner_size = corner.get_width()
+
+        # Draw corners
+        # todo make better
+        if self.style == self.STYLE_SIMPLE_HOVERED:
+            self.surface.fill((62, 58, 95))
         else:
-            self.surface.fill((100, 2, 234))
+            self.surface.fill((34, 32, 53))
+
+        pygame.draw.rect(self.surface, (255, 255, 255), self.surface.get_rect(), 4)
+        self.surface.blit(corner, (0, 0))
+        corner = pygame.transform.rotate(corner, 90)
+        self.surface.blit(corner, (0, self.height - self.corner_size))
+        corner = pygame.transform.rotate(corner, 90)
+        self.surface.blit(corner, (self.width - self.corner_size, self.height - self.corner_size))
+        corner = pygame.transform.rotate(corner, 90)
+        self.surface.blit(corner, (self.width - self.corner_size, 0))
+
+        # Make transparent
+        self.surface.set_colorkey((255, 0, 255))
 
 
-class ColorRect(GuiElement):
-    def __init__(self):
-        super().__init__(pygame.Surface((200, 100)))
-        self.surface.fill((100, 100, 234))
+class Text(GuiElement):
+    FONT_BASE = "assets/gui/fonts/Pixellari.ttf"
 
-    def update(self):
-        if self.hovered:
-            self.surface.fill((5, 78, 125))
-        else:
-            self.surface.fill((100, 100, 234))
+    SIZE_MAIN = 36
+
+    def __init__(self, text: str, font: str, font_size: int, color):
+        self.text = text
+        self.font = pygame.font.Font(font, font_size)
+        self.color = color
+
+        super().__init__(self.draw())
+
+    def draw(self):
+        return self.font.render(self.text, False, self.color)
 
 
 class Button(GuiElement):
-    def __init__(self, func, *args):
-        super().__init__(pygame.Surface((200, 100)))
+    def __init__(self, text, width, height, func, *args):
+        super().__init__(pygame.Surface((width, height)))
+
+        self.dummy_manager = GuiManager(self.surface)
+        self.line = self.dummy_manager.add_guideline(GuideLine("dummy", None, GuideLine.GL_HORIZONTAL, 0.5, GuideLine.ALIGN_CENTER_PADDED, GuideLine.REL_ALIGN_CENTER, 0))
+
+        self.back = CornerSquare(width, height, CornerSquare.STYLE_SIMPLE)
+        self.back_hovered = CornerSquare(width, height, CornerSquare.STYLE_SIMPLE_HOVERED)
+        self.line.add_element(Text(text, Text.FONT_BASE, Text.SIZE_MAIN, (255, 255, 255)))
+
+        self.draw()
 
         self.func = func
         self.args = args
 
+    def draw(self):
+        self.surface.fill((255, 0, 255))
+        self.surface.blit(self.back_hovered.surface if self.hovered else self.back.surface, (0, 0))
+        self.dummy_manager.render_guidelines()
+        self.surface.set_colorkey((255, 0, 255))
+
     def update(self):
+        self.draw()
         if self.hovered:
-            self.surface.fill((110, 110, 110))
             if pygame.mouse.get_pressed()[0]:
                 self.func(*self.args)
-        else:
-            self.surface.fill((100, 100, 100))
 
 
 class Image(GuiElement):
@@ -250,4 +295,5 @@ class Image(GuiElement):
         super().__init__(pygame.image.load(path))
 
 
-
+# use guidelines within GuiElements
+# Grid class

@@ -1,8 +1,6 @@
-import random
 import sys
-
 from scene_manager import Scene, SceneManager
-from gui import GuiManager, GuideLine, Button, Image, Grid, Text, ProgressBar
+from gui import GuiManager, Guide, Button, Image, Grid, Text, ProgressBar
 import pygame
 
 
@@ -13,19 +11,19 @@ class MainMenu(Scene):
         self.guiManager = GuiManager(self.sceneManager.screen)
 
         # ------ Backdrop ------
-        self.back = self.guiManager.add_guideline(GuideLine("img", None, GuideLine.GL_VERTICAL, 0, GuideLine.ALIGN_LEFT, GuideLine.REL_ALIGN_BOTTOM, 0))
+        self.back = self.guiManager.add_guideline(Guide("img", None, Guide.GL_VERTICAL, 0, Guide.ALIGN_LEFT, Guide.REL_ALIGN_BOTTOM, 0))
 
         self.back.add_element(Image("assets/test.jpg"))
 
         # ------ Buttons ------
-        self.buttons = self.guiManager.add_guideline(GuideLine("buttons", None, GuideLine.GL_HORIZONTAL, 0.95, GuideLine.ALIGN_CENTER_PADDED, GuideLine.REL_ALIGN_CENTER, 50))
+        self.buttons = self.guiManager.add_guideline(Guide("buttons", None, Guide.GL_HORIZONTAL, 0.95, Guide.ALIGN_CENTER_PADDED, Guide.REL_ALIGN_CENTER, 50))
 
         self.buttons.add_element(Button("Start", 300, 75, manager.set_scene, "game"))
         self.buttons.add_element(Button("Credits", 300, 75, manager.set_scene, "creditsMenu"))
         self.buttons.add_element(Button("Quit", 300, 75, sys.exit))
 
         # ------ Testing ------
-        self.test = self.guiManager.add_guideline(GuideLine("test", None, GuideLine.GL_VERTICAL, 0.5, GuideLine.ALIGN_CENTER_PADDED, GuideLine.REL_ALIGN_CENTER, 50))
+        self.test = self.guiManager.add_guideline(Guide("test", None, Guide.GL_VERTICAL, 0.5, Guide.ALIGN_CENTER_PADDED, Guide.REL_ALIGN_CENTER, 50))
 
         self.progress_bar = self.test.add_element(ProgressBar(1000, 50, ProgressBar.BASIC, (230, 85, 65), ProgressBar.DEFAULT_BACK_COLOR))
         self.fps = self.test.add_element(Text("test", Text.FONT_BASE, Text.SIZE_MAIN, (255, 255, 255)))
@@ -45,7 +43,7 @@ class CreditsMenu(Scene):
 
         self.guiManager = GuiManager(self.sceneManager.screen)
 
-        self.center = self.guiManager.add_guideline(GuideLine("center", self.guiManager, GuideLine.GL_VERTICAL, 0.5, GuideLine.ALIGN_CENTER_PADDED, GuideLine.REL_ALIGN_CENTER, 75))
+        self.center = self.guiManager.add_guideline(Guide("center", self.guiManager, Guide.GL_VERTICAL, 0.5, Guide.ALIGN_CENTER_PADDED, Guide.REL_ALIGN_CENTER, 75))
 
         # ------ Grid ------
         self.grid = Grid(1000, 750, 10)

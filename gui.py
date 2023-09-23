@@ -17,7 +17,7 @@ class GuiElement:
         self.y = 0
 
     def get_dim(self, dim, other=False):
-        if dim == GuideLine.GL_HORIZONTAL:
+        if dim == Guide.GL_HORIZONTAL:
             if other:
                 return self.height
             return self.width
@@ -41,7 +41,8 @@ class GuiElement:
     def set_value(self, value):
         pass
 
-class GuideLine:
+
+class Guide:
     GL_VERTICAL = 1
     GL_HORIZONTAL = 2
 
@@ -62,9 +63,9 @@ class GuideLine:
 
     def __init__(self, name: str, manager, line_type: int, percent_align: float, alignment: int, rel_alignment: int, padding: int):
         """
-        Elements can be placed on the GuideLine to align them in certain ways.
+        Elements can be placed on the Guide to align them in certain ways.
 
-        :param name: A string which you can use to reference a GuideLine object from the GuiManager class
+        :param name: A string which you can use to reference a Guide object from the GuiManager class
         :param manager: The main GuiManager instance
         :param line_type: Either a vertical (GL_VERTICAL) or horizontal line (GL_HORIZONTAL)
         :param percent_align: A float between 0 to 1 which positions the line relative to the screen size
@@ -90,7 +91,7 @@ class GuideLine:
     # todo: make it that you can delete elements
     def add_element(self, e: GuiElement) -> GuiElement:
         """
-        Adds an element to be rendered to the GuideLine
+        Adds an element to be rendered to the Guide
 
         :rtype: object
         :return: A reference to the Element
@@ -108,26 +109,19 @@ class GuideLine:
             match self.alignment:
                 case self.ALIGN_CENTER_PADDED:
                     x = int((self.manager.get_dim(self.line_type) - elements_len) * 0.5)
-                    if i != 0:
-                        offset += self.padding + self.elements[i-1].get_dim(self.line_type)
 
                 case self.ALIGN_LEFT:
                     x = 0
-                    if i != 0:
-                        offset += self.padding + self.elements[i-1].get_dim(self.line_type)
 
                 case self.ALIGN_RIGHT:
-                    x = self.manager.get_dim(self.line_type) - element.get_dim(self.line_type)
-                    if i != 0:
-                        offset -= self.padding + self.elements[i-1].get_dim(self.line_type)
+                    x = self.manager.get_dim(self.line_type) - elements_len
 
                 case self.ALIGN_LEFT_PADDING:
                     x = self.padding
-                    if i != 0:
-                        offset += self.padding + self.elements[i-1].get_dim(self.line_type)
-
                 case _:
                     raise "Not an option for: alignment"
+            if i != 0:
+                offset += self.padding + self.elements[i-1].get_dim(self.line_type)
 
             match self.rel_alignment:
                 case self.REL_ALIGN_TOP:
@@ -170,7 +164,7 @@ class GuiManager:
         self.guideLines = {}
 
     def get_dim(self, dim, other=False):
-        if dim == GuideLine.GL_HORIZONTAL:
+        if dim == Guide.GL_HORIZONTAL:
             if other:
                 return self.height
             return self.width
@@ -178,12 +172,12 @@ class GuiManager:
             return self.width
         return self.height
 
-    def add_guideline(self, guideline: GuideLine) -> GuideLine:
+    def add_guideline(self, guideline: Guide) -> Guide:
         """
         Adds a guideline which will be rendered
 
-        :param guideline: A GuideLine object
-        :return: A reference to the GuideLine you added to the manager
+        :param guideline: A Guide object
+        :return: A reference to the Guide you added to the manager
         """
 
         if guideline.manager is None:
@@ -194,22 +188,22 @@ class GuiManager:
 
     def delete_guideline(self, item):
         """
-        Deletes a GuideLine from the manager
+        Deletes a Guide from the manager
 
-        :param item: Either a GuideLine object or the name of the GuideLine
+        :param item: Either a Guide object or the name of the Guide
         """
 
         if type(input) is str:
             self.guideLines.pop(item)
-        elif type(input) is GuideLine:
+        elif type(input) is Guide:
             self.guideLines.popitem(item)
 
-    def __getitem__(self, item: str) -> GuideLine:
+    def __getitem__(self, item: str) -> Guide:
         """
-        Returns a GuideLine object based on its name
+        Returns a Guide object based on its name
 
-        :param item: GuideLine name
-        :return: GuideLine object
+        :param item: Guide name
+        :return: Guide object
         """
         return self.guideLines[item]
 
@@ -287,7 +281,7 @@ class Button(GuiElement):
         super().__init__(pygame.Surface((width, height)))
 
         self.dummy_manager = GuiManager(self.surface)
-        self.line = self.dummy_manager.add_guideline(GuideLine("dummy", None, GuideLine.GL_HORIZONTAL, 0.5, GuideLine.ALIGN_CENTER_PADDED, GuideLine.REL_ALIGN_CENTER, 0))
+        self.line = self.dummy_manager.add_guideline(Guide("dummy", None, Guide.GL_HORIZONTAL, 0.5, Guide.ALIGN_CENTER_PADDED, Guide.REL_ALIGN_CENTER, 0))
 
         self.back = CornerSquare(width, height, CornerSquare.STYLE_SIMPLE)
         self.back_hovered = CornerSquare(width, height, CornerSquare.STYLE_SIMPLE_HOVERED)
@@ -325,7 +319,7 @@ class Grid(GuiElement):
         self.dummy_manager = GuiManager(self.surface)
 
         for i in range(rows):
-            self.dummy_manager.add_guideline(GuideLine(f"row{i}", self.dummy_manager, GuideLine.GL_HORIZONTAL, 1.0 / rows * i, GuideLine.ALIGN_CENTER_PADDED, GuideLine.REL_ALIGN_BOTTOM, 0))
+            self.dummy_manager.add_guideline(Guide(f"row{i}", self.dummy_manager, Guide.GL_HORIZONTAL, 1.0 / rows * i, Guide.ALIGN_CENTER_PADDED, Guide.REL_ALIGN_BOTTOM, 0))
 
         self.draw()
 

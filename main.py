@@ -2,6 +2,7 @@ import pygame
 import sys
 from scene_manager import SceneManager
 from menu import MainMenu, SplashScreen, CreditsMenu
+from game import GameScene
 
 
 # ---------------- Setup ---------------- #
@@ -25,6 +26,7 @@ sceneManager = SceneManager(screen)
 mainMenu = MainMenu(sceneManager)
 splashScreen = SplashScreen(sceneManager)
 creditsMenu = CreditsMenu(sceneManager)
+gameScene = GameScene(sceneManager)
 
 sceneManager.set_scene(splashScreen)
 

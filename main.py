@@ -1,7 +1,8 @@
 import pygame
 import sys
 from scene_manager import SceneManager
-from menu import MainMenu, SplashScreen
+from menu import MainMenu, SplashScreen, CreditsMenu
+from game import GameScene
 
 
 # ---------------- Setup ---------------- #
@@ -10,8 +11,9 @@ pygame.init()
 
 FRAMERATE = 60
 infoObject = pygame.display.Info()
+# (infoObject.current_w, infoObject.current_h), pygame.FULLSCREEN
 
-screen = pygame.display.set_mode((infoObject.current_w, infoObject.current_h), pygame.FULLSCREEN)
+screen = pygame.display.set_mode((1920, 1080))
 pygame.display.set_caption("Game")
 # pygame.display.set_icon()
 
@@ -19,10 +21,12 @@ clock = pygame.time.Clock()
 
 
 # ---- Scene Manager ---- #
-sceneManager = SceneManager()
+sceneManager = SceneManager(screen)
 
 mainMenu = MainMenu(sceneManager)
 splashScreen = SplashScreen(sceneManager)
+creditsMenu = CreditsMenu(sceneManager)
+gameScene = GameScene(sceneManager)
 
 sceneManager.set_scene(splashScreen)
 
@@ -42,8 +46,10 @@ while running:
             if event.key == pygame.K_ESCAPE:
                 sys.exit()
 
+    screen.fill((0, 0, 0))
+
     sceneManager.scene.input(events, pygame.key.get_pressed())
-    sceneManager.scene.update()
+    sceneManager.scene.update(dt)
     sceneManager.scene.render(screen)
 
     pygame.display.flip()

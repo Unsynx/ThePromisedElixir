@@ -47,7 +47,7 @@ while running:
     screen.fill((0, 0, 0))
 
     sceneManager.scene.input(events, pygame.key.get_pressed())
-    sceneManager.scene.update()
+    sceneManager.scene.update(dt)
     sceneManager.scene.render(screen)
 
     pygame.display.flip()

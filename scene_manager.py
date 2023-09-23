@@ -34,7 +34,7 @@ class Scene:
     def input(self, events, pressed_keys):
         pass
 
-    def update(self):
+    def update(self, dt: float):
         pass
 
     def render(self, screen: pygame.Surface):

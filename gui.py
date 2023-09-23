@@ -38,6 +38,8 @@ class GuiElement:
             if self.y < mouse_y < self.y + self.height:
                 self.hovered = True
 
+    def set_value(self, value):
+        pass
 
 class GuideLine:
     GL_VERTICAL = 1
@@ -48,6 +50,8 @@ class GuideLine:
     ALIGN_BOTTOM = 1
     ALIGN_RIGHT = ALIGN_BOTTOM
     ALIGN_CENTER_PADDED = 2
+
+    ALIGN_LEFT_PADDING = 4
     # ALIGN_CENTER_EQUAL = 3
 
     REL_ALIGN_TOP = 0
@@ -78,16 +82,21 @@ class GuideLine:
 
         self.percent_align = max(min(percent_align, 1), 0)
 
+        self.offset_x = 0
+        self.offset_y = 0
+
         self.elements = []
 
     # todo: make it that you can delete elements
-    def add_element(self, e: GuiElement):
+    def add_element(self, e: GuiElement) -> GuiElement:
         """
         Adds an element to be rendered to the GuideLine
 
         :rtype: object
+        :return: A reference to the Element
         """
         self.elements.append(e)
+        return e
 
     def render(self):
         elements_len = -self.padding
@@ -112,6 +121,11 @@ class GuideLine:
                     if i != 0:
                         offset -= self.padding + self.elements[i-1].get_dim(self.line_type)
 
+                case self.ALIGN_LEFT_PADDING:
+                    x = self.padding
+                    if i != 0:
+                        offset += self.padding + self.elements[i-1].get_dim(self.line_type)
+
                 case _:
                     raise "Not an option for: alignment"
 
@@ -128,16 +142,18 @@ class GuideLine:
                 case _:
                     raise "Not an option for: rel_alignment"
 
+            y += int(self.manager.get_dim(self.line_type, True) * self.percent_align)
             if self.line_type == self.GL_HORIZONTAL:
-                y += int(self.manager.get_dim(self.line_type, True) * self.percent_align)
-                element.is_hovered(x + offset, y)
-                element.update()
-                self.manager.screen.blit(element.surface, (x + offset, y))
+                final_x = x + offset + self.offset_x
+                final_y = y + self.offset_y
+
             else:
-                y += int(self.manager.get_dim(self.line_type, True) * self.percent_align)
-                element.is_hovered(y, x + offset)
-                element.update()
-                self.manager.screen.blit(element.surface, (y, x + offset))
+                final_x = y + self.offset_x
+                final_y = x + offset + self.offset_y
+
+            element.is_hovered(final_x, final_y)
+            element.update()
+            self.manager.screen.blit(element.surface, (final_x, final_y))
 
 
 class GuiManager:
@@ -249,6 +265,7 @@ class Text(GuiElement):
     FONT_BASE = "assets/gui/fonts/Pixellari.ttf"
 
     SIZE_MAIN = 36
+    SIZE_HEADER = 48
 
     def __init__(self, text: str, font: str, font_size: int, color):
         self.text = text
@@ -259,6 +276,10 @@ class Text(GuiElement):
 
     def draw(self):
         return self.font.render(self.text, False, self.color)
+
+    def set_value(self, value):
+        self.text = value
+        self.surface = self.draw()
 
 
 class Button(GuiElement):
@@ -295,5 +316,69 @@ class Image(GuiElement):
         super().__init__(pygame.image.load(path))
 
 
-# use guidelines within GuiElements
-# Grid class
+class Grid(GuiElement):
+    def __init__(self, width: int, height: int, rows: int):
+        super().__init__(pygame.Surface((width, height)))
+
+        self.back = CornerSquare(width, height, CornerSquare.STYLE_ORNATE)
+
+        self.dummy_manager = GuiManager(self.surface)
+
+        for i in range(rows):
+            self.dummy_manager.add_guideline(GuideLine(f"row{i}", self.dummy_manager, GuideLine.GL_HORIZONTAL, 1.0 / rows * i, GuideLine.ALIGN_CENTER_PADDED, GuideLine.REL_ALIGN_BOTTOM, 0))
+
+        self.draw()
+
+    def add_element(self, row: int, e: GuiElement):
+        self.dummy_manager[f"row{row}"].add_element(e)
+        self.draw()
+
+    def __getitem__(self, row):
+        return self.dummy_manager[f"row{row}"]
+
+    def draw(self):
+        self.surface.fill((255, 0, 255))
+        self.surface.blit(self.back.surface, (0, 0))
+        self.dummy_manager.render_guidelines()
+        self.surface.set_colorkey((255, 0, 255))
+
+
+class ProgressBar(GuiElement):
+    BASIC = "assets/gui/corners/SimpleFIllCorner.png"
+
+    DEFAULT_BACK_COLOR = (34, 32, 53)
+
+    def __init__(self, width: int, height: int, style: str, fill_color, back_color):
+        super().__init__(pygame.Surface((width, height)))
+        self.color = fill_color
+        self.back_color = back_color
+
+        self.corner = pygame.image.load(style)
+        self.corner_size = self.corner.get_width()
+
+        self.progress = 0.5
+        self.render()
+
+    def set_value(self, percent: float):
+        self.progress = max(min(percent, 1), 0)
+        self.render()
+
+    def render(self):
+        self.surface.fill(self.back_color)
+        pygame.draw.rect(self.surface, self.color, pygame.Rect(0, 0, int(self.width * self.progress), self.height))
+        pygame.draw.rect(self.surface, (255, 255, 255), self.surface.get_rect(), 4)
+
+        corner = self.corner
+        corner.set_colorkey((0, 255, 255))
+        self.surface.blit(corner, (0, 0))
+        corner = pygame.transform.rotate(self.corner, 90)
+        corner.set_colorkey((0, 255, 255))
+        self.surface.blit(corner, (0, self.height - self.corner_size))
+        corner = pygame.transform.rotate(corner, 90)
+        corner.set_colorkey((0, 255, 255))
+        self.surface.blit(corner, (self.width - self.corner_size, self.height - self.corner_size))
+        corner = pygame.transform.rotate(corner, 90)
+        corner.set_colorkey((0, 255, 255))
+        self.surface.blit(corner, (self.width - self.corner_size, 0))
+
+        self.surface.set_colorkey((255, 0, 255))

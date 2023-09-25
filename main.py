@@ -1,4 +1,5 @@
 import pygame
+import ctypes
 import sys
 from scene_manager import SceneManager
 from menu import MainMenu, SplashScreen, CreditsMenu
@@ -9,11 +10,14 @@ from game import GameScene
 pygame.init()
 
 
-FRAMERATE = 60
-infoObject = pygame.display.Info()
-# (infoObject.current_w, infoObject.current_h), pygame.FULLSCREEN
+# Makes the display whatever resolution your display is and ignores windows scaling
+ctypes.windll.user32.SetProcessDPIAware()
+true_res = (ctypes.windll.user32.GetSystemMetrics(0), ctypes.windll.user32.GetSystemMetrics(1))
+screen = pygame.display.set_mode(true_res, pygame.FULLSCREEN)
 
-screen = pygame.display.set_mode((1920, 1080))
+FRAMERATE = 60
+
+
 pygame.display.set_caption("Game")
 # pygame.display.set_icon()
 

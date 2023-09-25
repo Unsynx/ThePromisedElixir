@@ -13,7 +13,7 @@ class MainMenu(Scene):
         # ------ Backdrop ------
         self.back = self.guiManager.add_guideline(Guide("img", None, Guide.GL_VERTICAL, 0, Guide.ALIGN_LEFT, Guide.REL_ALIGN_BOTTOM, 0))
 
-        self.back.add_element(Image("assets/test.jpg"))
+        self.back.add_element(Image("../assets/test.jpg"))
 
         # ------ Buttons ------
         self.buttons = self.guiManager.add_guideline(Guide("buttons", None, Guide.GL_HORIZONTAL, 0.95, Guide.ALIGN_CENTER_PADDED, Guide.REL_ALIGN_CENTER, 50))

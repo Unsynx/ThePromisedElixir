@@ -1,4 +1,4 @@
-pyinstaller main.py --onefile --windowed --noconsole
+pyinstaller src/main.py --onefile --windowed --noconsole
 cd dist
 mkdir assets
 cd ..

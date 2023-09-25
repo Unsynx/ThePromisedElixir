@@ -216,9 +216,9 @@ class GuiManager:
 
 
 class CornerSquare(GuiElement):
-    STYLE_ORNATE = "assets/gui/corners/StyleOrnateCorner.png"
-    STYLE_SIMPLE = "assets/gui/corners/StyleSimpleCorner.png"
-    STYLE_SIMPLE_HOVERED = "assets/gui/corners/StyleSimpleCornerHovered.png"
+    STYLE_ORNATE = "../assets/gui/corners/StyleOrnateCorner.png"
+    STYLE_SIMPLE = "../assets/gui/corners/StyleSimpleCorner.png"
+    STYLE_SIMPLE_HOVERED = "../assets/gui/corners/StyleSimpleCornerHovered.png"
 
     def __init__(self, width: int, height: int, style: str):
         super().__init__(pygame.Surface((width, height)))
@@ -256,7 +256,7 @@ class CornerSquare(GuiElement):
 
 
 class Text(GuiElement):
-    FONT_BASE = "assets/gui/fonts/Pixellari.ttf"
+    FONT_BASE = "../assets/gui/fonts/Pixellari.ttf"
 
     SIZE_MAIN = 36
     SIZE_HEADER = 48
@@ -338,7 +338,7 @@ class Grid(GuiElement):
 
 
 class ProgressBar(GuiElement):
-    BASIC = "assets/gui/corners/SimpleFIllCorner.png"
+    BASIC = "../assets/gui/corners/SimpleFIllCorner.png"
 
     DEFAULT_BACK_COLOR = (34, 32, 53)
 

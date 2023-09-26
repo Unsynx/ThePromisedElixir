@@ -13,7 +13,7 @@ pygame.init()
 # Makes the display whatever resolution your display is and ignores windows scaling
 ctypes.windll.user32.SetProcessDPIAware()
 true_res = (ctypes.windll.user32.GetSystemMetrics(0), ctypes.windll.user32.GetSystemMetrics(1))
-screen = pygame.display.set_mode(true_res, pygame.FULLSCREEN)
+screen = pygame.display.set_mode(true_res, pygame.SCALED, vsync=1)
 
 FRAMERATE = 60
 
@@ -32,7 +32,7 @@ splashScreen = SplashScreen(sceneManager)
 creditsMenu = CreditsMenu(sceneManager)
 gameScene = GameScene(sceneManager)
 
-sceneManager.set_scene(splashScreen)
+sceneManager.set_scene(gameScene)
 
 
 # ---------------- Main Loop ---------------- #
@@ -49,8 +49,6 @@ while running:
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
                 sys.exit()
-
-    screen.fill((0, 0, 0))
 
     sceneManager.scene.input(events, pygame.key.get_pressed())
     sceneManager.scene.update(dt)

@@ -67,7 +67,7 @@ class Tile:
 
 
 class Chunk:
-    tile = pygame.image.load("../assets/tiles/tile1.png")
+    tile = pygame.image.load("../assets/tiles/tile.png")
 
     def __init__(self, x: int, y: int, size: int, tile_size: int):
         self.x = x
@@ -81,7 +81,7 @@ class Chunk:
         self.render()
 
     def generate(self):
-
+        # todo get this from pre generated files.
         chunk = []
         for x in range(self.size):
             row = []

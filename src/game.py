@@ -12,11 +12,11 @@ class GameScene(Scene):
 
         self.guiManager = GuiManager(self.screen)
         self.debug = self.guiManager.add_guideline(Guide("center", None, Guide.GL_VERTICAL, 0, Guide.ALIGN_TOP, Guide.REL_ALIGN_RIGHT, 0))
-        self.fps = self.debug.add_element(Text("", Text.FONT_BASE, Text.SIZE_HEADER, (255, 0, 0)))
-        self.metric = self.debug.add_element(Text("", Text.FONT_BASE, Text.SIZE_HEADER, (255, 0, 0)))
+        self.fps = self.debug.add_element(Text("", Text.FONT_BASE, Text.SIZE_HEADER, (255, 255, 255)))
+        self.metric = self.debug.add_element(Text("", Text.FONT_BASE, Text.SIZE_HEADER, (255, 255, 255)))
 
         self.camera = Camera(self.screen.get_size())
-        self.tileManager = TileManager(self.screen, 16, 16, self.camera)
+        self.tileManager = TileManager(self.screen, 128, 4, self.camera)
 
     def update(self, dt):
         pressed = pygame.key.get_pressed()
@@ -29,7 +29,7 @@ class GameScene(Scene):
         self.metric.set_value("Yay!")
 
     def render(self, screen: pygame.Surface):
-        screen.fill((255, 255, 255))
+        screen.fill((0, 0, 0))
         self.tileManager.render()
         self.guiManager.render_guidelines()
 

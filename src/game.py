@@ -3,6 +3,7 @@ from tiles import Camera, TileManager
 from scene_manager import Scene, SceneManager
 from gui import GuiManager, Guide, Text
 import pygame
+from gen import generate_dungeon
 
 
 # This is where the main gameplay will go
@@ -16,7 +17,9 @@ class GameScene(Scene):
         self.metric = self.debug.add_element(Text("", Text.FONT_BASE, Text.SIZE_HEADER, (255, 255, 255)))
 
         self.camera = Camera(self.screen.get_size())
-        self.tileManager = TileManager(self.screen, 128, 4, self.camera)
+        chunk_size = 4
+        generate_dungeon(chunk_size)
+        self.tileManager = TileManager(self.screen, 128, chunk_size, self.camera)
 
     def update(self, dt):
         pressed = pygame.key.get_pressed()

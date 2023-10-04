@@ -81,17 +81,21 @@ class Chunk:
         self.render()
 
     def generate(self):
-        # todo get this from pre generated files.
-        chunk = []
-        for x in range(self.size):
-            row = []
-            for y in range(self.size):
-                row.append(random.randint(0, 1))
-            chunk.append(row)
-        return chunk
+        try:
+            with open(f"../assets/world/chunk_{self.x}_{self.y}.txt", "r") as f:
+                chunk = []
+                for li in f.readlines():
+                    chunk.append(list(map(int, li.split(", "))))
+            return chunk
+
+        except FileNotFoundError:
+            return None
 
     def render(self):
         self.surface.fill((255, 100, 255))
+
+        if self.tiles is None:
+            return
 
         for x in range(self.size):
             for y in range(self.size):

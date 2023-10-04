@@ -1,4 +1,4 @@
-import math
+from math import floor, ceil, dist
 import pygame
 import random
 
@@ -27,8 +27,8 @@ class TileManager:
         self.cam = camera
         self.chunks = []
         self.chunk_positions = []
-        self.chunks_per_width = math.ceil(self.cam.screen_width / self.chunk_size_px) + 3
-        self.chunks_per_height = math.ceil(self.cam.screen_height / self.chunk_size_px) + 3
+        self.chunks_per_width = ceil(self.cam.screen_width / self.chunk_size_px) + 3
+        self.chunks_per_height = ceil(self.cam.screen_height / self.chunk_size_px) + 3
         self.chunk_del_range = 10
 
     def new_chunk(self, x, y):
@@ -56,8 +56,17 @@ class TileManager:
                     self.new_chunk(chunk_x, chunk_y)
 
         for chunk in self.chunk_positions:
-            if math.dist([chunk[0], chunk[1]], [self.cam.x // self.chunk_size_px, self.cam.y // self.chunk_size_px]) > self.chunk_del_range:
+            if dist([chunk[0], chunk[1]], [self.cam.x // self.chunk_size_px, self.cam.y // self.chunk_size_px]) > self.chunk_del_range:
                 self.del_chunk(self.chunk_positions.index([chunk[0], chunk[1]]))
+
+    def get_tile(self, x, y):
+        chunk_x = floor(x/self.chunk_size)
+        chunk_y = floor(y/self.chunk_size)
+
+        if [chunk_x, chunk_y] not in self.chunk_positions:
+            raise f"Chunk at {x}, {y} is not loaded"
+
+        return self.chunks[self.chunk_positions.index([chunk_x, chunk_y])].get_tile(x % self.chunk_size, y % self.chunk_size )
 
 
 class Tile:
@@ -68,6 +77,7 @@ class Tile:
 
 class Chunk:
     tile = pygame.image.load("../assets/tiles/tile.png")
+    tile2 = pygame.image.load("../assets/tiles/start_tile.png")
 
     def __init__(self, x: int, y: int, size: int, tile_size: int):
         self.x = x
@@ -99,5 +109,16 @@ class Chunk:
 
         for x in range(self.size):
             for y in range(self.size):
-                if self.tiles[y][x] == 0:
-                    self.surface.blit(self.tile, (x * self.tile_size, y * self.tile_size))
+                tile = pygame.Surface((0, 0))
+                match self.tiles[y][x]:
+                    case 1:
+                        tile = self.tile
+                    case 2:
+                        tile = self.tile2
+                    case _:
+                        pass
+
+                self.surface.blit(tile, (x * self.tile_size, y * self.tile_size))
+
+    def get_tile(self, x, y):
+        return self.tiles[y][x]

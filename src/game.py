@@ -1,7 +1,7 @@
 import sys
 from tiles import Camera, TileManager
 from scene_manager import Scene, SceneManager
-from gui import GuiManager, Guide, Text
+from gui import GuiManager, Guide, Text, Button
 import pygame
 from gen import generate_dungeon
 
@@ -18,8 +18,10 @@ class GameScene(Scene):
 
         self.camera = Camera(self.screen.get_size())
         chunk_size = 4
-        generate_dungeon(chunk_size)
+        self.player_x, self.player_y = generate_dungeon(chunk_size)
         self.tileManager = TileManager(self.screen, 128, chunk_size, self.camera)
+
+        self.debug.add_element(Button("Get", 100, 50, self.tileManager.get_tile, self.player_x, self.player_y))
 
     def update(self, dt):
         pressed = pygame.key.get_pressed()

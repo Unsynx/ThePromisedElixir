@@ -1,5 +1,5 @@
 import os
-import random
+from random import randint
 
 
 def generate_dungeon(chunk_size):
@@ -11,28 +11,34 @@ def generate_dungeon(chunk_size):
             os.remove(os.path.join(dir_name, item))
 
     # Create world
-    width = 10
-    height = 10
+    width = 4
+    height = 4
 
     world = []
     for y in range(height * chunk_size):
         row = []
         for x in range(width * chunk_size):
-            row.append(random.randint(0, 1))
-
+            row.append(randint(0, 1))
         world.append(row)
+
+    # World gen
+    start_x = randint(0, height*chunk_size-1)
+    start_y = randint(0, height*chunk_size-1)
+    world[start_y][start_x] = 2
 
     # Save chunks to files
     for h in range(height):
         for w in range(width):
             with open(f"../assets/world/chunk_{w}_{h}.txt", "x") as f:
                 for i in range(chunk_size):
-                    row = world[(h * chunk_size) + i - 1][(chunk_size * w):(chunk_size * (w+1))]
+                    row = world[(h * chunk_size) + i][(chunk_size * w):(chunk_size * (w+1))]
                     for c, li in enumerate(list(map(str, row))):
                         if c != 0:
                             f.write(", ")
                         f.write(f"{li}")
                     f.write("\n")
+
+    return start_x, start_y
 
 
 generate_dungeon(4)

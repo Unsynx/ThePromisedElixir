@@ -20,8 +20,8 @@ class GameScene(Scene):
 
     def update(self, dt):
         pressed = pygame.key.get_pressed()
-        self.camera.x += int((pressed[pygame.K_RIGHT] - pressed[pygame.K_LEFT]) * 5 * dt)
-        self.camera.y += int((pressed[pygame.K_DOWN] - pressed[pygame.K_UP]) * 5 * dt)
+        self.camera.x += int((pressed[pygame.K_RIGHT] - pressed[pygame.K_LEFT]) * 10 * dt)
+        self.camera.y += int((pressed[pygame.K_DOWN] - pressed[pygame.K_UP]) * 10 * dt)
 
         self.tileManager.update()
 

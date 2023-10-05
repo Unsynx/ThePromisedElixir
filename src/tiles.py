@@ -41,8 +41,8 @@ class TileManager:
 
     def render(self):
         for chunk in self.chunks:
-            self.surface.blit(chunk.surface, (chunk.x * self.chunk_size_px - self.cam.rel_x - self.chunk_size_px / 2,
-                                              chunk.y * self.chunk_size_px - self.cam.rel_y - self.chunk_size_px / 2))
+            self.surface.blit(chunk.surface, (chunk.x * self.chunk_size_px - self.cam.x + self.cam.center_offset_x,
+                                              chunk.y * self.chunk_size_px - self.cam.y + self.cam.center_offset_y))
 
     def update(self):
 

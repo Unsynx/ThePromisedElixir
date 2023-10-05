@@ -4,6 +4,10 @@ import threading
 
 
 class Camera:
+    ARROW_CONTROLS = 0
+    CENTER_FIRST_ENTITY = 1
+    CENTER_ENTITIES_SMOOTH = 2
+
     def __init__(self, screensize, x=0, y=0):
         (self.screen_width, self.screen_height) = screensize
         self.center_offset_x = self.screen_width / 2
@@ -13,7 +17,48 @@ class Camera:
         self.rel_x = self.x - self.center_offset_x
         self.rel_y = self.y - self.center_offset_y
 
-    def update(self):
+        # Camera controls
+        self.input_x = 0
+        self.input_y = 0
+        self.smooth_x = 0
+        self.smooth_y = 0
+
+        self.mode = self.CENTER_FIRST_ENTITY
+        self.entities = []
+
+    def input(self):
+        pressed = pygame.key.get_pressed()
+
+        self.input_x = pressed[pygame.K_RIGHT] - pressed[pygame.K_LEFT]
+        self.input_y = pressed[pygame.K_DOWN] - pressed[pygame.K_UP]
+
+    def update(self, dt):
+        match self.mode:
+            case self.ARROW_CONTROLS:
+                self.x += self.input_x * dt * 10
+                self.y += self.input_y * dt * 10
+
+            case self.CENTER_ENTITIES_SMOOTH:
+                x = 0
+                y = 0
+                for e in self.entities:
+                    x += e.x
+                    y += e.y
+
+                x = int(x / len(self.entities))
+                y = int(y / len(self.entities))
+
+                # Temp
+                self.smooth_x += (x - self.x) * 0.3
+                self.smooth_y += (y - self.y) * 0.3
+
+                self.x = int(self.smooth_x)
+                self.y = int(self.smooth_y)
+
+            case self.CENTER_FIRST_ENTITY:
+                self.x = int(self.entities[0].x / len(self.entities)) + int(self.entities[0].surface.get_width() * 0.5)
+                self.y = int(self.entities[0].y / len(self.entities)) + int(self.entities[0].surface.get_height() * 0.5)
+
         self.rel_x = self.x - self.center_offset_x
         self.rel_y = self.y - self.center_offset_y
 
@@ -45,8 +90,6 @@ class TileManager:
                                               chunk.y * self.chunk_size_px - self.cam.y + self.cam.center_offset_y))
 
     def update(self):
-
-        self.cam.update()
         for x in range(self.chunks_per_width):
             for y in range(self.chunks_per_height):
 
@@ -69,7 +112,7 @@ class TileManager:
         if [chunk_x, chunk_y] not in self.chunk_positions:
             raise f"Chunk at {x}, {y} is not loaded"
 
-        return self.chunks[self.chunk_positions.index([chunk_x, chunk_y])].get_tile(x % self.chunk_size, y % self.chunk_size )
+        return self.chunks[self.chunk_positions.index([chunk_x, chunk_y])].get_tile(x % self.chunk_size, y % self.chunk_size)
 
 
 class Tile:

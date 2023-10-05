@@ -1,6 +1,6 @@
 from math import floor, ceil, dist
 import pygame
-import random
+import threading
 
 
 class Camera:
@@ -45,6 +45,7 @@ class TileManager:
                                               chunk.y * self.chunk_size_px - self.cam.rel_y - self.chunk_size_px / 2))
 
     def update(self):
+
         self.cam.update()
         for x in range(self.chunks_per_width):
             for y in range(self.chunks_per_height):
@@ -53,7 +54,9 @@ class TileManager:
                 chunk_y = y - self.chunks_per_height // 2 + self.cam.y // self.chunk_size_px
 
                 if [chunk_x, chunk_y] not in self.chunk_positions:
-                    self.new_chunk(chunk_x, chunk_y)
+                    thread = threading.Thread(target=self.new_chunk, args=(chunk_x, chunk_y))
+                    thread.start()
+                    # self.new_chunk(chunk_x, chunk_y)
 
         for chunk in self.chunk_positions:
             if dist([chunk[0], chunk[1]], [self.cam.x // self.chunk_size_px, self.cam.y // self.chunk_size_px]) > self.chunk_del_range:

@@ -29,7 +29,7 @@ class GameScene(Scene):
         self.tileManager = TileManager(self.screen, tile_size, chunk_size, self.camera)
 
         # Set up player.
-        self.player = Player(self.camera, self.screen, tile_size)
+        self.player = Player(self.camera, self.screen, self.tileManager, tile_size)
         self.player.x = self.start_x * self.tileManager.tile_size
         self.player.y = self.start_y * self.tileManager.tile_size
         self.player.tile_x = self.start_x

@@ -116,14 +116,21 @@ class TileManager:
 
 
 class Tile:
-    def __init__(self, name, image):
-        self.name = name
-        self.image = pygame.image.load(image)
+    def __init__(self, num: int, path):
+        self.name = num
+        if path is None:
+            self.image = pygame.surface.Surface((0, 0))
+        else:
+            self.image = pygame.image.load(path)
 
 
+# Define tiles here
 class Chunk:
-    tile = pygame.image.load("../assets/tiles/tile.png")
-    tile2 = pygame.image.load("../assets/tiles/start_tile.png")
+    tile_images = [
+        Tile(0, None),
+        Tile(1, "../assets/tiles/tile.png"),
+        Tile(2, "../assets/tiles/start_tile.png")
+    ]
 
     def __init__(self, x: int, y: int, size: int, tile_size: int):
         self.x = x
@@ -155,16 +162,11 @@ class Chunk:
 
         for x in range(self.size):
             for y in range(self.size):
-                tile = pygame.Surface((0, 0))
-                match self.tiles[y][x]:
-                    case 1:
-                        tile = self.tile
-                    case 2:
-                        tile = self.tile2
-                    case _:
-                        pass
-
+                tile = self.tile_images[self.tiles[y][x]].image
                 self.surface.blit(tile, (x * self.tile_size, y * self.tile_size))
 
     def get_tile(self, x, y):
-        return self.tiles[y][x]
+        try:
+            return self.tiles[y][x]
+        except TypeError:
+            return 0

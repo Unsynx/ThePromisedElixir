@@ -61,7 +61,8 @@ class Guide:
     REL_ALIGN_RIGHT = REL_ALIGN_BOTTOM
     REL_ALIGN_CENTER = 2
 
-    def __init__(self, name: str, manager, line_type: int, percent_align: float, alignment: int, rel_alignment: int, padding: int):
+    def __init__(self, name: str, manager, line_type: int, percent_align: float, alignment: int, rel_alignment: int,
+                 padding: int):
         """
         Elements can be placed on the Guide to align them in certain ways.
 
@@ -121,7 +122,7 @@ class Guide:
                 case _:
                     raise "Not an option for: alignment"
             if i != 0:
-                offset += self.padding + self.elements[i-1].get_dim(self.line_type)
+                offset += self.padding + self.elements[i - 1].get_dim(self.line_type)
 
             match self.rel_alignment:
                 case self.REL_ALIGN_TOP:
@@ -281,7 +282,8 @@ class Button(GuiElement):
         super().__init__(pygame.Surface((width, height)))
 
         self.dummy_manager = GuiManager(self.surface)
-        self.line = self.dummy_manager.add_guideline(Guide("dummy", None, Guide.GL_HORIZONTAL, 0.5, Guide.ALIGN_CENTER_PADDED, Guide.REL_ALIGN_CENTER, 0))
+        self.line = self.dummy_manager.add_guideline(
+            Guide("dummy", None, Guide.GL_HORIZONTAL, 0.5, Guide.ALIGN_CENTER_PADDED, Guide.REL_ALIGN_CENTER, 0))
 
         self.back = CornerSquare(width, height, CornerSquare.STYLE_SIMPLE)
         self.back_hovered = CornerSquare(width, height, CornerSquare.STYLE_SIMPLE_HOVERED)
@@ -319,7 +321,9 @@ class Grid(GuiElement):
         self.dummy_manager = GuiManager(self.surface)
 
         for i in range(rows):
-            self.dummy_manager.add_guideline(Guide(f"row{i}", self.dummy_manager, Guide.GL_HORIZONTAL, 1.0 / rows * i, Guide.ALIGN_CENTER_PADDED, Guide.REL_ALIGN_BOTTOM, 0))
+            self.dummy_manager.add_guideline(
+                Guide(f"row{i}", self.dummy_manager, Guide.GL_HORIZONTAL, 1.0 / rows * i, Guide.ALIGN_CENTER_PADDED,
+                      Guide.REL_ALIGN_BOTTOM, 0))
 
         self.draw()
 

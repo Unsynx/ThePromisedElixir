@@ -9,14 +9,14 @@ class Tween:
         self.current_time = 0
         self.easing_func = easing_func if easing_func else self.linear_easing
 
-    def update(self, dt):
+    def update(self, dt: float):
         self.current_time += dt
 
     def get_current_value(self):
         if self.current_time >= self.duration:
             return self.end_value
-        t = self.current_time / self.duration
-        return self.start_value + (self.end_value - self.start_value) * t
+        t = self.current_time / self.duration  # time as float from 0 start to 1 end
+        return self.start_value + (self.end_value - self.start_value) * self.easing_func(t)
 
     # Easing functions
     @staticmethod

@@ -37,6 +37,6 @@ class DrunkGeneration:
             print(''.join(row))
 
 
-dungeon = DrunkGeneration(55, 55, 600, 3)
-dungeon.generate_level()
-dungeon.display_level()
+# dungeon = DrunkGeneration(55, 55, 600, 3)
+# dungeon.generate_level()
+# dungeon.display_level()

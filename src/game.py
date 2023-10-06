@@ -1,4 +1,4 @@
-from tiles import Camera, TileManager
+from tiles import Camera, TileManager, CHUNK_SIZE, TILE_SIZE
 from scene_manager import Scene, SceneManager
 from gui import GuiManager, Guide, Text, Button
 import pygame
@@ -23,19 +23,24 @@ class GameScene(Scene):
 
         # Set up camera and tile manager.
         self.camera = Camera(self.screen.get_size())
-        chunk_size = 4
-        tile_size = 128
-        self.start_x, self.start_y = generate_dungeon(chunk_size)
-        self.tileManager = TileManager(self.screen, tile_size, chunk_size, self.camera)
+
+        self.start_x, self.start_y = 0, 0
+        self.tileManager = TileManager(self.screen, TILE_SIZE, CHUNK_SIZE, self.camera)
 
         # Set up player.
-        self.player = Player(self.camera, self.screen, self.tileManager, tile_size)
+        self.player = Player(self.camera, self.screen, self.tileManager, TILE_SIZE)
+        self.player.x = 0
+        self.player.y = 0
+        self.player.tile_x = 0
+        self.player.tile_y = 0
+
+        self.camera.entities.append(self.player)
+
+    def on_scene_start(self):
         self.player.x = self.start_x * self.tileManager.tile_size
         self.player.y = self.start_y * self.tileManager.tile_size
         self.player.tile_x = self.start_x
         self.player.tile_y = self.start_y
-
-        self.camera.entities.append(self.player)
 
     def input(self, events, pressed_keys):
         self.camera.input()

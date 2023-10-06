@@ -15,12 +15,16 @@ class SceneManager:
         self.sceneDict[scene.name] = scene
 
     def set_scene(self, scene):
+        self.scene.on_scene_end()
+
         if type(scene) is str:
             # When scene name entered
             self.scene = self.sceneDict[scene]
         else:
             # When scene object passed
             self.scene = scene
+
+        self.scene.on_scene_start()
 
 
 class Scene:
@@ -30,6 +34,12 @@ class Scene:
         self.screen = manager.screen
 
         self.sceneManager.add_scene(self)
+
+    def on_scene_end(self):
+        pass
+
+    def on_scene_start(self):
+        pass
 
     def input(self, events, pressed_keys):
         pass

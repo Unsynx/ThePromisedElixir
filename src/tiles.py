@@ -3,6 +3,10 @@ import pygame
 import threading
 
 
+CHUNK_SIZE = 4
+TILE_SIZE = 128
+
+
 class Camera:
     ARROW_CONTROLS = 0
     CENTER_FIRST_ENTITY = 1
@@ -35,8 +39,8 @@ class Camera:
     def update(self, dt):
         match self.mode:
             case self.ARROW_CONTROLS:
-                self.x += self.input_x * dt * 10
-                self.y += self.input_y * dt * 10
+                self.x += int(self.input_x * dt * 10)
+                self.y += int(self.input_y * dt * 10)
 
             case self.CENTER_ENTITIES_SMOOTH:
                 x = 0

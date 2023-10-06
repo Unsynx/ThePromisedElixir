@@ -1,9 +1,10 @@
 import pygame
-import ctypes
 import sys
+from screeninfo import get_monitors
 from scene_manager import SceneManager
 from menu import MainMenu, SplashScreen, CreditsMenu
 from game import GameScene
+from gen import LoadingScreen
 
 
 # ---------------- Setup ---------------- #
@@ -11,9 +12,8 @@ pygame.init()
 
 
 # Makes the display whatever resolution your display is and ignores windows scaling
-ctypes.windll.user32.SetProcessDPIAware()
-true_res = (ctypes.windll.user32.GetSystemMetrics(0), ctypes.windll.user32.GetSystemMetrics(1))
-screen = pygame.display.set_mode(true_res, pygame.SCALED, vsync=1)
+primary_monitor = get_monitors()[0]
+screen = pygame.display.set_mode((primary_monitor.width, primary_monitor.height), pygame.SCALED, vsync=1)
 
 FRAMERATE = 60
 
@@ -31,8 +31,9 @@ mainMenu = MainMenu(sceneManager)
 splashScreen = SplashScreen(sceneManager)
 creditsMenu = CreditsMenu(sceneManager)
 gameScene = GameScene(sceneManager)
+loadingScene = LoadingScreen(sceneManager)
 
-sceneManager.set_scene(gameScene)
+sceneManager.set_scene(mainMenu)
 
 
 # ---------------- Main Loop ---------------- #

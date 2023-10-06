@@ -23,21 +23,20 @@ class DrunkGeneration:
                 self.wall_countdown -= 1
 
             roll = randint(1, 4)
-
-            if roll == 1 and self.x > self.padding:
+            if roll == 1 and self.x > self.padding:  # left
                 self.x -= 1
-            if roll == 2 and self.x < self.width - 1 - self.padding:
+            if roll == 2 and self.x < self.width - 1 - self.padding:  # right
                 self.x += 1
-            if roll == 3 and self.y > self.padding:
+            if roll == 3 and self.y > self.padding:  # up
                 self.y -= 1
-            if roll == 4 and self.y < self.height - 1 - self.padding:
+            if roll == 4 and self.y < self.height - 1 - self.padding:  # down
                 self.y += 1
 
-    def get_level(self):
+    def display_level(self):
         for row in self.level:
             print(''.join(row))
 
 
 dungeon = DrunkGeneration(55, 55, 600, 3)
 dungeon.generate_level()
-dungeon.get_level()
+dungeon.display_level()

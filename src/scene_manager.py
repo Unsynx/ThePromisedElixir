@@ -15,7 +15,8 @@ class SceneManager:
         self.sceneDict[scene.name] = scene
 
     def set_scene(self, scene):
-        self.scene.on_scene_end()
+        if self.scene is not None:
+            self.scene.on_scene_end()
 
         if type(scene) is str:
             # When scene name entered

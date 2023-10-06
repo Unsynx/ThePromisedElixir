@@ -16,6 +16,8 @@ class GuiElement:
         self.x = 0
         self.y = 0
 
+        self.hide = False
+
     def get_dim(self, dim, other=False):
         if dim == Guide.GL_HORIZONTAL:
             if other:
@@ -89,6 +91,8 @@ class Guide:
 
         self.elements = []
 
+        self.hide = False
+
     # todo: make it that you can delete elements
     def add_element(self, e: GuiElement) -> GuiElement:
         """
@@ -101,6 +105,9 @@ class Guide:
         return e
 
     def render(self):
+        if self.hide:
+            return
+
         elements_len = -self.padding
         for e in self.elements:
             elements_len += e.get_dim(self.line_type) + self.padding
@@ -148,7 +155,8 @@ class Guide:
 
             element.is_hovered(final_x, final_y)
             element.update()
-            self.manager.screen.blit(element.surface, (final_x, final_y))
+            if not element.hide:
+                self.manager.screen.blit(element.surface, (final_x, final_y))
 
 
 class GuiManager:

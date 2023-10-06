@@ -21,6 +21,8 @@ class GameScene(Scene):
         self.plyr_pos = self.debug.add_element(Text("", Text.FONT_BASE, Text.SIZE_HEADER, (255, 255, 255)))
         self.plyr_tile_pos = self.debug.add_element(Text("", Text.FONT_BASE, Text.SIZE_HEADER, (255, 255, 255)))
 
+        self.debug.hide = True
+
         # Set up camera and tile manager.
         self.camera = Camera(self.screen.get_size())
 
@@ -36,15 +38,27 @@ class GameScene(Scene):
 
         self.camera.entities.append(self.player)
 
+        self.debug_cool = False
+
     def on_scene_start(self):
         self.player.x = self.start_x * self.tileManager.tile_size
         self.player.y = self.start_y * self.tileManager.tile_size
         self.player.tile_x = self.start_x
         self.player.tile_y = self.start_y
 
-    def input(self, events, pressed_keys):
+    def input(self, events, pressed):
+
+        if pressed[pygame.K_e] and self.debug_cool:
+            if self.debug.hide:
+                self.debug.hide = False
+            else:
+                self.debug.hide = True
+            self.debug_cool = False
+        elif not pressed[pygame.K_e]:
+            self.debug_cool = True
+
         self.camera.input()
-        self.player.input(pressed_keys)
+        self.player.input(pressed)
 
     def update(self, dt):
         self.player.update()

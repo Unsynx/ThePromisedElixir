@@ -49,8 +49,8 @@ def generate_dungeon(chunk_size, event):
 
     # Create world
     # --------------------- REPLACE BELOW --------------------- #
-    width = 100
-    height = 100
+    width = 4
+    height = 4
 
     world = []
     for y in range(height * chunk_size):

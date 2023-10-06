@@ -101,9 +101,9 @@ def generate_dungeon(chunk_size, event):
     world = dungeon.level
 
     # World gen
-    start_x = randint(0, width * CHUNK_SIZE - 1)
-    start_y = randint(0, height * CHUNK_SIZE - 1)
-    world[start_y][start_x] = 2
+    # start_x = randint(0, width * CHUNK_SIZE - 1)
+    # start_y = randint(0, height * CHUNK_SIZE - 1)
+    # world[start_y][start_x] = 2
 
     # --------------------- REPLACE ABOVE --------------------- #
 

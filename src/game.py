@@ -3,7 +3,7 @@ from scene_manager import Scene, SceneManager
 from gui import GuiManager, Guide, Text, Button
 import pygame
 from gen import generate_dungeon
-from player import Player
+from player import Player, Enemy, EntityGroup
 
 
 # This is where the main gameplay will go
@@ -20,34 +20,35 @@ class GameScene(Scene):
         self.cam_pos = self.debug.add_element(Text("", Text.FONT_BASE, Text.SIZE_HEADER, (255, 255, 255)))
         self.plyr_pos = self.debug.add_element(Text("", Text.FONT_BASE, Text.SIZE_HEADER, (255, 255, 255)))
         self.plyr_tile_pos = self.debug.add_element(Text("", Text.FONT_BASE, Text.SIZE_HEADER, (255, 255, 255)))
+        # Doesn't work?
+        self.reload = self.debug.add_element(Button("Re-Generate", 300, 80, self.sceneManager.set_scene, "loadingScreen"))
 
         self.debug.hide = True
 
         # Set up camera and tile manager.
-        self.camera = Camera(self.screen.get_size())
+        self.camera = Camera(self.screen.get_size(), TILE_SIZE)
+        self.camera.mode = Camera.CENTER_FIRST_ENTITY_SMOOTH
 
         self.start_x, self.start_y = 0, 0
         self.tileManager = TileManager(self.screen, TILE_SIZE, CHUNK_SIZE, self.camera)
 
+        self.group = EntityGroup(self.camera, self.screen, self.tileManager, TILE_SIZE)
         # Set up player.
-        self.player = Player(self.camera, self.screen, self.tileManager, TILE_SIZE)
-        self.player.x = 0
-        self.player.y = 0
-        self.player.tile_x = 0
-        self.player.tile_y = 0
+        self.player = self.group.add_entity(Player)
+        self.player.set_position(0, 0)
 
         self.camera.entities.append(self.player)
+
+        # Temp: Create Enemy
+        self.group.add_entity(Enemy).set_position(10, 10)
 
         self.debug_cool = False
 
     def on_scene_start(self):
-        self.player.x = self.start_x * self.tileManager.tile_size
-        self.player.y = self.start_y * self.tileManager.tile_size
-        self.player.tile_x = self.start_x
-        self.player.tile_y = self.start_y
+        self.player.set_position(self.start_x, self.start_y)
 
     def input(self, events, pressed):
-
+        # Toggle Debug Menu
         if pressed[pygame.K_e] and self.debug_cool:
             if self.debug.hide:
                 self.debug.hide = False
@@ -58,13 +59,14 @@ class GameScene(Scene):
             self.debug_cool = True
 
         self.camera.input()
-        self.player.input(pressed)
+        self.group.input(pressed)
 
     def update(self, dt):
-        self.player.update()
+        self.group.update(dt)
         self.camera.update(dt)
         self.tileManager.update()
 
+        # Debug Menu
         self.fps.set_value(f"FPS: {str(round(dt * 60, 1))}")
         self.cam_pos.set_value(f"Camera: {round(self.camera.x, 0)}, {round(self.camera.y, 0)}")
         self.plyr_pos.set_value(f"Plyr - Position: {round(self.player.x, 0)}, {round(self.player.y, 0)}")
@@ -73,5 +75,5 @@ class GameScene(Scene):
     def render(self, screen: pygame.Surface):
         screen.fill((50, 60, 57))
         self.tileManager.render()
-        self.player.render()
+        self.group.render()
         self.guiManager.render_guidelines()

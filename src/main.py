@@ -33,7 +33,7 @@ creditsMenu = CreditsMenu(sceneManager)
 gameScene = GameScene(sceneManager)
 loadingScene = LoadingScreen(sceneManager)
 
-sceneManager.set_scene(mainMenu)
+sceneManager.set_scene(loadingScene)
 
 
 # ---------------- Main Loop ---------------- #

@@ -1,7 +1,7 @@
 import pygame
 import sys
-from screeninfo import get_monitors
 from scene_manager import SceneManager
+from screeninfo import get_monitors
 from menu import MainMenu, SplashScreen, CreditsMenu
 from game import GameScene
 from gen import LoadingScreen

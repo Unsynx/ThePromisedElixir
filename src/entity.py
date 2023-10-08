@@ -44,7 +44,7 @@ class Entity:
 
     def on_death(self):
         print("Entity Dead")
-        self.group.entity_group.pop(self.group.entity_group.index(self))
+        self.group.entities.pop(self.group.entities.index(self))
 
     def input(self, pressed):
         pass

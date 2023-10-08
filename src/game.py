@@ -57,6 +57,7 @@ class GameScene(Scene):
 
         self.player = self.group.entities[0]
 
+        # Resets loaded tiles when reloading world
         for _ in range(len(self.tileManager.chunks)):
             self.tileManager.del_chunk(0)
 

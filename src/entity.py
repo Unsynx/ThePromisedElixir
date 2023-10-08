@@ -44,7 +44,7 @@ class Entity:
 
     def on_death(self):
         print("Entity Dead")
-        self.group.entities.pop(self.group.entities.index(self))
+        self.group.entity_group.pop(self.group.entity_group.index(self))
 
     def input(self, pressed):
         pass
@@ -88,6 +88,12 @@ class EntityGroup:
         self.tile_size = tile_size
 
         self.entities = []
+
+    def __get__(self):
+        return self.entities
+
+    def __getitem__(self, item):
+        return self.entities[item]
 
     def add_entity(self, entity, *args):
         e = entity(self.camera, self.screen, self.tile_manager, self.tile_size, *args)

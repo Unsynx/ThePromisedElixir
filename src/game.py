@@ -21,23 +21,22 @@ class GameScene(Scene):
         self.plyr_pos = self.debug.add_element(Text("", Text.FONT_BASE, Text.SIZE_HEADER, (255, 255, 255)))
         self.plyr_tile_pos = self.debug.add_element(Text("", Text.FONT_BASE, Text.SIZE_HEADER, (255, 255, 255)))
         # Doesn't work?
-        self.reload = self.debug.add_element(Button("Re-Generate", 300, 80, self.sceneManager.set_scene, "loadingScreen"))
+        self.reload = self.debug.add_element(Button("Re-Generate", 300, 80, self.sceneManager.set_scene, "loadingScreen", True))
 
         self.debug.hide = True
 
         # Set up camera and tile manager.
-        self.camera = Camera(self.screen.get_size(), TILE_SIZE)
+        self.camera = Camera(self.screen.get_size(), TILE_SIZE, None)
         self.camera.mode = Camera.CENTER_FIRST_ENTITY_SMOOTH
 
         self.start_x, self.start_y = 0, 0
         self.tileManager = TileManager(self.screen, TILE_SIZE, CHUNK_SIZE, self.camera)
 
         self.group = EntityGroup(self.camera, self.screen, self.tileManager, TILE_SIZE)
+        self.camera.entity_group = self.group
         # Set up player.
         self.player = self.group.add_entity(Player)
         self.player.set_position(0, 0)
-
-        self.camera.entities.append(self.player)
 
         # Temp: Create Enemy
         self.group.add_entity(Enemy).set_position(10, 10)
@@ -51,11 +50,10 @@ class GameScene(Scene):
     def on_scene_start(self, new):
         if new:
             self.group.load()
-            self.player = self.group.entities[0]
-            self.camera.entities = [self.player]
-
         else:
             self.player.set_position(self.start_x, self.start_y)
+
+        self.player = self.group.entities[0]
 
         for _ in range(len(self.tileManager.chunks)):
             self.tileManager.del_chunk(0)

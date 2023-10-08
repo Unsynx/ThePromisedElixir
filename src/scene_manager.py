@@ -14,7 +14,7 @@ class SceneManager:
     def add_scene(self, scene):
         self.sceneDict[scene.name] = scene
 
-    def set_scene(self, scene):
+    def set_scene(self, scene, *args):
         if self.scene is not None:
             self.scene.on_scene_end()
 
@@ -25,7 +25,7 @@ class SceneManager:
             # When scene object passed
             self.scene = scene
 
-        self.scene.on_scene_start()
+        self.scene.on_scene_start(*args)
 
 
 class Scene:
@@ -39,7 +39,7 @@ class Scene:
     def on_scene_end(self):
         pass
 
-    def on_scene_start(self):
+    def on_scene_start(self, *args):
         pass
 
     def input(self, events, pressed_keys):

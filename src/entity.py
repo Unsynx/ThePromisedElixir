@@ -1,7 +1,8 @@
 import pygame.surface
-
+import os
 from tiles import Camera, TileManager
 from random import randint
+import json
 
 
 class Entity:
@@ -11,6 +12,7 @@ class Entity:
         self.tile_manager = tile_manager
         self.tile_size = tile_size
         self.group = None
+        self.type = type(self).__name__
 
         self.x = 0
         self.y = 0
@@ -102,6 +104,41 @@ class EntityGroup:
     def on_player_move(self):
         for e in self.entities:
             e.on_player_move()
+
+    def load(self):
+        self.entities = []
+        for file in os.listdir("../assets/saves"):
+            if file.endswith(".json"):
+                with open(f"../assets/saves/{file}", "r") as f:
+                    data = json.load(f)
+                    match data["type"]:
+                        case "Player":
+                            t = Player
+                        case "Enemy":
+                            t = Enemy
+
+                    e = self.add_entity(t)
+                    e.set_position(data["tile_x"], data["tile_y"])
+                    e.health = data["health"]
+
+    def save(self):
+        # Delete current saved data
+        dir_name = "../assets/saves"
+        test = os.listdir(dir_name)
+        for item in test:
+            if item.endswith(".json"):
+                os.remove(os.path.join(dir_name, item))
+
+        for i, e in enumerate(self.entities):
+            data = {
+                "tile_x": e.tile_x,
+                "tile_y": e.tile_y,
+                "health": e.health,
+                "type": e.type
+            }
+
+            with open(f"../assets/saves/entity_{i}.json", "x") as f:
+                json.dump(data, f)
 
     def input(self, pressed):
         for e in self.entities:

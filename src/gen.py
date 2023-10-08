@@ -19,18 +19,21 @@ class LoadingScreen(Scene):
 
         self.completion_event = threading.Event()
 
-    def on_scene_start(self):
-        second_thread = threading.Thread(target=generate_dungeon, args=(CHUNK_SIZE, self.completion_event))
-        second_thread.start()
+    def on_scene_start(self, new):
+        if new:
+            second_thread = threading.Thread(target=generate_dungeon, args=(CHUNK_SIZE, self.completion_event))
+            second_thread.start()
+        else:
+            self.sceneManager.set_scene("game", True)
 
     def update(self, dt):
         if self.completion_event.is_set():
-            self.sceneManager.set_scene("game")
+            self.sceneManager.set_scene("game", False)
 
             # Set the starting positions
             self.sceneManager.scene.start_x = 10
             self.sceneManager.scene.start_y = 10
-            self.sceneManager.scene.on_scene_start()
+            self.sceneManager.scene.on_scene_start(False)
 
         self.loading_text.set_value(f"Loading{'.'*randint(3, 9)}")
 

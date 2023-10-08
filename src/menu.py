@@ -18,7 +18,8 @@ class MainMenu(Scene):
         # ------ Buttons ------
         self.buttons = self.guiManager.add_guideline(Guide("buttons", None, Guide.GL_VERTICAL, 0.2, Guide.ALIGN_CENTER_PADDED, Guide.REL_ALIGN_CENTER, 50))
 
-        self.buttons.add_element(Button("Start", 300, 75, manager.set_scene, "loadingScreen"))
+        self.buttons.add_element(Button("New Game", 300, 75, manager.set_scene, "loadingScreen", True))
+        self.buttons.add_element(Button("Load Game", 300, 75, manager.set_scene, "loadingScreen", False))
         self.buttons.add_element(Button("Credits", 300, 75, manager.set_scene, "creditsMenu"))
         self.buttons.add_element(Button("Quit", 300, 75, sys.exit))
 

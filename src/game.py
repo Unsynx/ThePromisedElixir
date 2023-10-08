@@ -3,7 +3,7 @@ from scene_manager import Scene, SceneManager
 from gui import GuiManager, Guide, Text, Button
 import pygame
 from gen import generate_dungeon
-from player import Player, Enemy, EntityGroup
+from entity import Player, Enemy, EntityGroup
 
 
 # This is where the main gameplay will go
@@ -42,10 +42,23 @@ class GameScene(Scene):
         # Temp: Create Enemy
         self.group.add_entity(Enemy).set_position(10, 10)
 
+        # Temp: Save + Load
+        self.debug.add_element(Button("Save", 300, 80, self.group.save))
+        self.debug.add_element(Button("Load", 300, 80, self.group.load))
+
         self.debug_cool = False
 
-    def on_scene_start(self):
-        self.player.set_position(self.start_x, self.start_y)
+    def on_scene_start(self, new):
+        if new:
+            self.group.load()
+            self.player = self.group.entities[0]
+            self.camera.entities = [self.player]
+
+        else:
+            self.player.set_position(self.start_x, self.start_y)
+
+        for _ in range(len(self.tileManager.chunks)):
+            self.tileManager.del_chunk(0)
 
     def input(self, events, pressed):
         # Toggle Debug Menu

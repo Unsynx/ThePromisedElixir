@@ -71,7 +71,7 @@ class GameScene(Scene):
         self.plyr_tile_pos.set_value(f"Plyr - Tile Position: {self.player.tile_x}, {self.player.tile_y}")
 
     def render(self, screen: pygame.Surface):
-        screen.fill((0, 0, 0))
+        screen.fill((50, 60, 57))
         self.tileManager.render()
         self.player.render()
         self.guiManager.render_guidelines()

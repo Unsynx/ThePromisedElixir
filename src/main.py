@@ -13,8 +13,8 @@ pygame.init()
 
 # Makes the display whatever resolution your display is and ignores windows scaling
 primary_monitor = get_monitors()[0]
-screen = pygame.display.set_mode((primary_monitor.width, primary_monitor.height), pygame.SCALED, vsync=1)
-
+# screen = pygame.display.set_mode((primary_monitor.width, primary_monitor.height), pygame.SCALED, vsync=1)
+screen = pygame.display.set_mode((1920, 1080), pygame.SCALED, vsync=1)
 FRAMERATE = 60
 
 

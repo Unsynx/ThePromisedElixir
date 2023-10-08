@@ -132,8 +132,10 @@ class Tile:
 class Chunk:
     tile_images = [
         Tile(0, None),
-        Tile(1, "../assets/tiles/tile.png"),
-        Tile(2, "../assets/tiles/start_tile.png")
+        Tile(1, "../assets/tiles/ground.png"),
+        Tile(2, "../assets/tiles/start_tile.png"),
+        Tile(3, "../assets/tiles/wall.png"),
+        Tile(4, "../assets/tiles/walltop.png")
     ]
 
     def __init__(self, x: int, y: int, size: int, tile_size: int):

@@ -265,7 +265,7 @@ class CornerSquare(GuiElement):
 
 
 class Text(GuiElement):
-    FONT_BASE = "../assets/gui/fonts/Pixellari.ttf"
+    FONT_BASE = "../assets/gui/fonts/MondayDonuts.ttf"
 
     SIZE_MAIN = 36
     SIZE_HEADER = 48

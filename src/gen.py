@@ -6,6 +6,9 @@ import pygame
 import threading
 from random import randint
 
+global x
+global y
+
 
 class DrunkGeneration:
     def __init__(self, height: int, width: int, wall_countdown: int, padding: int):
@@ -38,17 +41,12 @@ class DrunkGeneration:
             if roll == 4 and self.y < self.height - 1 - self.padding:  # down
                 self.y += 1
 
-        # define user starting square
-        breakout_flag = False
+    def set_starting_square(self):
         for y in range(len(self.level)):
             for x in range(len(self.level[y])):
                 if self.level[y][x] == 1:
                     self.level[y][x] = 2
-                    breakout_flag = True
-                    break
-            if breakout_flag:
-                break
-
+                    return x, y
 
 
 class LoadingScreen(Scene):
@@ -70,8 +68,8 @@ class LoadingScreen(Scene):
     def update(self, dt):
         if self.completion_event.is_set():
             # set starting positions
-            self.sceneManager.sceneDict["game"].start_x = 10
-            self.sceneManager.sceneDict["game"].start_y = 10
+            self.sceneManager.sceneDict["game"].start_x = x
+            self.sceneManager.sceneDict["game"].start_y = y
 
             self.sceneManager.set_scene("game")
 
@@ -83,6 +81,8 @@ class LoadingScreen(Scene):
 
 
 def generate_dungeon(chunk_size, event):
+    global x
+    global y
     # Delete current world
     dir_name = "../assets/world"
     test = os.listdir(dir_name)
@@ -95,6 +95,7 @@ def generate_dungeon(chunk_size, event):
     height = 10
     dungeon = DrunkGeneration(height * CHUNK_SIZE, width * chunk_size, 600, 3)
     dungeon.generate_level()
+    x, y = dungeon.set_starting_square()
 
     # Create world
 

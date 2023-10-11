@@ -1,7 +1,7 @@
 import pygame
 import sys
-from screeninfo import get_monitors
 from scene_manager import SceneManager
+from screeninfo import get_monitors
 from menu import MainMenu, SplashScreen, CreditsMenu
 from game import GameScene
 from gen import LoadingScreen
@@ -13,8 +13,8 @@ pygame.init()
 
 # Makes the display whatever resolution your display is and ignores windows scaling
 primary_monitor = get_monitors()[0]
-screen = pygame.display.set_mode((primary_monitor.width, primary_monitor.height), pygame.SCALED, vsync=1)
-
+# screen = pygame.display.set_mode((primary_monitor.width, primary_monitor.height), pygame.SCALED, vsync=1)
+screen = pygame.display.set_mode((1920, 1080), pygame.SCALED, vsync=1)
 FRAMERATE = 60
 
 
@@ -33,7 +33,7 @@ creditsMenu = CreditsMenu(sceneManager)
 gameScene = GameScene(sceneManager)
 loadingScene = LoadingScreen(sceneManager)
 
-sceneManager.set_scene(mainMenu)
+sceneManager.set_scene(splashScreen)
 
 
 # ---------------- Main Loop ---------------- #

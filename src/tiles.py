@@ -11,9 +11,11 @@ class Camera:
     ARROW_CONTROLS = 0
     CENTER_FIRST_ENTITY = 1
     CENTER_ENTITIES_SMOOTH = 2
+    CENTER_FIRST_ENTITY_SMOOTH = 3
 
-    def __init__(self, screensize, x=0, y=0):
+    def __init__(self, screensize, tile_size, group, x=0, y=0):
         (self.screen_width, self.screen_height) = screensize
+        self.tile_size = tile_size
         self.center_offset_x = self.screen_width / 2
         self.center_offset_y = self.screen_height / 2
         self.x = x
@@ -28,7 +30,7 @@ class Camera:
         self.smooth_y = 0
 
         self.mode = self.CENTER_FIRST_ENTITY
-        self.entities = []
+        self.entity_group = group
 
     def input(self):
         pressed = pygame.key.get_pressed()
@@ -45,12 +47,12 @@ class Camera:
             case self.CENTER_ENTITIES_SMOOTH:
                 x = 0
                 y = 0
-                for e in self.entities:
+                for e in self.entity_group:
                     x += e.x
                     y += e.y
 
-                x = int(x / len(self.entities))
-                y = int(y / len(self.entities))
+                x = int(x / len(self.entity_group))
+                y = int(y / len(self.entity_group))
 
                 # Temp
                 self.smooth_x += (x - self.x) * 0.3
@@ -60,8 +62,19 @@ class Camera:
                 self.y = int(self.smooth_y)
 
             case self.CENTER_FIRST_ENTITY:
-                self.x = int(self.entities[0].x / len(self.entities)) + int(self.entities[0].surface.get_width() * 0.5)
-                self.y = int(self.entities[0].y / len(self.entities)) + int(self.entities[0].surface.get_height() * 0.5)
+                self.x = int(self.entity_group[0].x / len(self.entity_group)) + int(self.entity_group[0].surface.get_width() * 0.5)
+                self.y = int(self.entity_group[0].y / len(self.entity_group)) + int(self.entity_group[0].surface.get_height() * 0.5)
+
+            case self.CENTER_FIRST_ENTITY_SMOOTH:
+                x = self.entity_group[0].tile_x * self.tile_size
+                y = self.entity_group[0].tile_y * self.tile_size
+
+                # Temp
+                self.smooth_x += (x - self.x) * 0.3
+                self.smooth_y += (y - self.y) * 0.3
+
+                self.x = int(self.smooth_x)
+                self.y = int(self.smooth_y)
 
         self.rel_x = self.x - self.center_offset_x
         self.rel_y = self.y - self.center_offset_y
@@ -132,8 +145,10 @@ class Tile:
 class Chunk:
     tile_images = [
         Tile(0, None),
-        Tile(1, "../assets/tiles/tile.png"),
-        Tile(2, "../assets/tiles/start_tile.png")
+        Tile(1, "../assets/tiles/ground.png"),
+        Tile(2, "../assets/tiles/start_tile.png"),
+        Tile(3, "../assets/tiles/wall.png"),
+        Tile(4, "../assets/tiles/walltop.png")
     ]
 
     def __init__(self, x: int, y: int, size: int, tile_size: int):

@@ -14,12 +14,12 @@ class DrunkGeneration:
         self.level = [self._get_level_row() for _ in range(self.height)]
 
     def _get_level_row(self):
-        return ['#'] * self.width
+        return [0] * self.width
 
     def generate_level(self):
         while self.wall_countdown >= 0:
-            if self.level[self.y][self.x] == '#':
-                self.level[self.y][self.x] = ' '
+            if self.level[self.y][self.x] == 0:
+                self.level[self.y][self.x] = 1
                 self.wall_countdown -= 1
 
             roll = randint(1, 4)
@@ -32,9 +32,9 @@ class DrunkGeneration:
             if roll == 4 and self.y < self.height - 1 - self.padding:  # down
                 self.y += 1
 
-    def display_level(self):
-        for row in self.level:
-            print(''.join(row))
+    # def display_level(self):
+    #     for row in self.level:
+    #         print(''.join(row))
 
 
 # dungeon = DrunkGeneration(55, 55, 600, 3)

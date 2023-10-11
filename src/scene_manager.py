@@ -17,12 +17,14 @@ class SceneManager:
     def set_scene(self, scene, *args):
         if self.scene is not None:
             self.scene.on_scene_end()
-
+          
         if type(scene) is str:
             # When scene name entered
+            self.sceneDict[scene].on_scene_end()
             self.scene = self.sceneDict[scene]
         else:
             # When scene object passed
+            scene.on_scene_end()
             self.scene = scene
 
         self.scene.on_scene_start(*args)

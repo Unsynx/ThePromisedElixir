@@ -1,8 +1,10 @@
 import pygame.surface
 import os
+import sys
 from tiles import Camera, TileManager
 from random import randint
 import json
+from items import Range
 
 
 class Entity:
@@ -23,6 +25,13 @@ class Entity:
         self.surface = pygame.surface.Surface((tile_size, tile_size))
 
         self.health = None
+        self.weapon = None
+
+    def set_weapon(self, weapon):
+        if type(weapon) is str:
+            self.weapon = getattr(sys.modules[__name__], weapon)
+        else:
+            self.weapon = weapon
 
     def set_position(self, tile_x, tile_y):
         self.tile_x = tile_x
@@ -41,6 +50,23 @@ class Entity:
 
         if self.health <= 0:
             self.on_death()
+
+    def attack_logic(self, enemy, x, y):
+        if self.weapon is None:
+            enemy.attack(1)
+            print(self.weapon)
+            return
+
+        if x == -1:
+            direction = Range.LEFT
+        elif x == 1:
+            direction = Range.RIGHT
+        elif y == -1:
+            direction = Range.DOWN
+        else:
+            direction = Range.UP
+
+        self.weapon.attack(self.tile_x, self.tile_y, direction, enemy.group)
 
     def on_death(self):
         print("Entity Dead")
@@ -63,7 +89,7 @@ class Entity:
                 if e is None:
                     self.tile_x += x
                 else:
-                    e.attack(1)
+                    self.attack_logic(e, x, y)
                     self.x += x * 64  # Animation :)
                 return True
 
@@ -73,7 +99,7 @@ class Entity:
                 if e is None:
                     self.tile_y += y
                 else:
-                    e.attack(1)
+                    self.attack_logic(e, x, y)
                     self.y += y * 64  # Animation :)
                 return True
 
@@ -125,6 +151,7 @@ class EntityGroup:
 
                     e = self.add_entity(t)
                     e.set_position(data["tile_x"], data["tile_y"])
+                    e.set_weapon(data["weapon"])
                     e.health = data["health"]
 
     def save(self):
@@ -140,8 +167,12 @@ class EntityGroup:
                 "tile_x": e.tile_x,
                 "tile_y": e.tile_y,
                 "health": e.health,
-                "type": e.type
+                "type": e.type,
             }
+            try:
+                data["weapon"] = e.weapon.name
+            except AttributeError:
+                data["weapon"] = None
 
             with open(f"../assets/saves/entity_{i}.json", "x") as f:
                 json.dump(data, f)

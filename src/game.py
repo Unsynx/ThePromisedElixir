@@ -3,6 +3,7 @@ from scene_manager import Scene, SceneManager
 from gui import GuiManager, Guide, Text, Button
 import pygame
 from entity import Player, Enemy, EntityGroup
+from items import SimpleSpearWeapon
 
 
 # This is where the main gameplay will go
@@ -37,6 +38,7 @@ class GameScene(Scene):
         # Set up player.
         self.player = self.group.add_entity(Player)
         self.player.set_position(0, 0)
+        self.player.set_weapon(SimpleSpearWeapon())
 
         # -------------- TEMP: Debug only -------------- #
         # Temp: Create Enemy

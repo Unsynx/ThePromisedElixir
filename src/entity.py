@@ -1,7 +1,10 @@
+import random
+
 import pygame.surface
 from tiles import Camera, TileManager
 from random import randint
 from constants import *
+from items import SimpleSpearWeapon, FunnyExplosion
 
 
 class Entity:
@@ -15,7 +18,6 @@ class Entity:
 
         self.x = 0
         self.y = 0
-
         self.tile_x = 0
         self.tile_y = 0
 
@@ -23,6 +25,7 @@ class Entity:
 
         self.health = None
         self.weapon = None
+        self.intractable = False
 
     def set_weapon(self, weapon):
         self.weapon = weapon
@@ -36,9 +39,13 @@ class Entity:
     def on_player_move(self):
         pass
 
+    def on_interact(self, entity):
+        pass
+
     def attack(self, damage):
         if self.health is None:
             return
+
         self.health -= damage
         print(f"Entity Attacked: {self.health}hp remaining")
 
@@ -48,7 +55,6 @@ class Entity:
     def attack_logic(self, enemy, x, y):
         if self.weapon is None:
             enemy.attack(1)
-            print(self.weapon)
             return
 
         if x == -1:
@@ -84,6 +90,8 @@ class Entity:
                 e = self.group.get_entity_at(self.tile_x + x, self.tile_y)
                 if e is None:
                     self.tile_x += x
+                elif e.intractable:
+                    e.on_interact(self)
                 else:
                     self.attack_logic(e, x, 0)
                     self.x += x * 64  # Animation :)
@@ -94,6 +102,8 @@ class Entity:
                 e = self.group.get_entity_at(self.tile_x, self.tile_y + y)
                 if e is None:
                     self.tile_y += y
+                elif e.intractable:
+                    e.on_interact(self)
                 else:
                     self.attack_logic(e, 0, y)
                     self.y += y * 64  # Animation :)
@@ -174,3 +184,18 @@ class Dummy(Entity):
         super().__init__(camera, screen, tile_manager, tile_size)
         self.health = 1
         self.surface = pygame.image.load("../assets/player/baddy.png")
+
+
+class Chest(Entity):
+    def __init__(self, camera: Camera, screen: pygame.surface.Surface, tile_manager: TileManager, tile_size: int):
+        super().__init__(camera, screen, tile_manager, tile_size)
+        self.surface = pygame.image.load("../assets/player/chest.png")
+        self.intractable = True
+
+    def on_interact(self, entity: Entity):
+        #temp
+        weapons = (
+            SimpleSpearWeapon,
+            FunnyExplosion
+                   )
+        entity.set_weapon(random.choice(weapons)())

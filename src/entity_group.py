@@ -51,6 +51,7 @@ class EntityGroup:
                     except TypeError:
                         e.set_weapon(None)
                     e.health = data["health"]
+                    e.intractable = data["intractable"]
 
     def save(self):
         # Delete current saved data
@@ -66,6 +67,7 @@ class EntityGroup:
                 "tile_y": e.tile_y,
                 "health": e.health,
                 "type": e.type,
+                "intractable": e.intractable
             }
             try:
                 data["weapon"] = e.weapon.name

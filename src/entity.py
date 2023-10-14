@@ -4,7 +4,7 @@ import sys
 from tiles import Camera, TileManager
 from random import randint
 import json
-from items import Range
+from items import *
 
 
 class Entity:
@@ -27,11 +27,8 @@ class Entity:
         self.health = None
         self.weapon = None
 
-    def set_weapon(self, weapon):
-        if type(weapon) is str:
-            self.weapon = getattr(sys.modules[__name__], weapon)
-        else:
-            self.weapon = weapon
+    def set_weapon(self, weapon: Weapon):
+        self.weapon = weapon
 
     def set_position(self, tile_x, tile_y):
         self.tile_x = tile_x
@@ -61,12 +58,14 @@ class Entity:
             direction = Range.LEFT
         elif x == 1:
             direction = Range.RIGHT
-        elif y == -1:
+        elif y == 1:
             direction = Range.DOWN
-        else:
+        elif y == -1:
             direction = Range.UP
+        else:
+            raise "Not a valid attack"
 
-        self.weapon.attack(self.tile_x, self.tile_y, direction, enemy.group)
+        self.weapon.attack(self.tile_x, self.tile_y, direction, self.group)
 
     def on_death(self):
         print("Entity Dead")
@@ -89,7 +88,7 @@ class Entity:
                 if e is None:
                     self.tile_x += x
                 else:
-                    self.attack_logic(e, x, y)
+                    self.attack_logic(e, x, 0)
                     self.x += x * 64  # Animation :)
                 return True
 
@@ -99,7 +98,7 @@ class Entity:
                 if e is None:
                     self.tile_y += y
                 else:
-                    self.attack_logic(e, x, y)
+                    self.attack_logic(e, 0, y)
                     self.y += y * 64  # Animation :)
                 return True
 
@@ -143,15 +142,12 @@ class EntityGroup:
             if file.endswith(".json"):
                 with open(f"../assets/saves/{file}", "r") as f:
                     data = json.load(f)
-                    match data["type"]:
-                        case "Player":
-                            t = Player
-                        case "Enemy":
-                            t = Enemy
-
-                    e = self.add_entity(t)
+                    e = self.add_entity(getattr(sys.modules[__name__], data["type"]))
                     e.set_position(data["tile_x"], data["tile_y"])
-                    e.set_weapon(data["weapon"])
+                    try:
+                        e.set_weapon(getattr(sys.modules[__name__], data["weapon"])())
+                    except TypeError:
+                        e.set_weapon(None)
                     e.health = data["health"]
 
     def save(self):
@@ -257,3 +253,9 @@ class Enemy(Entity):
 
         print("I am stuck")
 
+
+class Dummy(Entity):
+    def __init__(self, camera: Camera, screen: pygame.surface.Surface, tile_manager: TileManager, tile_size: int):
+        super().__init__(camera, screen, tile_manager, tile_size)
+        self.health = 1
+        self.surface = pygame.image.load("../assets/player/baddy.png")

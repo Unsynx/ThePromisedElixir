@@ -2,7 +2,7 @@ from tiles import Camera, TileManager, CHUNK_SIZE, TILE_SIZE
 from scene_manager import Scene, SceneManager
 from gui import GuiManager, Guide, Text, Button
 import pygame
-from entity import Player, Enemy, EntityGroup
+from entity import Player, Enemy, EntityGroup, Dummy
 from items import SimpleSpearWeapon
 
 
@@ -41,8 +41,11 @@ class GameScene(Scene):
         self.player.set_weapon(SimpleSpearWeapon())
 
         # -------------- TEMP: Debug only -------------- #
-        # Temp: Create Enemy
-        self.group.add_entity(Enemy).set_position(10, 10)
+        self.group.add_entity(Dummy).set_position(8, 8)
+        self.group.add_entity(Dummy).set_position(8, 9)
+        self.group.add_entity(Dummy).set_position(8, 7)
+        self.group.add_entity(Dummy).set_position(7, 8)
+        self.group.add_entity(Dummy).set_position(9, 8)
 
         # Temp: Save + Load
         self.debug.add_element(Button("Save", 300, 80, self.group.save))

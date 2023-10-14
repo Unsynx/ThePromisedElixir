@@ -39,7 +39,7 @@ class Range:
                         case self.LEFT:
                             lis.append([self.center_x - x, self.center_y + y])
                         case self.UP:
-                            lis.append([self.center_y + y, self.center_x + x])
+                            lis.append([self.center_y + y, self.center_x - x])
                         case self.DOWN:
                             lis.append([self.center_y - y, self.center_x + x])
         return lis

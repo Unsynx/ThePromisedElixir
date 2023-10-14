@@ -1,16 +1,9 @@
-UP = 0
-DOWN = 1
-LEFT = 2
-RIGHT = 3
+import constants as c
 
 
 class Range:
     ATTACK = 1
     CENTER = 2
-    UP = 0
-    DOWN = 1
-    LEFT = 2
-    RIGHT = 3
 
     def __init__(self, pattern):
         self.pattern = pattern
@@ -22,36 +15,31 @@ class Range:
                 if self.pattern[y][x] == self.CENTER:
                     return x, y
 
-    def in_range(self, x1, y1, x2, y2):
-        dy = y2 - y1
-        dx = x2 - x1
-
-        return self.pattern[self.center_y + dy][self.center_x + dx] == 1
-
-    def get_list_of_positions(self, attack_dir):
-        lis = []
+    def get_hit_enemies(self, player_x, player_y, attack_dir, group):
+        hit_positions = []
         for y in range(len(self.pattern)):
             for x in range(len(self.pattern[0])):
                 if self.pattern[y][x] == self.ATTACK:
                     match attack_dir:
-                        case self.RIGHT:
-                            lis.append([self.center_x + x, self.center_y + y])
-                        case self.LEFT:
-                            lis.append([self.center_x - x, self.center_y + y])
-                        case self.UP:
-                            lis.append([self.center_y + y, self.center_x - x])
-                        case self.DOWN:
-                            lis.append([self.center_y - y, self.center_x + x])
-        return lis
+                        case c.RIGHT:
+                            hit_positions.append([self.center_x + x, self.center_y + y])
+                        case c.LEFT:
+                            hit_positions.append([self.center_x - x, self.center_y + y])
+                        case c.UP:
+                            hit_positions.append([self.center_y + y, self.center_x - x])
+                        case c.DOWN:
+                            hit_positions.append([self.center_y - y, self.center_x + x])
 
-    def get_hit_enemies(self, player_x, player_y, attack_dir, group):
-        lis = []
-        for pos in self.get_list_of_positions(attack_dir):
+        enemies = []
+        not_hit_positions = []
+        for pos in hit_positions:
             e = group.get_entity_at(player_x + pos[0], player_y + pos[1])
-            if e is not None:
-                lis.append(e)
+            if e is None:
+                not_hit_positions.append([pos[0] + player_x, pos[1] + player_y])
+            else:
+                enemies.append(e)
 
-        return lis
+        return enemies, not_hit_positions
 
 
 class Attack:
@@ -69,9 +57,9 @@ class Weapon:
         self.normal_attack = normal_attack
 
     def attack(self, player_x, player_y, attack_dir, group):
-        enemies = self.normal_attack.attack_range.get_hit_enemies(player_x, player_y, attack_dir, group)
+        hit_enemies, not_hit_positions = self.normal_attack.attack_range.get_hit_enemies(player_x, player_y, attack_dir, group)
 
-        for e in enemies:
+        for e in hit_enemies:
             e.attack(self.normal_attack.damage)
 
 

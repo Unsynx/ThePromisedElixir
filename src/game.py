@@ -2,7 +2,8 @@ from tiles import Camera, TileManager, CHUNK_SIZE, TILE_SIZE
 from scene_manager import Scene, SceneManager
 from gui import GuiManager, Guide, Text, Button
 import pygame
-from entity import Player, Enemy, EntityGroup, Dummy
+from entity import Player, Enemy, Dummy
+from entity_group import EntityGroup
 from items import SimpleSpearWeapon
 
 

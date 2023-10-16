@@ -16,6 +16,8 @@ class Entity:
         self.group = None
         self.type = type(self).__name__
 
+        self.companions = []
+
         self.x = 0
         self.y = 0
         self.tile_x = 0
@@ -80,9 +82,15 @@ class Entity:
     def render(self):
         self.screen.blit(self.surface, (int(self.x) - self.camera.rel_x, int(self.y) - self.camera.rel_y))
 
-    def update(self, dt):
+        for e in self.companions:
+            e.render()
+
+    def update(self, dt, **kwargs):
         self.x += (self.tile_x * self.tile_size - self.x) * 0.3
         self.y += (self.tile_y * self.tile_size - self.y) * 0.3
+
+        for e in self.companions:
+            e.update(dt, x=self.x, y=self.y)
 
     def move(self, x, y):
         if x != 0:
@@ -111,6 +119,40 @@ class Entity:
 
         return False
 
+    def add_companion_entity(self, companion):
+        e = companion(self.camera, self.screen, self.tile_manager, self.tile_size)
+        self.companions.append(e)
+        return e
+
+
+class CompanionEntity(Entity):
+    def __init__(self, camera: Camera, screen: pygame.surface.Surface, tile_manager: TileManager, tile_size: int):
+        super().__init__(camera, screen, tile_manager, tile_size)
+
+        self.surface = pygame.surface.Surface((50, 50))
+        self.surface.fill((0, 0, 0))
+
+    def update(self, dt, **kwargs):
+        for key, value in kwargs.items():
+            setattr(self, key, value)
+
+    def set_var(self, **kwargs):
+        for key, value in kwargs.items():
+            setattr(self, key, value)
+
+        self.on_var_set()
+
+    def on_var_set(self):
+        pass
+
+
+class HealthBar(CompanionEntity):
+    def __init__(self, camera: Camera, screen: pygame.surface.Surface, tile_manager: TileManager, tile_size: int):
+        super().__init__(camera, screen, tile_manager, tile_size)
+
+        self.surface = pygame.surface.Surface((100, 10))
+        self.surface.fill((0, 0, 0))
+
 
 class Player(Entity):
     def __init__(self, camera: Camera, screen: pygame.surface.Surface, tile_manager: TileManager, tile_size: int):
@@ -124,6 +166,8 @@ class Player(Entity):
         self.recent_input_y = False
 
         self.surface = pygame.image.load("../assets/player/frog3.png")
+
+        self.add_companion_entity(HealthBar)
 
     def input(self, pressed):
         moved = False

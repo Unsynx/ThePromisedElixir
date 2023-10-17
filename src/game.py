@@ -40,11 +40,7 @@ class GameScene(Scene):
         self.player = self.group.add_entity(Player)
 
         # -------------- TEMP: Debug only -------------- #
-        self.group.add_entity(Dummy).set_position(8, 8)
-        self.group.add_entity(Dummy).set_position(8, 9)
-        self.group.add_entity(Dummy).set_position(8, 7)
-        self.group.add_entity(Dummy).set_position(7, 8)
-        self.group.add_entity(Dummy).set_position(9, 8)
+        self.group.add_entity(Enemy).set_position(8, 8)
 
         self.group.add_entity(Chest).set_position(10, 10)
         self.group.add_entity(Dummy).set_position(11, 10)

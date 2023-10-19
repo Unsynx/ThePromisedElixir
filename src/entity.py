@@ -16,6 +16,8 @@ class Entity:
         self.group = None
         self.type = type(self).__name__
 
+        self.companions = []
+
         self.x = 0
         self.y = 0
         self.tile_x = 0
@@ -47,6 +49,9 @@ class Entity:
             return
 
         self.health -= damage
+        if any(isinstance(x, HealthBar) for x in self.companions):
+            self.companions[0].set_var(current_value=self.health)
+
         print(f"Entity Attacked: {self.health}hp remaining")
 
         if self.health <= 0:
@@ -80,9 +85,15 @@ class Entity:
     def render(self):
         self.screen.blit(self.surface, (int(self.x) - self.camera.rel_x, int(self.y) - self.camera.rel_y))
 
-    def update(self, dt):
+        for e in self.companions:
+            e.render()
+
+    def update(self, dt, **kwargs):
         self.x += (self.tile_x * self.tile_size - self.x) * 0.3
         self.y += (self.tile_y * self.tile_size - self.y) * 0.3
+
+        for e in self.companions:
+            e.update(dt, x=self.x, y=self.y)
 
     def move(self, x, y):
         if x != 0:
@@ -111,11 +122,81 @@ class Entity:
 
         return False
 
+    def add_companion_entity(self, companion):
+        e = companion(self.camera, self.screen, self.tile_manager, self.tile_size)
+        self.companions.append(e)
+        return e
+
+
+class CompanionEntity(Entity):
+    def __init__(self, camera: Camera, screen: pygame.surface.Surface, tile_manager: TileManager, tile_size: int):
+        super().__init__(camera, screen, tile_manager, tile_size)
+
+        self.parent_width = 0
+        self.parent_height = 0
+
+        self.offset_x = 0
+        self.offset_y = 0
+
+    def update(self, dt, **kwargs):
+        for key, value in kwargs.items():
+            setattr(self, key, value)
+
+    def center_on_parent_x(self, parent_width):
+        self.offset_x = (parent_width - self.surface.get_width()) * 0.5
+        return self
+
+    def set_var(self, **kwargs):
+        for key, value in kwargs.items():
+            setattr(self, key, value)
+            self.on_var_set(key)
+
+    def render(self):
+        self.screen.blit(self.surface, (int(self.x + self.offset_x) - self.camera.rel_x, int(self.y + self.offset_y) - self.camera.rel_y))
+
+    def on_var_set(self, var):
+        pass
+
+
+class HealthBar(CompanionEntity):
+    def __init__(self, camera: Camera, screen: pygame.surface.Surface, tile_manager: TileManager, tile_size: int):
+        super().__init__(camera, screen, tile_manager, tile_size)
+
+        self.offset_y = -10
+
+        self.surface = pygame.surface.Surface((100, 10))
+
+        self.current_value = 0
+        self.max_value = 0
+
+    def on_var_set(self, var):
+        match var:
+            case "current_value":
+                self.surface.fill((0, 0, 0))
+                pygame.draw.rect(self.surface, (255, 255, 255), [0, 0, self.current_value / self.max_value * self.surface.get_width(), self.surface.get_height()])
+
+
+class DamageIndicator(CompanionEntity):
+    def __init__(self, camera: Camera, screen: pygame.surface.Surface, tile_manager: TileManager, tile_size: int):
+        super().__init__(camera, screen, tile_manager, tile_size)
+
+        self.surface = pygame.surface.Surface((100, 20))
+
+        self.offset_y = -40
+        self.font = pygame.font.Font("../assets/gui/fonts/MondayDonuts.ttf", 20)
+        self.text = None
+
+    def on_var_set(self, var):
+        match var:
+            case "text":
+                self.surface = self.font.render(self.text, False, (255, 255, 255))
+
 
 class Player(Entity):
     def __init__(self, camera: Camera, screen: pygame.surface.Surface, tile_manager: TileManager, tile_size: int):
         super().__init__(camera, screen, tile_manager, tile_size)
         self.health = 10
+        self.max_health = self.health
 
         self.input_x = 0
         self.input_y = 0
@@ -156,6 +237,13 @@ class Enemy(Entity):
         super().__init__(camera, screen, tile_manager, tile_size)
         self.health = 5
         self.surface = pygame.image.load("../assets/player/baddy.png")
+        self.add_companion_entity(HealthBar)\
+            .center_on_parent_x(self.surface.get_width())\
+            .set_var(max_value=self.health, current_value=self.health)
+        try:
+            self.add_companion_entity(DamageIndicator).center_on_parent_x(self.surface.get_width()).set_var(text=f"{self.weapon.normal_attack.damage} dmg")
+        except AttributeError:
+            self.add_companion_entity(DamageIndicator).center_on_parent_x(self.surface.get_width()).set_var(text="1 dmg")
 
     def on_player_move(self):
         offset = randint(0, 3)

@@ -176,10 +176,27 @@ class HealthBar(CompanionEntity):
                 pygame.draw.rect(self.surface, (255, 255, 255), [0, 0, self.current_value / self.max_value * self.surface.get_width(), self.surface.get_height()])
 
 
+class DamageIndicator(CompanionEntity):
+    def __init__(self, camera: Camera, screen: pygame.surface.Surface, tile_manager: TileManager, tile_size: int):
+        super().__init__(camera, screen, tile_manager, tile_size)
+
+        self.surface = pygame.surface.Surface((100, 20))
+
+        self.offset_y = -40
+        self.font = pygame.font.Font("../assets/gui/fonts/MondayDonuts.ttf", 20)
+        self.text = None
+
+    def on_var_set(self, var):
+        match var:
+            case "text":
+                self.surface = self.font.render(self.text, False, (255, 255, 255))
+
+
 class Player(Entity):
     def __init__(self, camera: Camera, screen: pygame.surface.Surface, tile_manager: TileManager, tile_size: int):
         super().__init__(camera, screen, tile_manager, tile_size)
         self.health = 10
+        self.max_health = self.health
 
         self.input_x = 0
         self.input_y = 0
@@ -223,6 +240,10 @@ class Enemy(Entity):
         self.add_companion_entity(HealthBar)\
             .center_on_parent_x(self.surface.get_width())\
             .set_var(max_value=self.health, current_value=self.health)
+        try:
+            self.add_companion_entity(DamageIndicator).center_on_parent_x(self.surface.get_width()).set_var(text=f"{self.weapon.normal_attack.damage} dmg")
+        except AttributeError:
+            self.add_companion_entity(DamageIndicator).center_on_parent_x(self.surface.get_width()).set_var(text="1 dmg")
 
     def on_player_move(self):
         offset = randint(0, 3)

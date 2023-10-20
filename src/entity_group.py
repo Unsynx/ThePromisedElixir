@@ -22,8 +22,11 @@ class EntityGroup:
     def __getitem__(self, item):
         return self.entities[item]
 
-    def add_entity(self, entity, *args):
+    def add_entity(self, entity, *args, **kwargs):
         e = entity(self.camera, self.screen, self.tile_manager, self.tile_size, *args)
+        for item, value in kwargs.items():
+            setattr(e, item, value)
+
         e.group = self
         self.entities.append(e)
         return e
@@ -44,14 +47,12 @@ class EntityGroup:
             if file.endswith(".json"):
                 with open(f"../assets/saves/{file}", "r") as f:
                     data = json.load(f)
+
                     e = self.add_entity(getattr(sys.modules[__name__], data["type"]))
                     e.set_position(data["tile_x"], data["tile_y"])
-                    try:
-                        e.set_weapon(getattr(sys.modules[__name__], data["weapon"])())
-                    except TypeError:
-                        e.set_weapon(None)
-                    e.health = data["health"]
-                    e.intractable = data["intractable"]
+
+                    for item, value in data.items():
+                        setattr(e, item, value)
 
     def save(self):
         # Delete current saved data
@@ -69,6 +70,7 @@ class EntityGroup:
                 "type": e.type,
                 "intractable": e.intractable
             }
+
             try:
                 data["weapon"] = e.weapon.name
             except AttributeError:

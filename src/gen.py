@@ -7,7 +7,7 @@ import threading
 from random import randint
 from tiles import TILE_SIZE
 from entity_group import EntityGroup
-from entity import Enemy, Player, Chest
+from entity import *
 from tiles import Chunk
 
 # coordinates for the player starting position
@@ -95,7 +95,7 @@ class LoadingScreen(Scene):
 
     def on_scene_start(self, new):
         if new:
-            second_thread = threading.Thread(target=generate_dungeon, args=(CHUNK_SIZE, self.completion_event))
+            second_thread = threading.Thread(target=generate_dungeon, args=(CHUNK_SIZE, self.completion_event, self.sceneManager))
             second_thread.start()
         else:
             self.sceneManager.set_scene("game", True)
@@ -116,7 +116,7 @@ class LoadingScreen(Scene):
         self.guiManager.render_guidelines()
 
 
-def generate_dungeon(chunk_size, event):
+def generate_dungeon(chunk_size, event, scene_manager):
     global x
     global y
     # Delete current world
@@ -137,12 +137,17 @@ def generate_dungeon(chunk_size, event):
 
     group = EntityGroup(None, None, None, TILE_SIZE)
     group.add_entity(Player).set_position(x, y)
+
+    group.add_entity(Staircase).set_position(x + 2, y)
+
     group.add_entity(Chest).set_position(x, y + 2)
     for _ in range(100):
         r_x = randint(0, width * chunk_size - 1)
         r_y = randint(0, height * chunk_size - 1)
         if not Chunk.tile_data[world[r_y][r_x]].collider:
             group.add_entity(Enemy).set_position(r_x, r_y)
+
+    group.add_entity(Staircase).set_position(x + 2, y)
 
     group.save()
 

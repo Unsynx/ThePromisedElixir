@@ -133,8 +133,10 @@ class Entity:
 
         return False
 
-    def add_companion_entity(self, companion):
+    def add_companion_entity(self, companion, **kwargs):
         e = companion(self.camera, self.screen, self.tile_manager, self.tile_size)
+        for key, value in kwargs.items():
+            setattr(self, key, value)
         self.companions.append(e)
         return e
 
@@ -311,5 +313,8 @@ class Staircase(Entity):
         self.surface = pygame.image.load("../assets/tiles/start_tile.png")
         self.intractable = True
 
+        self.scene_manager = None
+
     def on_interact(self, entity):
-        print("you win")
+        self.scene_manager.set_scene("mainMenu")
+

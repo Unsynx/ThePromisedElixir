@@ -23,10 +23,8 @@ class Tween:
 
     def get_current_value(self):
         if self.current_time >= self.duration:
-            print('done')
             return self.end_value
         t = self.current_time / self.duration  # time as float from 0 start to 1 end
-        print(t)
         pos = self.start_value + (self.end_value - self.start_value) * self.easing_func(t)
         return int(pos)
 

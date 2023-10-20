@@ -6,12 +6,20 @@ import pygame
 import threading
 from random import randint
 
+# coordinates for the player starting position
 global x
 global y
 
 
 class DrunkGeneration:
     def __init__(self, height: int, width: int, wall_countdown: int, padding: int):
+        """
+        Class to generate a random dungeon
+        :param height: height of the dungeon in tiles
+        :param width: width of the dungeon in tiles
+        :param wall_countdown: how many tiles should be walkable
+        :param padding: how many tiles to leave on each edge of the dungeon
+        """
         self.height = height
         self.width = width
         self.wall_countdown = wall_countdown
@@ -26,6 +34,10 @@ class DrunkGeneration:
         return [0] * self.width
 
     def generate_level(self):
+        """
+        Generates a dungeon level with the initiated parameters
+        :return: nothing
+        """
         while self.wall_countdown >= 0:
             if self.level[self.y][self.x] == 0:
                 self.level[self.y][self.x] = 1
@@ -42,18 +54,26 @@ class DrunkGeneration:
                 self.y += 1
 
     def set_starting_square(self):
-        for y in range(len(self.level)):
-            for x in range(len(self.level[y])):
-                if self.level[y][x] == 1:
-                    self.level[y][x] = 2
-                    return x, y
+        """
+        Sets the starting square for the player. Must be run after generating dungeon
+        :return: the starting squares x and y coordinates
+        """
+        for tile_y in range(len(self.level)):
+            for tile_x in range(len(self.level[tile_y])):
+                if self.level[tile_y][tile_x] == 1:
+                    self.level[tile_y][tile_x] = 2
+                    return tile_x, tile_y
 
     def set_wall_top_tiles(self):
-        for y in range(len(self.level)):
-            for x in range(len(self.level[y])):
-                if y != len(self.level) - 1:
-                    if self.level[y][x] == 0 and self.level[y + 1][x]:
-                        self.level[y][x] = 3
+        """
+        Sets the wall top tile positions
+        :return: nothing
+        """
+        for tile_y in range(len(self.level)):
+            for tile_x in range(len(self.level[tile_y])):
+                if tile_y != len(self.level) - 1:
+                    if self.level[tile_y][tile_x] == 0 and self.level[tile_y + 1][tile_x]:
+                        self.level[tile_y][tile_x] = 3
 
 
 class LoadingScreen(Scene):
@@ -101,7 +121,6 @@ def generate_dungeon(chunk_size, event):
         if item.endswith(".txt"):
             os.remove(os.path.join(dir_name, item))
 
-    # --------------------- REPLACE BELOW --------------------- #
     width = 10
     height = 10
     dungeon = DrunkGeneration(height * CHUNK_SIZE, width * chunk_size, 600, 3)
@@ -110,15 +129,7 @@ def generate_dungeon(chunk_size, event):
     dungeon.set_wall_top_tiles()
 
     # Create world
-
     world = dungeon.level
-
-    # World gen
-    # start_x = randint(0, width * CHUNK_SIZE - 1)
-    # start_y = randint(0, height * CHUNK_SIZE - 1)
-    # world[start_y][start_x] = 2
-
-    # --------------------- REPLACE ABOVE --------------------- #
 
     # Save chunks to files
     for h in range(height):

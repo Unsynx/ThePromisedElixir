@@ -1,6 +1,6 @@
 import sys
 from scene_manager import Scene, SceneManager
-from gui import GuiManager, Guide, Button, Image, Grid, Text, ProgressBar
+from gui import GuiManager, Guide, Button, Image, Grid, Text
 import pygame
 
 
@@ -11,12 +11,14 @@ class MainMenu(Scene):
         self.guiManager = GuiManager(self.sceneManager.screen)
 
         # ------ Backdrop ------
-        self.back = self.guiManager.add_guideline(Guide("img", None, Guide.GL_VERTICAL, 0, Guide.ALIGN_LEFT, Guide.REL_ALIGN_BOTTOM, 0))
+        self.back = self.guiManager.add_guideline(
+            Guide("img", None, Guide.GL_VERTICAL, 0, Guide.ALIGN_LEFT, Guide.REL_ALIGN_BOTTOM, 0))
 
         self.back.add_element(Image("../assets/gui/images/backdrop1.png"))
 
         # ------ Buttons ------
-        self.buttons = self.guiManager.add_guideline(Guide("buttons", None, Guide.GL_VERTICAL, 0.2, Guide.ALIGN_CENTER_PADDED, Guide.REL_ALIGN_CENTER, 50))
+        self.buttons = self.guiManager.add_guideline(
+            Guide("buttons", None, Guide.GL_VERTICAL, 0.2, Guide.ALIGN_CENTER_PADDED, Guide.REL_ALIGN_CENTER, 50))
 
         self.buttons.add_element(Button("New Game", 300, 75, manager.set_scene, "loadingScreen", True))
         self.buttons.add_element(Button("Load Game", 300, 75, manager.set_scene, "loadingScreen", False))
@@ -24,11 +26,13 @@ class MainMenu(Scene):
         self.buttons.add_element(Button("Quit", 300, 75, sys.exit))
 
         # ------ Logo ------
-        self.logo_g = self.guiManager.add_guideline(Guide("logo", None, Guide.GL_VERTICAL, 0.75, Guide.ALIGN_CENTER_PADDED, Guide.REL_ALIGN_CENTER, 0))
+        self.logo_g = self.guiManager.add_guideline(
+            Guide("logo", None, Guide.GL_VERTICAL, 0.75, Guide.ALIGN_CENTER_PADDED, Guide.REL_ALIGN_CENTER, 0))
         self.logo_g.add_element(Image("../assets/gui/images/logo_shadow.png"))
 
         # ------ Version Text ------
-        self.text = self.guiManager.add_guideline(Guide("text", None, Guide.GL_VERTICAL, 0, Guide.ALIGN_BOTTOM, Guide.REL_ALIGN_RIGHT, 25))
+        self.text = self.guiManager.add_guideline(
+            Guide("text", None, Guide.GL_VERTICAL, 0, Guide.ALIGN_BOTTOM, Guide.REL_ALIGN_RIGHT, 25))
         self.text.add_element(Text("  In Development", Text.FONT_BASE, Text.SIZE_MAIN, (255, 255, 255)))
 
     def update(self, dt):
@@ -44,7 +48,8 @@ class CreditsMenu(Scene):
 
         self.guiManager = GuiManager(self.sceneManager.screen)
 
-        self.center = self.guiManager.add_guideline(Guide("center", self.guiManager, Guide.GL_VERTICAL, 0.5, Guide.ALIGN_CENTER_PADDED, Guide.REL_ALIGN_CENTER, 75))
+        self.center = self.guiManager.add_guideline(Guide(
+            "center", self.guiManager, Guide.GL_VERTICAL, 0.5, Guide.ALIGN_CENTER_PADDED, Guide.REL_ALIGN_CENTER, 75))
 
         # ------ Grid ------
         self.grid = Grid(1000, 750, 10)

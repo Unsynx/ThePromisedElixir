@@ -1,8 +1,16 @@
 from math import sin, cos, pi
 from time import time_ns
 
+
 class Tween:
     def __init__(self, start_value: int, end_value: int, duration: float, easing_func=None):
+        """
+        Class used to create animations in one dimension
+        :param start_value: start position in pixels
+        :param end_value: end position in pixels
+        :param duration: duration in milliseconds
+        :param easing_func: default linear, options: sine_in_easing, sine_out_easing, quad_in_easing, quad_out_easing
+        """
         self.start_value = start_value
         self.end_value = end_value
         self.duration = duration

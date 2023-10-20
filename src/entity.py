@@ -1,5 +1,4 @@
 import random
-
 import pygame.surface
 from tiles import Camera, TileManager, Chunk
 from random import randint
@@ -255,7 +254,7 @@ class Enemy(Entity):
         try:
             self.add_companion_entity(DamageIndicator).center_on_parent_x(self.surface.get_width()).set_var(text=f"{self.weapon.normal_attack.damage} dmg")
         except AttributeError:
-            self.add_companion_entity(DamageIndicator).center_on_parent_x(self.surface.get_width()).set_var(text="1 dmg")
+            self.add_companion_entity(DamageIndicator).center_on_parent_x(self.surface.get_width()).set_var(text="1 atck")
 
     def on_player_move(self):
         offset = randint(0, 3)
@@ -304,3 +303,13 @@ class Chest(Entity):
             FunnyExplosion
         )
         entity.set_weapon(random.choice(weapons)())
+
+
+class Staircase(Entity):
+    def __init__(self, camera: Camera, screen: pygame.surface.Surface, tile_manager: TileManager, tile_size: int):
+        super().__init__(camera, screen, tile_manager, tile_size)
+        self.surface = pygame.image.load("../assets/tiles/start_tile.png")
+        self.intractable = True
+
+    def on_interact(self, entity):
+        print("you win")

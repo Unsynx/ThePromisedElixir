@@ -137,6 +137,7 @@ def generate_dungeon(chunk_size, event):
 
     group = EntityGroup(None, None, None, TILE_SIZE)
     group.add_entity(Player).set_position(x, y)
+    group.add_entity(Chest).set_position(x, y + 2)
     for _ in range(100):
         r_x = randint(0, width * chunk_size - 1)
         r_y = randint(0, height * chunk_size - 1)

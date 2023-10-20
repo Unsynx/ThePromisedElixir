@@ -5,6 +5,9 @@ from tiles import CHUNK_SIZE
 import pygame
 import threading
 from random import randint
+from tiles import TILE_SIZE
+from entity_group import EntityGroup
+from entity import Enemy, Player, Chest
 
 # coordinates for the player starting position
 global x
@@ -124,10 +127,17 @@ def generate_dungeon(chunk_size, event):
 
     width = 10
     height = 10
+
     dungeon = DrunkGeneration(height * CHUNK_SIZE, width * chunk_size, 600, 3)
     dungeon.generate_level()
     x, y = dungeon.set_starting_square()
     dungeon.set_wall_top_tiles()
+
+    group = EntityGroup(None, None, None, TILE_SIZE)
+    group.add_entity(Player).set_position(x, y)
+    group.add_entity(Enemy).set_position(x, y + 2)
+
+    group.save()
 
     # Create world
     world = dungeon.level

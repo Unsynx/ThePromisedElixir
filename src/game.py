@@ -4,7 +4,6 @@ from gui import GuiManager, Guide, Text, Button, ProgressBar
 import pygame
 from entity import Player, Enemy, Dummy, Chest
 from entity_group import EntityGroup
-from items import SimpleSpearWeapon
 
 
 # This is where the main gameplay will go
@@ -21,7 +20,8 @@ class GameScene(Scene):
         self.cam_pos = self.debug.add_element(Text("", Text.FONT_BASE, Text.SIZE_HEADER, (255, 255, 255)))
         self.plyr_pos = self.debug.add_element(Text("", Text.FONT_BASE, Text.SIZE_HEADER, (255, 255, 255)))
         self.plyr_tile_pos = self.debug.add_element(Text("", Text.FONT_BASE, Text.SIZE_HEADER, (255, 255, 255)))
-        self.reload = self.debug.add_element(Button("Re-Generate", 300, 80, self.sceneManager.set_scene, "loadingScreen", True))
+        self.reload = self.debug.add_element(
+            Button("Re-Generate", 300, 80, self.sceneManager.set_scene, "loadingScreen", True))
         self.weapon = self.debug.add_element(Text("", Text.FONT_BASE, Text.SIZE_HEADER, (255, 255, 255)))
 
         self.debug.hide = True
@@ -40,8 +40,10 @@ class GameScene(Scene):
         self.player = self.group.add_entity(Player)
 
         # -------------- Entities and Player -------------- #
-        self.player_ui = self.guiManager.add_guideline(Guide("player_ui", None, Guide.GL_HORIZONTAL, 1, Guide.ALIGN_CENTER_PADDED, Guide.REL_ALIGN_TOP, 10))
-        self.health_bar = self.player_ui.add_element(ProgressBar(750, 20, ProgressBar.BASIC, (255, 255, 255), (0, 0, 0)))
+        self.player_ui = self.guiManager.add_guideline(
+            Guide("player_ui", None, Guide.GL_HORIZONTAL, 1, Guide.ALIGN_CENTER_PADDED, Guide.REL_ALIGN_TOP, 10))
+        self.health_bar = self.player_ui.add_element(
+            ProgressBar(750, 20, ProgressBar.BASIC, (255, 255, 255), (0, 0, 0)))
         self.weapon_attack = self.player_ui.add_element(Text("", Text.FONT_BASE, Text.SIZE_MAIN, (255, 255, 255)))
 
         # -------------- TEMP: Debug only -------------- #

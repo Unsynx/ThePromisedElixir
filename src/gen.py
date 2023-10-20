@@ -8,6 +8,7 @@ from random import randint
 from tiles import TILE_SIZE
 from entity_group import EntityGroup
 from entity import Enemy, Player, Chest
+from tiles import Chunk
 
 # coordinates for the player starting position
 global x
@@ -132,15 +133,17 @@ def generate_dungeon(chunk_size, event):
     dungeon.generate_level()
     x, y = dungeon.set_starting_square()
     dungeon.set_wall_top_tiles()
+    world = dungeon.level
 
     group = EntityGroup(None, None, None, TILE_SIZE)
     group.add_entity(Player).set_position(x, y)
-    group.add_entity(Enemy).set_position(x, y + 2)
+    for _ in range(100):
+        r_x = randint(0, width * chunk_size - 1)
+        r_y = randint(0, height * chunk_size - 1)
+        if not Chunk.tile_data[world[r_y][r_x]].collider:
+            group.add_entity(Enemy).set_position(r_x, r_y)
 
     group.save()
-
-    # Create world
-    world = dungeon.level
 
     # --------------------- REPLACE ABOVE --------------------- #
 

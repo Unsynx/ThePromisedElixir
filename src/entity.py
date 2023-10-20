@@ -105,7 +105,8 @@ class Entity:
 
     def move(self, x, y):
         if x != 0:
-            if not Chunk.tile_data[self.tile_manager.get_tile(self.tile_x + x, self.tile_y)].collider:
+            _, collider = self.tile_manager.get_tile(self.tile_x + x, self.tile_y)
+            if not collider:
                 e = self.group.get_entity_at(self.tile_x + x, self.tile_y)
                 if e is None:
                     self.tile_x += x
@@ -118,7 +119,8 @@ class Entity:
                 return True
 
         if y != 0:
-            if not Chunk.tile_data[self.tile_manager.get_tile(self.tile_x, self.tile_y + y)].collider:
+            _, collider = self.tile_manager.get_tile(self.tile_x, self.tile_y + y)
+            if not collider:
                 e = self.group.get_entity_at(self.tile_x, self.tile_y + y)
                 if e is None:
                     self.tile_y += y
@@ -270,7 +272,12 @@ class Enemy(Entity):
                 case 3:
                     y = 1
 
-            if not Chunk.tile_data[self.tile_manager.get_tile(self.tile_x + x, self.tile_y + y)].collider:
+            tile, collider = self.tile_manager.get_tile(self.tile_x + x, self.tile_y + y)
+            # instead of returning a tile index, it returns false when the chunk is not loaded
+            if not tile:
+                return
+
+            if not collider:
                 self.move(x, y)
                 return
 

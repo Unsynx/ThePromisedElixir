@@ -35,7 +35,7 @@ class GameScene(Scene):
         self.camera.entity_group = self.group
         self.player = None
 
-        # -------------- Entities and Player -------------- #
+        # -------------- Player UI -------------- #
         self.player_ui = self.guiManager.add_guideline(
             Guide("player_ui", None, Guide.GL_HORIZONTAL, 1, Guide.ALIGN_CENTER_PADDED, Guide.REL_ALIGN_TOP, 10))
         self.health_bar = self.player_ui.add_element(

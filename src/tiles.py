@@ -130,10 +130,12 @@ class TileManager:
         chunk_y = floor(y/self.chunk_size)
 
         if [chunk_x, chunk_y] not in self.chunk_positions:
-            raise f"Chunk at {x}, {y} is not loaded"
+            return False, False
 
-        return self.chunks[self.chunk_positions.index([chunk_x, chunk_y])].get_tile(
+        tile = self.chunks[self.chunk_positions.index([chunk_x, chunk_y])].get_tile(
             x % self.chunk_size, y % self.chunk_size)
+
+        return tile, Chunk.tile_data[tile].collider
 
 
 class Tile:

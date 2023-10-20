@@ -1,7 +1,7 @@
 import random
 
 import pygame.surface
-from tiles import Camera, TileManager, SOLID_TILES
+from tiles import Camera, TileManager, Chunk
 from random import randint
 from constants import *
 from items import SimpleSpearWeapon, FunnyExplosion
@@ -105,7 +105,7 @@ class Entity:
 
     def move(self, x, y):
         if x != 0:
-            if self.tile_manager.get_tile(self.tile_x + x, self.tile_y) not in SOLID_TILES:
+            if not Chunk.tile_data[self.tile_manager.get_tile(self.tile_x + x, self.tile_y)].collider:
                 e = self.group.get_entity_at(self.tile_x + x, self.tile_y)
                 if e is None:
                     self.tile_x += x
@@ -118,7 +118,7 @@ class Entity:
                 return True
 
         if y != 0:
-            if self.tile_manager.get_tile(self.tile_x, self.tile_y + y) not in SOLID_TILES:
+            if not Chunk.tile_data[self.tile_manager.get_tile(self.tile_x, self.tile_y + y)].collider:
                 e = self.group.get_entity_at(self.tile_x, self.tile_y + y)
                 if e is None:
                     self.tile_y += y
@@ -270,7 +270,7 @@ class Enemy(Entity):
                 case 3:
                     y = 1
 
-            if self.tile_manager.get_tile(self.tile_x + x, self.tile_y + y) not in SOLID_TILES:
+            if not Chunk.tile_data[self.tile_manager.get_tile(self.tile_x + x, self.tile_y + y)].collider:
                 self.move(x, y)
                 return
 

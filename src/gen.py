@@ -53,7 +53,8 @@ class DrunkGeneration:
             for x in range(len(self.level[y])):
                 if y != len(self.level) - 1:
                     if self.level[y][x] == 0 and self.level[y + 1][x]:
-                        self.level[y][x] = 3
+                        self.level[y][x] = 4
+                        self.level[y + 1][x] = 3
 
 
 class LoadingScreen(Scene):
@@ -109,14 +110,7 @@ def generate_dungeon(chunk_size, event):
     x, y = dungeon.set_starting_square()
     dungeon.set_wall_top_tiles()
 
-    # Create world
-
     world = dungeon.level
-
-    # World gen
-    # start_x = randint(0, width * CHUNK_SIZE - 1)
-    # start_y = randint(0, height * CHUNK_SIZE - 1)
-    # world[start_y][start_x] = 2
 
     # --------------------- REPLACE ABOVE --------------------- #
 

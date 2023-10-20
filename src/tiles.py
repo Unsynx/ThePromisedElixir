@@ -5,7 +5,6 @@ import threading
 
 CHUNK_SIZE = 4
 TILE_SIZE = 128
-SOLID_TILES = [0, 3]
 
 
 class Camera:
@@ -134,8 +133,9 @@ class TileManager:
 
 
 class Tile:
-    def __init__(self, num: int, path):
+    def __init__(self, num: int, path, collider: bool):
         self.name = num
+        self.collider = collider
         if path is None:
             self.image = pygame.surface.Surface((0, 0))
         else:
@@ -144,12 +144,12 @@ class Tile:
 
 # Define tiles here
 class Chunk:
-    tile_images = [
-        Tile(0, None),
-        Tile(1, "../assets/tiles/ground.png"),
-        Tile(2, "../assets/tiles/start_tile.png"),
-        Tile(3, "../assets/tiles/wall.png"),
-        Tile(4, "../assets/tiles/walltop.png")
+    tile_data = [
+        Tile(0, None, True),
+        Tile(1, "../assets/tiles/ground.png", False),
+        Tile(2, "../assets/tiles/start_tile.png", False),
+        Tile(3, "../assets/tiles/wall.png", False),
+        Tile(4, "../assets/tiles/walltop.png", True)
     ]
 
     def __init__(self, x: int, y: int, size: int, tile_size: int):
@@ -182,7 +182,7 @@ class Chunk:
 
         for x in range(self.size):
             for y in range(self.size):
-                tile = self.tile_images[self.tiles[y][x]].image
+                tile = self.tile_data[self.tiles[y][x]].image
                 self.surface.blit(tile, (x * self.tile_size, y * self.tile_size))
 
     def get_tile(self, x, y):

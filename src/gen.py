@@ -91,9 +91,11 @@ class LoadingScreen(Scene):
             Guide("center", None, Guide.GL_VERTICAL, 0.5, Guide.ALIGN_CENTER_PADDED, Guide.REL_ALIGN_CENTER, 0))
         self.loading_text = self.center.add_element(Text("", Text.FONT_BASE, Text.SIZE_HEADER, (255, 255, 255)))
 
-        self.completion_event = threading.Event()
+        self.completion_event = None
 
     def on_scene_start(self, new):
+        self.completion_event = threading.Event()
+
         if new:
             second_thread = threading.Thread(target=generate_dungeon, args=(CHUNK_SIZE, self.completion_event, self.sceneManager))
             second_thread.start()

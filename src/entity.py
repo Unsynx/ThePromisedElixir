@@ -310,11 +310,12 @@ class Chest(Entity):
 class Staircase(Entity):
     def __init__(self, camera: Camera, screen: pygame.surface.Surface, tile_manager: TileManager, tile_size: int):
         super().__init__(camera, screen, tile_manager, tile_size)
-        self.surface = pygame.image.load("../assets/tiles/start_tile.png")
+        self.surface = pygame.image.load("../assets/tiles/stairs.png")
         self.intractable = True
 
         self.scene_manager = None
 
     def on_interact(self, entity):
-        self.scene_manager.set_scene("mainMenu")
+        if type(entity) is Player:
+            self.scene_manager.set_scene("win")
 

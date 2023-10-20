@@ -75,6 +75,8 @@ class GameScene(Scene):
     def update(self, dt):
         if any(isinstance(x, Player) for x in self.group):
             self.player = self.group[0]  # Work around :(
+        else:
+            self.sceneManager.set_scene("lose")
 
         self.group.update(dt)
         self.camera.update(dt)

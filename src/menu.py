@@ -81,3 +81,55 @@ class SplashScreen(Scene):
 
     def render(self, screen: pygame.Surface):
         pass
+
+
+class TempWinScreen(Scene):
+    def __init__(self, manager: SceneManager):
+        super().__init__(manager, "win")
+
+        self.guiManager = GuiManager(self.sceneManager.screen)
+
+        # ------ Backdrop ------
+        self.back = self.guiManager.add_guideline(
+            Guide("img", None, Guide.GL_VERTICAL, 0, Guide.ALIGN_LEFT, Guide.REL_ALIGN_BOTTOM, 0))
+        self.back.add_element(Image("../assets/gui/images/backdrop1.png"))
+
+        # ------ Buttons ------
+        self.buttons = self.guiManager.add_guideline(
+            Guide("buttons", None, Guide.GL_HORIZONTAL, 0.9, Guide.ALIGN_CENTER_PADDED, Guide.REL_ALIGN_CENTER, 50))
+
+        self.buttons.add_element(Button("Home", 300, 75, manager.set_scene, "mainMenu"))
+        self.buttons.add_element(Button("Quit", 300, 75, sys.exit))
+
+        self.logo_g = self.guiManager.add_guideline(
+            Guide("logo", None, Guide.GL_VERTICAL, 0.5, Guide.ALIGN_CENTER_PADDED, Guide.REL_ALIGN_CENTER, 0))
+        self.logo_g.add_element(Text("You Win!", Text.FONT_BASE, 128, (255, 255, 255)))
+
+    def render(self, screen):
+        self.guiManager.render_guidelines()
+
+
+class TempLoseScreen(Scene):
+    def __init__(self, manager: SceneManager):
+        super().__init__(manager, "lose")
+
+        self.guiManager = GuiManager(self.sceneManager.screen)
+
+        # ------ Backdrop ------
+        self.back = self.guiManager.add_guideline(
+            Guide("img", None, Guide.GL_VERTICAL, 0, Guide.ALIGN_LEFT, Guide.REL_ALIGN_BOTTOM, 0))
+        self.back.add_element(Image("../assets/gui/images/backdrop1.png"))
+
+        # ------ Buttons ------
+        self.buttons = self.guiManager.add_guideline(
+            Guide("buttons", None, Guide.GL_HORIZONTAL, 0.9, Guide.ALIGN_CENTER_PADDED, Guide.REL_ALIGN_CENTER, 50))
+
+        self.buttons.add_element(Button("Home", 300, 75, manager.set_scene, "mainMenu"))
+        self.buttons.add_element(Button("Quit", 300, 75, sys.exit))
+
+        self.logo_g = self.guiManager.add_guideline(
+            Guide("logo", None, Guide.GL_VERTICAL, 0.5, Guide.ALIGN_CENTER_PADDED, Guide.REL_ALIGN_CENTER, 0))
+        self.logo_g.add_element(Text("You Lose!", Text.FONT_BASE, 128, (255, 255, 255)))
+
+    def render(self, screen):
+        self.guiManager.render_guidelines()

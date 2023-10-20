@@ -2,7 +2,7 @@ import pygame
 import sys
 from scene_manager import SceneManager
 from screeninfo import get_monitors
-from menu import MainMenu, SplashScreen, CreditsMenu
+from menu import *
 from game import GameScene
 from gen import LoadingScreen
 
@@ -32,6 +32,8 @@ splashScreen = SplashScreen(sceneManager)
 creditsMenu = CreditsMenu(sceneManager)
 gameScene = GameScene(sceneManager)
 loadingScene = LoadingScreen(sceneManager)
+winScene = TempWinScreen(sceneManager)
+loseScene = TempLoseScreen(sceneManager)
 
 sceneManager.set_scene(splashScreen)
 

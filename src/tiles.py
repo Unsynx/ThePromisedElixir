@@ -67,8 +67,8 @@ class Camera:
                 self.y = int(self.entity_group[0].y / len(self.entity_group)) + int(self.entity_group[0].surface.get_height() * 0.5)
 
             case self.CENTER_FIRST_ENTITY_SMOOTH:
-                x = self.entity_group[0].tile_x * self.tile_size
-                y = self.entity_group[0].tile_y * self.tile_size
+                x = self.entity_group[0].tile_x * self.tile_size + self.entity_group[0].surface.get_width() * 0.5
+                y = self.entity_group[0].tile_y * self.tile_size + self.entity_group[0].surface.get_height() * 0.5
 
                 # Temp
                 self.smooth_x += (x - self.x) * 0.3

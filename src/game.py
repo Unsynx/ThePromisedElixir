@@ -83,7 +83,8 @@ class GameScene(Scene):
         self.group.input(pressed)
 
     def update(self, dt):
-        self.player = self.group[0]  # Work around :(
+        if any(isinstance(x, Player) for x in self.group):
+            self.player = self.group[0]  # Work around :(
 
         self.group.update(dt)
         self.camera.update(dt)

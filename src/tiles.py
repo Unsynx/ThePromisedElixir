@@ -62,8 +62,10 @@ class Camera:
                 self.y = int(self.smooth_y)
 
             case self.CENTER_FIRST_ENTITY:
-                self.x = int(self.entity_group[0].x / len(self.entity_group)) + int(self.entity_group[0].surface.get_width() * 0.5)
-                self.y = int(self.entity_group[0].y / len(self.entity_group)) + int(self.entity_group[0].surface.get_height() * 0.5)
+                self.x = int(self.entity_group[0].x / len(self.entity_group)) +\
+                    int(self.entity_group[0].surface.get_width() * 0.5)
+                self.y = int(self.entity_group[0].y / len(self.entity_group)) +\
+                    int(self.entity_group[0].surface.get_height() * 0.5)
 
             case self.CENTER_FIRST_ENTITY_SMOOTH:
                 x = self.entity_group[0].tile_x * self.tile_size + self.entity_group[0].surface.get_width() * 0.5
@@ -119,7 +121,8 @@ class TileManager:
                     # self.new_chunk(chunk_x, chunk_y)
 
         for chunk in self.chunk_positions:
-            if dist([chunk[0], chunk[1]], [self.cam.x // self.chunk_size_px, self.cam.y // self.chunk_size_px]) > self.chunk_del_range:
+            if dist([chunk[0], chunk[1]], [self.cam.x // self.chunk_size_px, self.cam.y // self.chunk_size_px])\
+                    > self.chunk_del_range:
                 self.del_chunk(self.chunk_positions.index([chunk[0], chunk[1]]))
 
     def get_tile(self, x, y):
@@ -129,7 +132,8 @@ class TileManager:
         if [chunk_x, chunk_y] not in self.chunk_positions:
             raise f"Chunk at {x}, {y} is not loaded"
 
-        return self.chunks[self.chunk_positions.index([chunk_x, chunk_y])].get_tile(x % self.chunk_size, y % self.chunk_size)
+        return self.chunks[self.chunk_positions.index([chunk_x, chunk_y])].get_tile(
+            x % self.chunk_size, y % self.chunk_size)
 
 
 class Tile:

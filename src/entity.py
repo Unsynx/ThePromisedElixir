@@ -1,5 +1,4 @@
 import random
-
 import pygame.surface
 from tiles import Camera, TileManager, Chunk
 from random import randint
@@ -105,7 +104,8 @@ class Entity:
 
     def move(self, x, y):
         if x != 0:
-            if not Chunk.tile_data[self.tile_manager.get_tile(self.tile_x + x, self.tile_y)].collider:
+            _, collider = self.tile_manager.get_tile(self.tile_x + x, self.tile_y)
+            if not collider:
                 e = self.group.get_entity_at(self.tile_x + x, self.tile_y)
                 if e is None:
                     self.tile_x += x
@@ -118,7 +118,8 @@ class Entity:
                 return True
 
         if y != 0:
-            if not Chunk.tile_data[self.tile_manager.get_tile(self.tile_x, self.tile_y + y)].collider:
+            _, collider = self.tile_manager.get_tile(self.tile_x, self.tile_y + y)
+            if not collider:
                 e = self.group.get_entity_at(self.tile_x, self.tile_y + y)
                 if e is None:
                     self.tile_y += y
@@ -132,8 +133,10 @@ class Entity:
 
         return False
 
-    def add_companion_entity(self, companion):
+    def add_companion_entity(self, companion, **kwargs):
         e = companion(self.camera, self.screen, self.tile_manager, self.tile_size)
+        for key, value in kwargs.items():
+            setattr(self, key, value)
         self.companions.append(e)
         return e
 
@@ -253,7 +256,7 @@ class Enemy(Entity):
         try:
             self.add_companion_entity(DamageIndicator).center_on_parent_x(self.surface.get_width()).set_var(text=f"{self.weapon.normal_attack.damage} dmg")
         except AttributeError:
-            self.add_companion_entity(DamageIndicator).center_on_parent_x(self.surface.get_width()).set_var(text="1 dmg")
+            self.add_companion_entity(DamageIndicator).center_on_parent_x(self.surface.get_width()).set_var(text="1 atck")
 
     def on_player_move(self):
         offset = randint(0, 3)
@@ -270,7 +273,12 @@ class Enemy(Entity):
                 case 3:
                     y = 1
 
-            if not Chunk.tile_data[self.tile_manager.get_tile(self.tile_x + x, self.tile_y + y)].collider:
+            tile, collider = self.tile_manager.get_tile(self.tile_x + x, self.tile_y + y)
+            # instead of returning a tile index, it returns false when the chunk is not loaded
+            if not tile:
+                return
+
+            if not collider:
                 self.move(x, y)
                 return
 
@@ -291,9 +299,29 @@ class Chest(Entity):
         self.intractable = True
 
     def on_interact(self, entity: Entity):
+        if not type(entity) is Player:
+            return
+
         # temp
         weapons = (
             SimpleSpearWeapon,
             FunnyExplosion
         )
         entity.set_weapon(random.choice(weapons)())
+        self.group.remove(self)
+
+
+class Staircase(Entity):
+    def __init__(self, camera: Camera, screen: pygame.surface.Surface, tile_manager: TileManager, tile_size: int):
+        super().__init__(camera, screen, tile_manager, tile_size)
+        self.surface = pygame.image.load("../assets/tiles/stairs.png")
+        self.intractable = True
+
+        self.scene_manager = None
+
+    def on_interact(self, entity):
+        if not type(entity) is Player:
+            return
+
+        self.scene_manager.set_scene("win")
+

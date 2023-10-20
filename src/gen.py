@@ -5,6 +5,10 @@ from tiles import CHUNK_SIZE
 import pygame
 import threading
 from random import randint
+from tiles import TILE_SIZE
+from entity_group import EntityGroup
+from entity import *
+from tiles import Chunk
 
 # coordinates for the player starting position
 global x
@@ -87,11 +91,13 @@ class LoadingScreen(Scene):
             Guide("center", None, Guide.GL_VERTICAL, 0.5, Guide.ALIGN_CENTER_PADDED, Guide.REL_ALIGN_CENTER, 0))
         self.loading_text = self.center.add_element(Text("", Text.FONT_BASE, Text.SIZE_HEADER, (255, 255, 255)))
 
-        self.completion_event = threading.Event()
+        self.completion_event = None
 
     def on_scene_start(self, new):
+        self.completion_event = threading.Event()
+
         if new:
-            second_thread = threading.Thread(target=generate_dungeon, args=(CHUNK_SIZE, self.completion_event))
+            second_thread = threading.Thread(target=generate_dungeon, args=(CHUNK_SIZE, self.completion_event, self.sceneManager))
             second_thread.start()
         else:
             self.sceneManager.set_scene("game", True)
@@ -112,7 +118,7 @@ class LoadingScreen(Scene):
         self.guiManager.render_guidelines()
 
 
-def generate_dungeon(chunk_size, event):
+def generate_dungeon(chunk_size, event, scene_manager):
     global x
     global y
     # Delete current world
@@ -124,13 +130,40 @@ def generate_dungeon(chunk_size, event):
 
     width = 10
     height = 10
+
     dungeon = DrunkGeneration(height * CHUNK_SIZE, width * chunk_size, 600, 3)
     dungeon.generate_level()
     x, y = dungeon.set_starting_square()
     dungeon.set_wall_top_tiles()
-
-    # Create world
     world = dungeon.level
+
+    group = EntityGroup(None, None, None, TILE_SIZE)
+    group.add_entity(Player).set_position(x, y)
+
+    while True:
+        r_x = randint(0, width * chunk_size - 1)
+        r_y = randint(0, height * chunk_size - 1)
+        if not Chunk.tile_data[world[r_y][r_x]].collider:
+            group.add_entity(Staircase).set_position(r_x, r_y)
+            break
+
+    i = 0
+    while i < 10:
+        r_x = randint(0, width * chunk_size - 1)
+        r_y = randint(0, height * chunk_size - 1)
+        if not Chunk.tile_data[world[r_y][r_x]].collider:
+            group.add_entity(Chest).set_position(r_x, r_y)
+            i += 1
+
+    i = 0
+    while i < 60:
+        r_x = randint(0, width * chunk_size - 1)
+        r_y = randint(0, height * chunk_size - 1)
+        if not Chunk.tile_data[world[r_y][r_x]].collider:
+            group.add_entity(Enemy).set_position(r_x, r_y)
+            i += 1
+
+    group.save()
 
     # --------------------- REPLACE ABOVE --------------------- #
 

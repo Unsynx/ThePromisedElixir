@@ -20,8 +20,6 @@ class GameScene(Scene):
         self.cam_pos = self.debug.add_element(Text("", Text.FONT_BASE, Text.SIZE_HEADER, (255, 255, 255)))
         self.plyr_pos = self.debug.add_element(Text("", Text.FONT_BASE, Text.SIZE_HEADER, (255, 255, 255)))
         self.plyr_tile_pos = self.debug.add_element(Text("", Text.FONT_BASE, Text.SIZE_HEADER, (255, 255, 255)))
-        self.reload = self.debug.add_element(
-            Button("Re-Generate", 300, 80, self.sceneManager.set_scene, "loadingScreen", True))
         self.weapon = self.debug.add_element(Text("", Text.FONT_BASE, Text.SIZE_HEADER, (255, 255, 255)))
 
         self.debug.hide = True
@@ -30,41 +28,41 @@ class GameScene(Scene):
         # Set up camera and tile manager.
         self.camera = Camera(self.screen.get_size(), TILE_SIZE, None)
         self.camera.mode = Camera.CENTER_FIRST_ENTITY_SMOOTH
-
-        self.start_x, self.start_y = 0, 0
         self.tileManager = TileManager(self.screen, TILE_SIZE, CHUNK_SIZE, self.camera)
 
         # -------------- Entities and Player -------------- #
         self.group = EntityGroup(self.camera, self.screen, self.tileManager, TILE_SIZE)
         self.camera.entity_group = self.group
-        self.player = self.group.add_entity(Player)
+        self.player = None
 
-        # -------------- Entities and Player -------------- #
+        # -------------- Player UI -------------- #
         self.player_ui = self.guiManager.add_guideline(
             Guide("player_ui", None, Guide.GL_HORIZONTAL, 1, Guide.ALIGN_CENTER_PADDED, Guide.REL_ALIGN_TOP, 10))
         self.health_bar = self.player_ui.add_element(
             ProgressBar(750, 20, ProgressBar.BASIC, (255, 255, 255), (0, 0, 0)))
         self.weapon_attack = self.player_ui.add_element(Text("", Text.FONT_BASE, Text.SIZE_MAIN, (255, 255, 255)))
 
-        # -------------- TEMP: Debug only -------------- #
-        self.group.add_entity(Enemy).set_position(8, 8)
-
-        self.group.add_entity(Chest).set_position(10, 10)
-        self.group.add_entity(Dummy).set_position(11, 10)
-
         # Temp: Save + Load
         self.debug.add_element(Button("Save", 300, 80, self.group.save))
         self.debug.add_element(Button("Load", 300, 80, self.group.load))
 
+        # -------------- Tutorial UI -------------- #
+        self.tut = self.guiManager.add_guideline(
+            Guide("tut", None, Guide.GL_VERTICAL, 0.5, Guide.ALIGN_TOP, Guide.REL_ALIGN_CENTER, 5))
+        self.tut.add_element(Text("Instructions:", Text.FONT_BASE, Text.SIZE_HEADER, (255, 255, 255)))
+        self.tut.add_element(Text("Movement - Arrows", Text.FONT_BASE, Text.SIZE_MAIN, (255, 255, 255)))
+        self.tut.add_element(Text("Attack by moving into enemies", Text.FONT_BASE, Text.SIZE_MAIN, (255, 255, 255)))
+        self.tut.add_element(Text("Collect weapons from chests", Text.FONT_BASE, Text.SIZE_MAIN, (255, 255, 255)))
+        self.tut.add_element(Text("Find the stairs to win!", Text.FONT_BASE, Text.SIZE_MAIN, (255, 255, 255)))
+
         self.debug_cool = False
 
     def on_scene_start(self, is_loading_save):
-        if is_loading_save:
-            self.group.load()
-            self.player = self.group.entities[0]
-        else:
-            # Calls when world is newly generated
-            self.player.set_position(self.start_x, self.start_y)
+        self.group.load()
+        self.player = self.group[0]
+
+        self.group[1].scene_manager = self.sceneManager  # Temp
+        self.camera.set_position(self.player.x, self.player.y)
 
         # Resets loaded tiles when reloading world
         for _ in range(len(self.tileManager.chunks)):
@@ -87,6 +85,8 @@ class GameScene(Scene):
     def update(self, dt):
         if any(isinstance(x, Player) for x in self.group):
             self.player = self.group[0]  # Work around :(
+        else:
+            self.sceneManager.set_scene("lose")
 
         self.group.update(dt)
         self.camera.update(dt)
@@ -100,11 +100,12 @@ class GameScene(Scene):
         self.weapon.set_value(f"Weapon: {type(self.player.weapon).__name__}")
 
         # Player UI
-        self.health_bar.set_value(self.player.health / self.player.max_health)
-        try:
-            self.weapon_attack.set_value(f"{self.player.weapon.name} - {self.player.weapon.normal_attack.damage}dmg")
-        except AttributeError:
-            self.weapon_attack.set_value("Hands - 1dmg")
+        if self.player:
+            self.health_bar.set_value(self.player.health / self.player.max_health)
+            try:
+                self.weapon_attack.set_value(f"{self.player.weapon.name} - {self.player.weapon.normal_attack.damage}dmg")
+            except AttributeError:
+                self.weapon_attack.set_value("Hands - 1dmg")
 
     def render(self, screen: pygame.Surface):
         screen.fill((50, 60, 57))

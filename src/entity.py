@@ -299,6 +299,9 @@ class Chest(Entity):
         self.intractable = True
 
     def on_interact(self, entity: Entity):
+        if not type(entity) is Player:
+            return
+
         # temp
         weapons = (
             SimpleSpearWeapon,
@@ -317,6 +320,8 @@ class Staircase(Entity):
         self.scene_manager = None
 
     def on_interact(self, entity):
-        if type(entity) is Player:
-            self.scene_manager.set_scene("win")
+        if not type(entity) is Player:
+            return
+
+        self.scene_manager.set_scene("win")
 

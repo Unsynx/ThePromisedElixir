@@ -46,6 +46,15 @@ class GameScene(Scene):
         self.debug.add_element(Button("Save", 300, 80, self.group.save))
         self.debug.add_element(Button("Load", 300, 80, self.group.load))
 
+        # -------------- Tutorial UI -------------- #
+        self.tut = self.guiManager.add_guideline(
+            Guide("tut", None, Guide.GL_VERTICAL, 0.5, Guide.ALIGN_TOP, Guide.REL_ALIGN_CENTER, 5))
+        self.tut.add_element(Text("Instructions:", Text.FONT_BASE, Text.SIZE_HEADER, (255, 255, 255)))
+        self.tut.add_element(Text("Movement - Arrows", Text.FONT_BASE, Text.SIZE_MAIN, (255, 255, 255)))
+        self.tut.add_element(Text("Attack by moving into enemies", Text.FONT_BASE, Text.SIZE_MAIN, (255, 255, 255)))
+        self.tut.add_element(Text("Collect weapons from chests", Text.FONT_BASE, Text.SIZE_MAIN, (255, 255, 255)))
+        self.tut.add_element(Text("Find the stairs to win!", Text.FONT_BASE, Text.SIZE_MAIN, (255, 255, 255)))
+
         self.debug_cool = False
 
     def on_scene_start(self, is_loading_save):

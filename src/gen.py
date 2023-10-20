@@ -147,7 +147,13 @@ def generate_dungeon(chunk_size, event, scene_manager):
             group.add_entity(Staircase).set_position(r_x, r_y)
             break
 
-    group.add_entity(Chest).set_position(x, y + 2)
+    i = 0
+    while i < 10:
+        r_x = randint(0, width * chunk_size - 1)
+        r_y = randint(0, height * chunk_size - 1)
+        if not Chunk.tile_data[world[r_y][r_x]].collider:
+            group.add_entity(Chest).set_position(r_x, r_y)
+            i += 1
 
     i = 0
     while i < 60:

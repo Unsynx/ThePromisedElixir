@@ -5,6 +5,7 @@ import threading
 
 CHUNK_SIZE = 4
 TILE_SIZE = 128
+SOLID_TILES = [0, 3]
 
 
 class Camera:

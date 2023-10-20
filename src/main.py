@@ -39,7 +39,7 @@ sceneManager.set_scene(splashScreen)
 # ---------------- Main Loop ---------------- #
 running = True
 while running:
-    dt = clock.tick(FRAMERATE) * 0.001 * FRAMERATE
+    dt = clock.tick(FRAMERATE) * 0.010 * FRAMERATE
     sceneManager.dt = dt
 
     events = pygame.event.get()

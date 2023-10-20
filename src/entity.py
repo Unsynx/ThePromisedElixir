@@ -1,10 +1,11 @@
 import random
 
 import pygame.surface
-from tiles import Camera, TileManager
+from tiles import Camera, TileManager, SOLID_TILES
 from random import randint
 from constants import *
 from items import SimpleSpearWeapon, FunnyExplosion
+from tween import Tween
 
 
 class Entity:
@@ -26,6 +27,9 @@ class Entity:
         self.health = None
         self.weapon = None
         self.intractable = False
+
+        self.animation_x = None
+        self.animation_y = None
 
     def set_weapon(self, weapon):
         self.weapon = weapon
@@ -81,32 +85,38 @@ class Entity:
         self.screen.blit(self.surface, (int(self.x) - self.camera.rel_x, int(self.y) - self.camera.rel_y))
 
     def update(self, dt):
-        self.x += (self.tile_x * self.tile_size - self.x) * 0.3
-        self.y += (self.tile_y * self.tile_size - self.y) * 0.3
+        if self.animation_x is not None:
+            self.animation_x.update()
+            self.x = self.animation_x.get_current_value()
+        if self.animation_y is not None:
+            self.animation_y.update()
+            self.y = self.animation_y.get_current_value()
 
     def move(self, x, y):
         if x != 0:
-            if self.tile_manager.get_tile(self.tile_x + x, self.tile_y) != 0:
+            if self.tile_manager.get_tile(self.tile_x + x, self.tile_y) not in SOLID_TILES:
                 e = self.group.get_entity_at(self.tile_x + x, self.tile_y)
                 if e is None:
                     self.tile_x += x
+                    self.animation_x = Tween(self.x, self.tile_x * self.tile_size, 300)
                 elif e.intractable:
                     e.on_interact(self)
                 else:
                     self.attack_logic(e, x, 0)
-                    self.x += x * 64  # Animation :)
+                    self.x += x * 64
                 return True
 
         if y != 0:
-            if self.tile_manager.get_tile(self.tile_x, self.tile_y + y) != 0:
+            if self.tile_manager.get_tile(self.tile_x, self.tile_y + y) not in SOLID_TILES:
                 e = self.group.get_entity_at(self.tile_x, self.tile_y + y)
                 if e is None:
                     self.tile_y += y
+                    self.animation_y = Tween(self.y, self.tile_y * self.tile_size, 1000, Tween.quad_out_easing)
                 elif e.intractable:
                     e.on_interact(self)
                 else:
                     self.attack_logic(e, 0, y)
-                    self.y += y * 64  # Animation :)
+                    self.y += y * 64
                 return True
 
         return False
@@ -172,7 +182,7 @@ class Enemy(Entity):
                 case 3:
                     y = 1
 
-            if self.tile_manager.get_tile(self.tile_x + x, self.tile_y + y) != 0:
+            if self.tile_manager.get_tile(self.tile_x + x, self.tile_y + y) not in SOLID_TILES:
                 self.move(x, y)
                 return
 
@@ -193,9 +203,9 @@ class Chest(Entity):
         self.intractable = True
 
     def on_interact(self, entity: Entity):
-        #temp
+        # temp
         weapons = (
             SimpleSpearWeapon,
             FunnyExplosion
-                   )
+        )
         entity.set_weapon(random.choice(weapons)())

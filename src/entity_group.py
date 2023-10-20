@@ -31,6 +31,9 @@ class EntityGroup:
         self.entities.append(e)
         return e
 
+    def remove(self, e):
+        self.entities.remove(e)
+
     def get_entity_at(self, x, y):
         for e in self.entities:
             if e.tile_x == x and e.tile_y == y:

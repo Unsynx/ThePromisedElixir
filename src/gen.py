@@ -140,16 +140,22 @@ def generate_dungeon(chunk_size, event, scene_manager):
     group = EntityGroup(None, None, None, TILE_SIZE)
     group.add_entity(Player).set_position(x, y)
 
-    group.add_entity(Staircase).set_position(x + 2, y)
+    while True:
+        r_x = randint(0, width * chunk_size - 1)
+        r_y = randint(0, height * chunk_size - 1)
+        if not Chunk.tile_data[world[r_y][r_x]].collider:
+            group.add_entity(Staircase).set_position(r_x, r_y)
+            break
 
     group.add_entity(Chest).set_position(x, y + 2)
-    for _ in range(100):
+
+    i = 0
+    while i < 60:
         r_x = randint(0, width * chunk_size - 1)
         r_y = randint(0, height * chunk_size - 1)
         if not Chunk.tile_data[world[r_y][r_x]].collider:
             group.add_entity(Enemy).set_position(r_x, r_y)
-
-    group.add_entity(Staircase).set_position(x + 2, y)
+            i += 1
 
     group.save()
 

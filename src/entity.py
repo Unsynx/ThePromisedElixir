@@ -305,6 +305,7 @@ class Chest(Entity):
             FunnyExplosion
         )
         entity.set_weapon(random.choice(weapons)())
+        self.group.remove(self)
 
 
 class Staircase(Entity):

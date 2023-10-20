@@ -32,6 +32,12 @@ class Camera:
         self.mode = self.CENTER_FIRST_ENTITY
         self.entity_group = group
 
+    def set_position(self, x, y):
+        self.x = x
+        self.y = y
+        self.smooth_x = x
+        self.smooth_y = y
+
     def input(self):
         pressed = pygame.key.get_pressed()
 

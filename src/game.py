@@ -53,6 +53,7 @@ class GameScene(Scene):
         self.player = self.group[0]
 
         self.group[1].scene_manager = self.sceneManager  # Temp
+        self.camera.set_position(self.player.x, self.player.y)
 
         # Resets loaded tiles when reloading world
         for _ in range(len(self.tileManager.chunks)):

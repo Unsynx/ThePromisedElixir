@@ -109,7 +109,7 @@ class Entity:
                 e = self.group.get_entity_at(self.tile_x + x, self.tile_y)
                 if e is None:
                     self.tile_x += x
-                    self.animation_x = Tween(self.x, self.tile_x * self.tile_size, 300)
+                    self.animation_x = Tween(self.x, self.tile_x * self.tile_size, 100)
                 elif e.intractable:
                     e.on_interact(self)
                 else:
@@ -122,7 +122,7 @@ class Entity:
                 e = self.group.get_entity_at(self.tile_x, self.tile_y + y)
                 if e is None:
                     self.tile_y += y
-                    self.animation_y = Tween(self.y, self.tile_y * self.tile_size, 1000, Tween.quad_out_easing)
+                    self.animation_y = Tween(self.y, self.tile_y * self.tile_size, 100)
                 elif e.intractable:
                     e.on_interact(self)
                 else:

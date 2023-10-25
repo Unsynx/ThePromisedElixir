@@ -17,6 +17,7 @@ primary_monitor = get_monitors()[0]
 screen = pygame.display.set_mode((1920, 1080), pygame.SCALED, vsync=1)
 FRAMERATE = 60
 
+# Nice comment
 
 pygame.display.set_caption("Game")
 # pygame.display.set_icon()

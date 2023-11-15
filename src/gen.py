@@ -48,6 +48,13 @@ class DrunkGeneration:
                     self.level[y][x] = 2
                     return x, y
 
+    def set_wall_top_tiles(self):
+        for y in range(len(self.level)):
+            for x in range(len(self.level[y])):
+                if y != len(self.level) - 1:
+                    if self.level[y][x] == 0 and self.level[y + 1][x]:
+                        self.level[y][x] = 3
+
 
 class LoadingScreen(Scene):
     def __init__(self, manager: SceneManager):
@@ -100,6 +107,7 @@ def generate_dungeon(chunk_size, event):
     dungeon = DrunkGeneration(height * CHUNK_SIZE, width * chunk_size, 600, 3)
     dungeon.generate_level()
     x, y = dungeon.set_starting_square()
+    dungeon.set_wall_top_tiles()
 
     # Create world
 

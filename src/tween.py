@@ -1,5 +1,5 @@
 from math import sin, cos, pi
-
+from time import time_ns
 
 class Tween:
     def __init__(self, start_value: int, end_value: int, duration: float, easing_func=None):
@@ -8,15 +8,19 @@ class Tween:
         self.duration = duration
         self.current_time = 0
         self.easing_func = easing_func if easing_func else self.linear_easing
+        self.start_time = time_ns() // 1_000_000
 
-    def update(self, dt: float):
-        self.current_time += dt
+    def update(self):
+        self.current_time = time_ns() // 1_000_000 - self.start_time
 
     def get_current_value(self):
         if self.current_time >= self.duration:
+            print('done')
             return self.end_value
         t = self.current_time / self.duration  # time as float from 0 start to 1 end
-        return self.start_value + (self.end_value - self.start_value) * self.easing_func(t)
+        print(t)
+        pos = self.start_value + (self.end_value - self.start_value) * self.easing_func(t)
+        return int(pos)
 
     # Easing functions
     @staticmethod

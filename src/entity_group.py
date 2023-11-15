@@ -5,13 +5,16 @@ from tiles import Camera, TileManager
 import pygame.surface
 from items import *
 from entity import *
+from scene_manager import SceneManager
+from chests import Chest
 
 
 class EntityGroup:
-    def __init__(self, camera: Camera, screen: pygame.surface.Surface, tile_manager: TileManager, tile_size: int):
+    def __init__(self, camera: Camera, screen: pygame.surface.Surface, tile_manager: TileManager, scene_manager: SceneManager, tile_size: int):
         self.camera = camera
         self.screen = screen
         self.tile_manager = tile_manager
+        self.scene_manager = scene_manager
         self.tile_size = tile_size
 
         self.entities = []
@@ -52,6 +55,7 @@ class EntityGroup:
                     data = json.load(f)
 
                     e = self.add_entity(getattr(sys.modules[__name__], data["type"]))
+                    e.scene_manager = self.scene_manager
                     e.set_position(data["tile_x"], data["tile_y"])
 
                     for item, value in data.items():

@@ -12,6 +12,7 @@ class Entity:
         self.camera = camera
         self.screen = screen
         self.tile_manager = tile_manager
+        self.scene_manager = None
         self.tile_size = tile_size
         self.group = None
         self.type = type(self).__name__
@@ -290,25 +291,6 @@ class Dummy(Entity):
         super().__init__(camera, screen, tile_manager, tile_size)
         self.health = 1
         self.surface = pygame.image.load("../assets/player/baddy.png")
-
-
-class Chest(Entity):
-    def __init__(self, camera: Camera, screen: pygame.surface.Surface, tile_manager: TileManager, tile_size: int):
-        super().__init__(camera, screen, tile_manager, tile_size)
-        self.surface = pygame.image.load("../assets/player/chest.png")
-        self.intractable = True
-
-    def on_interact(self, entity: Entity):
-        if not type(entity) is Player:
-            return
-
-        # temp
-        weapons = (
-            SimpleSpearWeapon,
-            FunnyExplosion
-        )
-        entity.set_weapon(random.choice(weapons)())
-        self.group.remove(self)
 
 
 class Staircase(Entity):

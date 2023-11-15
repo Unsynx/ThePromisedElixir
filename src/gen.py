@@ -9,6 +9,7 @@ from tiles import TILE_SIZE
 from entity_group import EntityGroup
 from entity import *
 from tiles import Chunk
+from chests import Chest
 
 # coordinates for the player starting position
 global x
@@ -104,7 +105,7 @@ class LoadingScreen(Scene):
 
     def update(self, dt):
         if self.completion_event.is_set():
-            self.sceneManager.set_scene("game", False)
+            self.sceneManager.set_scene("game", True)
 
             # Set the starting positions
             self.sceneManager.scene.start_x = x
@@ -137,7 +138,7 @@ def generate_dungeon(chunk_size, event, scene_manager):
     dungeon.set_wall_top_tiles()
     world = dungeon.level
 
-    group = EntityGroup(None, None, None, TILE_SIZE)
+    group = EntityGroup(None, None, None, None, TILE_SIZE)
     group.add_entity(Player).set_position(x, y)
 
     while True:

@@ -1,15 +1,12 @@
-import os
 from scene_manager import Scene, SceneManager
 from gui import GuiManager, Guide, Text
 from tiles import CHUNK_SIZE
-import pygame
 import threading
-from random import randint
 from tiles import TILE_SIZE
-from entity_group import EntityGroup
 from entity import *
 from tiles import Chunk
 from chests import Chest
+from entity_group import EntityGroup
 
 # coordinates for the player starting position
 global x

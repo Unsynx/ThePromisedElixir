@@ -45,8 +45,8 @@ class ChestScreen(Scene):
 
 
 class Chest(Entity):
-    def __init__(self, camera: Camera, screen: pygame.surface.Surface, tile_manager: TileManager, tile_size: int):
-        super().__init__(camera, screen, tile_manager, tile_size)
+    def __init__(self):
+        super().__init__()
         self.surface = pygame.image.load("../assets/player/chest.png")
         self.intractable = True
 

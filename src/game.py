@@ -2,7 +2,7 @@ from tiles import Camera, TileManager, CHUNK_SIZE, TILE_SIZE
 from scene_manager import Scene, SceneManager
 from gui import GuiManager, Guide, Text, Button, ProgressBar
 import pygame
-from entity import Player, Enemy, Dummy
+from entity import Player
 from entity_group import EntityGroup
 
 

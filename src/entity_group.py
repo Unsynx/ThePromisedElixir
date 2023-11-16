@@ -1,11 +1,10 @@
-import json
-import os
-import sys
-from tiles import Camera, TileManager
 import pygame.surface
-from items import *
-from entity import *
+from tiles import Camera, TileManager
 from scene_manager import SceneManager
+import os
+import json
+import sys
+from entity import *
 from chests import Chest
 
 
@@ -26,11 +25,17 @@ class EntityGroup:
         return self.entities[item]
 
     def add_entity(self, entity, *args, **kwargs):
-        e = entity(self.camera, self.screen, self.tile_manager, self.tile_size, *args)
+        e = entity(*args)
         for item, value in kwargs.items():
             setattr(e, item, value)
 
         e.group = self
+        e.camera = self.camera
+        e.screen = self.screen
+        e.tile_manager = self.tile_manager
+        e.scene_manager = self.scene_manager
+        e.tile_size = self.tile_size
+
         self.entities.append(e)
         return e
 
@@ -53,13 +58,10 @@ class EntityGroup:
             if file.endswith(".json"):
                 with open(f"../assets/saves/{file}", "r") as f:
                     data = json.load(f)
-
                     e = self.add_entity(getattr(sys.modules[__name__], data["type"]))
-                    e.scene_manager = self.scene_manager
-                    e.set_position(data["tile_x"], data["tile_y"])
 
                     for item, value in data.items():
-                        setattr(e, item, value)
+                        e.load(item, value)
 
     def save(self):
         # Delete current saved data
@@ -70,18 +72,10 @@ class EntityGroup:
                 os.remove(os.path.join(dir_name, item))
 
         for i, e in enumerate(self.entities):
-            data = {
-                "tile_x": e.tile_x,
-                "tile_y": e.tile_y,
-                "health": e.health,
-                "type": e.type,
-                "intractable": e.intractable
-            }
-
-            try:
-                data["weapon"] = e.weapon.name
-            except AttributeError:
-                data["weapon"] = None
+            data = {}
+            for var in e.serialized_vars:
+                print(f"saved '{var}' as {e.serialized_vars[var]()}")
+                data[var] = e.serialized_vars[var]()
 
             with open(f"../assets/saves/entity_{i}.json", "x") as f:
                 json.dump(data, f)

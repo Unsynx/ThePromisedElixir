@@ -1,6 +1,7 @@
 import random
 import pygame.surface
 from tiles import Camera, TileManager, Chunk
+from math import copysign
 from random import randint
 from constants import *
 from items import SimpleSpearWeapon, FunnyExplosion
@@ -41,7 +42,7 @@ class Entity:
         self.x = self.tile_size * tile_x
         self.y = self.tile_size * tile_y
 
-    def on_player_move(self):
+    def on_player_move(self, player):
         pass
 
     def on_interact(self, entity):
@@ -214,6 +215,10 @@ class Player(Entity):
         self.input_x = 0
         self.input_y = 0
 
+        # saves previous tile before move for enemy movement
+        self.last_x = 0
+        self.last_y = 0
+
         self.recent_input_x = False
         self.recent_input_y = False
 
@@ -226,7 +231,9 @@ class Player(Entity):
         self.input_y = pressed[pygame.K_DOWN] - pressed[pygame.K_UP]
 
         if self.recent_input_x and self.input_x != 0:
+            last_x_temp = self.tile_x
             if self.move(self.input_x, 0):
+                self.last_x = last_x_temp # only sets last_x to old x if moved is True
                 moved = True
 
             self.recent_input_x = False
@@ -234,7 +241,9 @@ class Player(Entity):
             self.recent_input_x = True
 
         if self.recent_input_y and self.input_y != 0:
+            last_y_temp = self.tile_y
             if self.move(0, self.input_y):
+                self.last_y = last_y_temp
                 moved = True
 
             self.recent_input_y = False
@@ -242,7 +251,7 @@ class Player(Entity):
             self.recent_input_y = True
 
         if moved:
-            self.group.on_player_move()
+            self.group.on_player_move(self)
 
 
 class Enemy(Entity):
@@ -258,29 +267,33 @@ class Enemy(Entity):
         except AttributeError:
             self.add_companion_entity(DamageIndicator).center_on_parent_x(self.surface.get_width()).set_var(text="1 atck")
 
-    def on_player_move(self):
-        offset = randint(0, 3)
-        for i in range(4):
+    def on_player_move(self, player: Player):
+        # last x and y for moving toward previous player tile
+        d_x = player.last_x - self.tile_x
+        d_y = player.last_y - self.tile_y
+        x, y = 0, 0
+
+        if abs(d_x) > abs(d_y):
+            x = copysign(1, d_x)
+        elif abs(d_x) == 0:
             x = 0
+
+        if abs(d_y) > abs(d_x):
+            y = copysign(1, d_y)
+        elif abs(d_y) == 0:
             y = 0
-            match (offset + i) % 4:
-                case 0:
-                    x = -1
-                case 1:
-                    x = 1
-                case 2:
-                    y = -1
-                case 3:
-                    y = 1
 
-            tile, collider = self.tile_manager.get_tile(self.tile_x + x, self.tile_y + y)
-            # instead of returning a tile index, it returns false when the chunk is not loaded
-            if not tile:
-                return
+        x, y = int(x), int(y)
 
-            if not collider:
-                self.move(x, y)
-                return
+        tile, collider = self.tile_manager.get_tile(self.tile_x + x, self.tile_y + y)
+        # instead of returning a tile index, it returns false when the chunk is not loaded
+        if not tile:
+            return
+
+        if not collider:
+            self.move(x, y)
+            # print(f"moved to {self.tile_x}, {self.tile_y}")
+            return
 
         print("I am stuck")
 

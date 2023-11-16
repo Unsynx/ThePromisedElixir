@@ -40,9 +40,9 @@ class EntityGroup:
                 return e
         return None
 
-    def on_player_move(self):
+    def on_player_move(self, player):
         for e in self.entities:
-            e.on_player_move()
+            e.on_player_move(player)
 
     def load(self):
         self.entities = []

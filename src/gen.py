@@ -7,6 +7,7 @@ from entity import *
 from tiles import Chunk
 from chests import Chest
 from entity_group import EntityGroup
+import os
 
 # coordinates for the player starting position
 global x

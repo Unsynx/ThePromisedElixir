@@ -74,7 +74,7 @@ class EntityGroup:
         for i, e in enumerate(self.entities):
             data = {}
             for var in e.serialized_vars:
-                print(f"saved '{var}' as {e.serialized_vars[var]()}")
+                # print(f"saved '{var}' as {e.serialized_vars[var]()}")
                 data[var] = e.serialized_vars[var]()
 
             with open(f"../assets/saves/entity_{i}.json", "x") as f:

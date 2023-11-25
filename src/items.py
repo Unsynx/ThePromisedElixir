@@ -56,6 +56,9 @@ class Weapon:
         self.special_attack = special_attack
         self.normal_attack = normal_attack
 
+    def __get__(self, instance, owner):
+        return self.name
+
     def for_non_hit(self, not_hit_positions, group):
         pass
 

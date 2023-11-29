@@ -1,9 +1,13 @@
 import pygame.surface
+from tiles import Camera, TileManager, Chunk
+from math import copysign
 from random import randint
 from constants import *
 from tween import Tween
 import sys
 from items import *
+
+MOVEMENT_RADIUS = 3
 
 
 class Entity:
@@ -45,7 +49,7 @@ class Entity:
         self.x = self.tile_size * tile_x
         self.y = self.tile_size * tile_y
 
-    def on_player_move(self):
+    def on_player_move(self, player):
         pass
 
     def on_interact(self, entity):
@@ -95,7 +99,7 @@ class MobileEntity(Entity):
                     e.on_interact(self)
                 else:
                     self.attack_logic(e, x, 0)
-                    self.x += x * 64
+                    # self.x += x * 64
                 return True
 
         if y != 0:
@@ -109,7 +113,7 @@ class MobileEntity(Entity):
                     e.on_interact(self)
                 else:
                     self.attack_logic(e, 0, y)
-                    self.y += y * 64
+                    # self.y += y * 64
                 return True
 
         return False
@@ -162,6 +166,10 @@ class Player(MobileEntity):
         self.input_x = 0
         self.input_y = 0
 
+        # saves previous tile before move for enemy movement
+        self.last_x = 0
+        self.last_y = 0
+
         self.recent_input_x = False
         self.recent_input_y = False
 
@@ -174,7 +182,9 @@ class Player(MobileEntity):
         self.input_y = pressed[pygame.K_DOWN] - pressed[pygame.K_UP]
 
         if self.recent_input_x and self.input_x != 0:
+            last_x_temp = self.tile_x
             if self.move(self.input_x, 0):
+                self.last_x = last_x_temp  # only sets last_x to old x if moved is True
                 moved = True
 
             self.recent_input_x = False
@@ -182,7 +192,9 @@ class Player(MobileEntity):
             self.recent_input_x = True
 
         if self.recent_input_y and self.input_y != 0:
+            last_y_temp = self.tile_y
             if self.move(0, self.input_y):
+                self.last_y = last_y_temp
                 moved = True
 
             self.recent_input_y = False
@@ -190,7 +202,7 @@ class Player(MobileEntity):
             self.recent_input_y = True
 
         if moved:
-            self.group.on_player_move()
+            self.group.on_player_move(self)
 
 
 class Enemy(MobileEntity):
@@ -200,31 +212,39 @@ class Enemy(MobileEntity):
 
         self.surface = pygame.image.load("../assets/player/baddy.png")
 
-    def on_player_move(self):
-        offset = randint(0, 3)
-        for i in range(4):
-            x = 0
-            y = 0
-            match (offset + i) % 4:
-                case 0:
-                    x = -1
-                case 1:
-                    x = 1
-                case 2:
-                    y = -1
-                case 3:
-                    y = 1
+    def on_player_move(self, player: Player):
+        # last x and y for moving toward previous player tile
+        d_x = player.tile_x - self.tile_x
+        abs_x = abs(d_x)
+        d_y = player.tile_y - self.tile_y
+        abs_y = abs(d_y)
 
-            tile, collider = self.tile_manager.get_tile(self.tile_x + x, self.tile_y + y)
-            # instead of returning a tile index, it returns false when the chunk is not loaded
-            if not tile:
-                return
+        x = int(copysign(1, d_x))
+        y = int(copysign(1, d_y))
 
-            if not collider:
-                self.move(x, y)
-                return
+        if abs_x > MOVEMENT_RADIUS or abs_y > MOVEMENT_RADIUS:  # ARBITRARY VALUES: CHANGE FOR MORE/LESS DIFFICULTY
+            return
 
-        print("I am stuck")
+        """
+        movement logic:
+        1) try to move toward player on furthest axis
+        2) try to move toward player on closer axis
+        3) try to move away from player on furthest axis
+        4) try to move away from player on closest axis
+        
+        this should guarantee that an entity always moves, even if its course is blocked by walls
+        """
+
+        if abs_x >= abs_y:
+            if not self.move(x, 0):
+                if not self.move(0, y):
+                    if not self.move(-x, 0):
+                        self.move(0, -y)
+        if abs_y > abs_x:
+            if not self.move(0, y):
+                if not self.move(x, 0):
+                    if not self.move(0, -y):
+                        self.move(-x, 0)
 
 
 class Dummy(MobileEntity):
@@ -248,3 +268,18 @@ class Staircase(Entity):
         self.group.save()
         self.scene_manager.set_scene("loadingScreen", True)
 
+
+class Dialogue(Entity):
+    def __init__(self, camera: Camera, screen: pygame.surface.Surface, tile_manager: TileManager, tile_size: int,
+                 dialogue_scene):
+        super().__init__(camera, screen, tile_manager, tile_size)
+        self.dialogue_scene = dialogue_scene
+        self.surface = pygame.image.load("../assets/player/wise_old_druid_or_maybe_a_potion_seller.png")
+        self.intractable = True
+
+        self.scene_manager = None
+
+    def on_interact(self, entity):
+        if not type(entity) is Player:
+            return
+        self.scene_manager.set_scene(f"{self.dialogue_scene}")

@@ -158,7 +158,7 @@ def generate_dungeon(chunk_size, event, level):
             i += 1
 
     i = 0
-    while i < 60:
+    while i < 10:
         r_x = randint(0, width * chunk_size - 1)
         r_y = randint(0, height * chunk_size - 1)
         if not Chunk.tile_data[world[r_y][r_x]].collider:

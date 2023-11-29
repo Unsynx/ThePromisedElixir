@@ -10,7 +10,7 @@ from entity_group import EntityGroup
 import os
 from game import GameScene
 
-# coordinates for the player starting position
+# coordinates for the player_only starting position
 global x
 global y
 
@@ -59,7 +59,7 @@ class DrunkGeneration:
 
     def set_starting_square(self):
         """
-        Sets the starting square for the player. Must be run after generating dungeon
+        Sets the starting square for the player_only. Must be run after generating dungeon
         :return: the starting squares x and y coordinates
         """
         for tile_y in range(len(self.level)):
@@ -103,17 +103,12 @@ class LoadingScreen(Scene):
         self.sceneManager.add_scene(GameScene(self.sceneManager))
         self.completion_event = threading.Event()
 
-        second_thread = threading.Thread(target=generate_dungeon, args=(CHUNK_SIZE, self.completion_event, self.sceneManager,  self.level))
+        second_thread = threading.Thread(target=generate_dungeon, args=(CHUNK_SIZE, self.completion_event, self.level))
         second_thread.start()
 
     def update(self, dt):
         if self.completion_event.is_set():
             self.sceneManager.set_scene("game", True)
-
-            # Set the starting positions
-            self.sceneManager.scene.start_x = x
-            self.sceneManager.scene.start_y = y
-            self.sceneManager.scene.on_scene_start(False)
 
         self.loading_text.set_value(f"Loading{'.' * randint(3, 9)}")
 
@@ -122,7 +117,8 @@ class LoadingScreen(Scene):
         self.guiManager.render_guidelines()
 
 
-def generate_dungeon(chunk_size, event, scene_manager, level):
+def generate_dungeon(chunk_size, event, level):
+    player = False
     global x
     global y
     # Delete current world
@@ -142,7 +138,11 @@ def generate_dungeon(chunk_size, event, scene_manager, level):
     world = dungeon.level
 
     group = EntityGroup(None, None, None, None, TILE_SIZE)
-    group.add_entity(Player).set_position(x, y)
+    if player:
+        group.load(True)
+        group[0].set_position(x, y)
+    else:
+        group.add_entity(Player).set_position(x, y)
 
     while True:
         r_x = randint(0, width * chunk_size - 1)

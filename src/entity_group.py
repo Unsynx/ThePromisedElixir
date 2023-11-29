@@ -52,7 +52,7 @@ class EntityGroup:
         for e in self.entities:
             e.on_player_move()
 
-    def load(self):
+    def load(self, player_only=False):
         self.entities = []
         for file in os.listdir("../assets/saves"):
             if file.endswith(".json"):
@@ -62,6 +62,9 @@ class EntityGroup:
 
                     for item, value in data.items():
                         e.load(item, value)
+
+                    if player_only:
+                        return
 
     def save(self):
         # Delete current saved data

@@ -5,6 +5,7 @@ from screeninfo import get_monitors
 from menu import *
 from game import GameScene
 from gen import LoadingScreen
+from chests import ChestScreen
 
 
 # ---------------- Setup ---------------- #
@@ -31,10 +32,10 @@ sceneManager = SceneManager(screen)
 mainMenu = MainMenu(sceneManager)
 splashScreen = SplashScreen(sceneManager)
 creditsMenu = CreditsMenu(sceneManager)
-gameScene = GameScene(sceneManager)
 loadingScene = LoadingScreen(sceneManager)
 winScene = TempWinScreen(sceneManager)
 loseScene = TempLoseScreen(sceneManager)
+chestScene = ChestScreen(sceneManager)
 
 sceneManager.set_scene(splashScreen)
 

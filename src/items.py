@@ -56,6 +56,9 @@ class Weapon:
         self.special_attack = special_attack
         self.normal_attack = normal_attack
 
+    def __get__(self, instance, owner):
+        return self.name
+
     def for_non_hit(self, not_hit_positions, group):
         pass
 
@@ -76,9 +79,21 @@ class DoubleReach(Range):
         ])
 
 
+class NormalReach(Range):
+    def __init__(self):
+        super().__init__([
+            [2, 1]
+        ])
+
+
 class SpearNormalAttack(Attack):
     def __init__(self):
         super().__init__(2, DoubleReach())
+
+
+class Fists(Attack):
+    def __init__(self):
+        super().__init__(1, NormalReach())
 
 
 class SimpleSpearWeapon(Weapon):
@@ -103,4 +118,9 @@ class BigAttack(Attack):
 class FunnyExplosion(Weapon):
     def __init__(self):
         super().__init__("", BigAttack())
+
+
+class NoWeapon(Weapon):
+    def __init__(self):
+        super().__init__("", Fists())
 

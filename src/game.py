@@ -2,7 +2,7 @@ from tiles import Camera, TileManager, CHUNK_SIZE, TILE_SIZE
 from scene_manager import Scene, SceneManager
 from gui import GuiManager, Guide, Text, Button, ProgressBar
 import pygame
-from entity import Player, Enemy, Dummy, Chest
+from entity import Player
 from entity_group import EntityGroup
 
 
@@ -31,7 +31,7 @@ class GameScene(Scene):
         self.tileManager = TileManager(self.screen, TILE_SIZE, CHUNK_SIZE, self.camera)
 
         # -------------- Entities and Player -------------- #
-        self.group = EntityGroup(self.camera, self.screen, self.tileManager, TILE_SIZE)
+        self.group = EntityGroup(self.camera, self.screen, self.tileManager, self.sceneManager, TILE_SIZE)
         self.camera.entity_group = self.group
         self.player = None
 
@@ -58,7 +58,8 @@ class GameScene(Scene):
         self.debug_cool = False
 
     def on_scene_start(self, is_loading_save):
-        self.group.load()
+        if is_loading_save:
+            self.group.load()
         self.player = self.group[0]
 
         self.group[1].scene_manager = self.sceneManager  # Temp

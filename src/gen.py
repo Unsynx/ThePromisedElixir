@@ -1,16 +1,16 @@
-import os
 from scene_manager import Scene, SceneManager
 from gui import GuiManager, Guide, Text
 from tiles import CHUNK_SIZE
-import pygame
 import threading
-from random import randint
 from tiles import TILE_SIZE
-from entity_group import EntityGroup
 from entity import *
 from tiles import Chunk
+from chests import Chest
+from entity_group import EntityGroup
+import os
+from game import GameScene
 
-# coordinates for the player starting position
+# coordinates for the player_only starting position
 global x
 global y
 
@@ -59,7 +59,7 @@ class DrunkGeneration:
 
     def set_starting_square(self):
         """
-        Sets the starting square for the player. Must be run after generating dungeon
+        Sets the starting square for the player_only. Must be run after generating dungeon
         :return: the starting squares x and y coordinates
         """
         for tile_y in range(len(self.level)):
@@ -92,24 +92,23 @@ class LoadingScreen(Scene):
         self.loading_text = self.center.add_element(Text("", Text.FONT_BASE, Text.SIZE_HEADER, (255, 255, 255)))
 
         self.completion_event = None
+        self.level = 0
 
     def on_scene_start(self, new):
+        if not new:
+            self.sceneManager.set_scene("game", True)
+
+        self.level += 1
+        self.sceneManager.del_scene("game")
+        self.sceneManager.add_scene(GameScene(self.sceneManager))
         self.completion_event = threading.Event()
 
-        if new:
-            second_thread = threading.Thread(target=generate_dungeon, args=(CHUNK_SIZE, self.completion_event, self.sceneManager))
-            second_thread.start()
-        else:
-            self.sceneManager.set_scene("game", True)
+        second_thread = threading.Thread(target=generate_dungeon, args=(CHUNK_SIZE, self.completion_event, self.level))
+        second_thread.start()
 
     def update(self, dt):
         if self.completion_event.is_set():
-            self.sceneManager.set_scene("game", False)
-
-            # Set the starting positions
-            self.sceneManager.scene.start_x = x
-            self.sceneManager.scene.start_y = y
-            self.sceneManager.scene.on_scene_start(False)
+            self.sceneManager.set_scene("game", True)
 
         self.loading_text.set_value(f"Loading{'.' * randint(3, 9)}")
 
@@ -118,13 +117,12 @@ class LoadingScreen(Scene):
         self.guiManager.render_guidelines()
 
 
-def generate_dungeon(chunk_size, event, scene_manager):
+def generate_dungeon(chunk_size, event, level):
     global x
     global y
     # Delete current world
     dir_name = "../assets/world"
-    test = os.listdir(dir_name)
-    for item in test:
+    for item in os.listdir(dir_name):
         if item.endswith(".txt"):
             os.remove(os.path.join(dir_name, item))
 
@@ -137,8 +135,12 @@ def generate_dungeon(chunk_size, event, scene_manager):
     dungeon.set_wall_top_tiles()
     world = dungeon.level
 
-    group = EntityGroup(None, None, None, TILE_SIZE)
-    group.add_entity(Player).set_position(x, y)
+    group = EntityGroup(None, None, None, None, TILE_SIZE)
+    if level == 1:
+        group.add_entity(Player).set_position(x, y)
+    else:
+        group.load(True)
+        group[0].set_position(x, y)
 
     while True:
         r_x = randint(0, width * chunk_size - 1)

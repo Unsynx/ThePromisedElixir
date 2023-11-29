@@ -14,6 +14,12 @@ class SceneManager:
     def add_scene(self, scene):
         self.sceneDict[scene.name] = scene
 
+    def del_scene(self, scene):
+        try:
+            self.sceneDict.pop(scene)
+        except KeyError:
+            print(f"No scene of key {scene}")
+
     def set_scene(self, scene, *args):
         if self.scene is not None:
             self.scene.on_scene_end()

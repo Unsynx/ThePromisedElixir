@@ -1,17 +1,19 @@
-import json
-import os
-import sys
-from tiles import Camera, TileManager
 import pygame.surface
-from items import *
+from tiles import Camera, TileManager
+from scene_manager import SceneManager
+import os
+import json
+import sys
 from entity import *
+from chests import Chest
 
 
 class EntityGroup:
-    def __init__(self, camera: Camera, screen: pygame.surface.Surface, tile_manager: TileManager, tile_size: int):
+    def __init__(self, camera: Camera, screen: pygame.surface.Surface, tile_manager: TileManager, scene_manager: SceneManager, tile_size: int):
         self.camera = camera
         self.screen = screen
         self.tile_manager = tile_manager
+        self.scene_manager = scene_manager
         self.tile_size = tile_size
 
         self.entities = []
@@ -23,11 +25,17 @@ class EntityGroup:
         return self.entities[item]
 
     def add_entity(self, entity, *args, **kwargs):
-        e = entity(self.camera, self.screen, self.tile_manager, self.tile_size, *args)
+        e = entity(*args)
         for item, value in kwargs.items():
             setattr(e, item, value)
 
         e.group = self
+        e.camera = self.camera
+        e.screen = self.screen
+        e.tile_manager = self.tile_manager
+        e.scene_manager = self.scene_manager
+        e.tile_size = self.tile_size
+
         self.entities.append(e)
         return e
 
@@ -44,18 +52,19 @@ class EntityGroup:
         for e in self.entities:
             e.on_player_move(player)
 
-    def load(self):
+    def load(self, player_only=False):
         self.entities = []
         for file in os.listdir("../assets/saves"):
             if file.endswith(".json"):
                 with open(f"../assets/saves/{file}", "r") as f:
                     data = json.load(f)
-
                     e = self.add_entity(getattr(sys.modules[__name__], data["type"]))
-                    e.set_position(data["tile_x"], data["tile_y"])
 
                     for item, value in data.items():
-                        setattr(e, item, value)
+                        e.load(item, value)
+
+                    if player_only:
+                        return
 
     def save(self):
         # Delete current saved data
@@ -66,18 +75,10 @@ class EntityGroup:
                 os.remove(os.path.join(dir_name, item))
 
         for i, e in enumerate(self.entities):
-            data = {
-                "tile_x": e.tile_x,
-                "tile_y": e.tile_y,
-                "health": e.health,
-                "type": e.type,
-                "intractable": e.intractable
-            }
-
-            try:
-                data["weapon"] = e.weapon.name
-            except AttributeError:
-                data["weapon"] = None
+            data = {}
+            for var in e.serialized_vars:
+                # print(f"saved '{var}' as {e.serialized_vars[var]()}")
+                data[var] = e.serialized_vars[var]()
 
             with open(f"../assets/saves/entity_{i}.json", "x") as f:
                 json.dump(data, f)

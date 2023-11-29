@@ -3,6 +3,7 @@ from random import randint
 from constants import *
 from tween import Tween
 import sys
+from items import *
 
 
 class Entity:
@@ -69,16 +70,16 @@ class MobileEntity(Entity):
         super().__init__()
 
         self.health = None
-        self.weapon = None
+        self.weapon = NoWeapon()
 
         self.animation_x = None
         self.animation_y = None
 
         self.serialize("health", lambda: self.health)\
-            .serialize("weapon", lambda: self.weapon)
+            .serialize("weapon", lambda: self.weapon.name)
 
     def load(self, name: str, value):
-        if name == "weapon" and value is not None:
+        if name == "weapon":
             value = getattr(sys.modules[__name__], value)()
         setattr(self, name, value)
 
@@ -118,8 +119,6 @@ class MobileEntity(Entity):
             return
 
         self.health -= damage
-
-        print(f"Entity Attacked: {self.health}hp remaining")
 
         if self.health <= 0:
             self.on_death()

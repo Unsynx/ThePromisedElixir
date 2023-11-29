@@ -118,13 +118,11 @@ class LoadingScreen(Scene):
 
 
 def generate_dungeon(chunk_size, event, level):
-    player = False
     global x
     global y
     # Delete current world
     dir_name = "../assets/world"
-    test = os.listdir(dir_name)
-    for item in test:
+    for item in os.listdir(dir_name):
         if item.endswith(".txt"):
             os.remove(os.path.join(dir_name, item))
 
@@ -138,11 +136,11 @@ def generate_dungeon(chunk_size, event, level):
     world = dungeon.level
 
     group = EntityGroup(None, None, None, None, TILE_SIZE)
-    if player:
+    if level == 1:
+        group.add_entity(Player).set_position(x, y)
+    else:
         group.load(True)
         group[0].set_position(x, y)
-    else:
-        group.add_entity(Player).set_position(x, y)
 
     while True:
         r_x = randint(0, width * chunk_size - 1)

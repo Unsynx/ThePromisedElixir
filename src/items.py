@@ -79,9 +79,21 @@ class DoubleReach(Range):
         ])
 
 
+class NormalReach(Range):
+    def __init__(self):
+        super().__init__([
+            [2, 1]
+        ])
+
+
 class SpearNormalAttack(Attack):
     def __init__(self):
         super().__init__(2, DoubleReach())
+
+
+class Fists(Attack):
+    def __init__(self):
+        super().__init__(1, NormalReach())
 
 
 class SimpleSpearWeapon(Weapon):
@@ -106,4 +118,9 @@ class BigAttack(Attack):
 class FunnyExplosion(Weapon):
     def __init__(self):
         super().__init__("", BigAttack())
+
+
+class NoWeapon(Weapon):
+    def __init__(self):
+        super().__init__("", Fists())
 

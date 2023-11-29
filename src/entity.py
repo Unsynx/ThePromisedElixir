@@ -7,6 +7,8 @@ from constants import *
 from items import SimpleSpearWeapon, FunnyExplosion
 from tween import Tween
 
+MOVEMENT_RADIUS = 3
+
 
 class Entity:
     def __init__(self, camera: Camera, screen: pygame.surface.Surface, tile_manager: TileManager, tile_size: int):
@@ -115,7 +117,7 @@ class Entity:
                     e.on_interact(self)
                 else:
                     self.attack_logic(e, x, 0)
-                    self.x += x * 64
+                    # self.x += x * 64
                 return True
 
         if y != 0:
@@ -129,7 +131,7 @@ class Entity:
                     e.on_interact(self)
                 else:
                     self.attack_logic(e, 0, y)
-                    self.y += y * 64
+                    # self.y += y * 64
                 return True
 
         return False
@@ -166,7 +168,8 @@ class CompanionEntity(Entity):
             self.on_var_set(key)
 
     def render(self):
-        self.screen.blit(self.surface, (int(self.x + self.offset_x) - self.camera.rel_x, int(self.y + self.offset_y) - self.camera.rel_y))
+        self.screen.blit(self.surface, (
+            int(self.x + self.offset_x) - self.camera.rel_x, int(self.y + self.offset_y) - self.camera.rel_y))
 
     def on_var_set(self, var):
         pass
@@ -187,7 +190,9 @@ class HealthBar(CompanionEntity):
         match var:
             case "current_value":
                 self.surface.fill((0, 0, 0))
-                pygame.draw.rect(self.surface, (255, 255, 255), [0, 0, self.current_value / self.max_value * self.surface.get_width(), self.surface.get_height()])
+                pygame.draw.rect(self.surface, (255, 255, 255),
+                                 [0, 0, self.current_value / self.max_value * self.surface.get_width(),
+                                  self.surface.get_height()])
 
 
 class DamageIndicator(CompanionEntity):
@@ -233,7 +238,7 @@ class Player(Entity):
         if self.recent_input_x and self.input_x != 0:
             last_x_temp = self.tile_x
             if self.move(self.input_x, 0):
-                self.last_x = last_x_temp # only sets last_x to old x if moved is True
+                self.last_x = last_x_temp  # only sets last_x to old x if moved is True
                 moved = True
 
             self.recent_input_x = False
@@ -259,43 +264,49 @@ class Enemy(Entity):
         super().__init__(camera, screen, tile_manager, tile_size)
         self.health = 5
         self.surface = pygame.image.load("../assets/player/baddy.png")
-        self.add_companion_entity(HealthBar)\
-            .center_on_parent_x(self.surface.get_width())\
+        self.add_companion_entity(HealthBar) \
+            .center_on_parent_x(self.surface.get_width()) \
             .set_var(max_value=self.health, current_value=self.health)
         try:
-            self.add_companion_entity(DamageIndicator).center_on_parent_x(self.surface.get_width()).set_var(text=f"{self.weapon.normal_attack.damage} dmg")
+            self.add_companion_entity(DamageIndicator).center_on_parent_x(self.surface.get_width()).set_var(
+                text=f"{self.weapon.normal_attack.damage} dmg")
         except AttributeError:
-            self.add_companion_entity(DamageIndicator).center_on_parent_x(self.surface.get_width()).set_var(text="1 atck")
+            self.add_companion_entity(DamageIndicator).center_on_parent_x(self.surface.get_width()).set_var(
+                text="1 atck")
 
     def on_player_move(self, player: Player):
         # last x and y for moving toward previous player tile
-        d_x = player.last_x - self.tile_x
-        d_y = player.last_y - self.tile_y
-        x, y = 0, 0
+        d_x = player.tile_x - self.tile_x
+        abs_x = abs(d_x)
+        d_y = player.tile_y - self.tile_y
+        abs_y = abs(d_y)
 
-        if abs(d_x) > abs(d_y):
-            x = copysign(1, d_x)
-        elif abs(d_x) == 0:
-            x = 0
+        x = int(copysign(1, d_x))
+        y = int(copysign(1, d_y))
 
-        if abs(d_y) > abs(d_x):
-            y = copysign(1, d_y)
-        elif abs(d_y) == 0:
-            y = 0
-
-        x, y = int(x), int(y)
-
-        tile, collider = self.tile_manager.get_tile(self.tile_x + x, self.tile_y + y)
-        # instead of returning a tile index, it returns false when the chunk is not loaded
-        if not tile:
+        if abs_x > MOVEMENT_RADIUS or abs_y > MOVEMENT_RADIUS:  # ARBITRARY VALUES: CHANGE FOR MORE/LESS DIFFICULTY
             return
 
-        if not collider:
-            self.move(x, y)
-            # print(f"moved to {self.tile_x}, {self.tile_y}")
-            return
+        """
+        movement logic:
+        1) try to move toward player on furthest axis
+        2) try to move toward player on closer axis
+        3) try to move away from player on furthest axis
+        4) try to move away from player on closest axis
+        
+        this should guarantee that an entity always moves, even if its course is blocked by walls
+        """
 
-        print("I am stuck")
+        if abs_x >= abs_y:
+            if not self.move(x, 0):
+                if not self.move(0, y):
+                    if not self.move(-x, 0):
+                        self.move(0, -y)
+        if abs_y > abs_x:
+            if not self.move(0, y):
+                if not self.move(x, 0):
+                    if not self.move(0, -y):
+                        self.move(-x, 0)
 
 
 class Dummy(Entity):
@@ -338,3 +349,18 @@ class Staircase(Entity):
 
         self.scene_manager.set_scene("win")
 
+
+class Dialogue(Entity):
+    def __init__(self, camera: Camera, screen: pygame.surface.Surface, tile_manager: TileManager, tile_size: int,
+                 dialogue_scene):
+        super().__init__(camera, screen, tile_manager, tile_size)
+        self.dialogue_scene = dialogue_scene
+        self.surface = pygame.image.load("../assets/player/wise_old_druid_or_maybe_a_potion_seller.png")
+        self.intractable = True
+
+        self.scene_manager = None
+
+    def on_interact(self, entity):
+        if not type(entity) is Player:
+            return
+        self.scene_manager.set_scene(f"{self.dialogue_scene}")

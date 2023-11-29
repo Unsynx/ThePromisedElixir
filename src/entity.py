@@ -246,5 +246,6 @@ class Staircase(Entity):
         if not type(entity) is Player:
             return
 
-        self.scene_manager.set_scene("win")
+        self.group.save()
+        self.scene_manager.set_scene("loadingScreen", True)
 

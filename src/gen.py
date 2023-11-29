@@ -8,6 +8,7 @@ from tiles import Chunk
 from chests import Chest
 from entity_group import EntityGroup
 import os
+from game import GameScene
 
 # coordinates for the player starting position
 global x
@@ -91,15 +92,19 @@ class LoadingScreen(Scene):
         self.loading_text = self.center.add_element(Text("", Text.FONT_BASE, Text.SIZE_HEADER, (255, 255, 255)))
 
         self.completion_event = None
+        self.level = 0
 
     def on_scene_start(self, new):
+        if not new:
+            self.sceneManager.set_scene("game", True)
+
+        self.level += 1
+        self.sceneManager.del_scene("game")
+        self.sceneManager.add_scene(GameScene(self.sceneManager))
         self.completion_event = threading.Event()
 
-        if new:
-            second_thread = threading.Thread(target=generate_dungeon, args=(CHUNK_SIZE, self.completion_event, self.sceneManager))
-            second_thread.start()
-        else:
-            self.sceneManager.set_scene("game", True)
+        second_thread = threading.Thread(target=generate_dungeon, args=(CHUNK_SIZE, self.completion_event, self.sceneManager,  self.level))
+        second_thread.start()
 
     def update(self, dt):
         if self.completion_event.is_set():
@@ -117,7 +122,7 @@ class LoadingScreen(Scene):
         self.guiManager.render_guidelines()
 
 
-def generate_dungeon(chunk_size, event, scene_manager):
+def generate_dungeon(chunk_size, event, scene_manager, level):
     global x
     global y
     # Delete current world

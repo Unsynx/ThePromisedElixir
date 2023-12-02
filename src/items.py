@@ -56,6 +56,9 @@ class Weapon:
         self.special_attack = special_attack
         self.normal_attack = normal_attack
 
+        self.offset_x = 0
+        self.offset_y = 0
+
     def __get__(self, instance, owner):
         return self.name
 
@@ -98,7 +101,7 @@ class Fists(Attack):
 
 class SimpleSpearWeapon(Weapon):
     def __init__(self):
-        super().__init__("", SpearNormalAttack())
+        super().__init__("../assets/weapons/sword.png", SpearNormalAttack())
 
 
 class StarReach(Range):
@@ -117,10 +120,12 @@ class BigAttack(Attack):
 
 class FunnyExplosion(Weapon):
     def __init__(self):
-        super().__init__("", BigAttack())
+        super().__init__("../assets/weapons/sword.png", BigAttack())
 
 
 class NoWeapon(Weapon):
     def __init__(self):
-        super().__init__("", Fists())
+        super().__init__("../assets/weapons/sword.png", Fists())
+        self.offset_x = 50
+
 

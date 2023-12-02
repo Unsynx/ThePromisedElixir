@@ -1,13 +1,12 @@
+import threading
+import os
+
 from scene_manager import Scene, SceneManager
 from gui import GuiManager, Guide, Text
-from tiles import CHUNK_SIZE
-import threading
-from tiles import TILE_SIZE, TILE_DATA
+from tiles import TILE_SIZE, TILE_DATA, CHUNK_SIZE
 from entity import *
-from tiles import Chunk
 from chests import Chest
 from entity_group import EntityGroup
-import os
 from game import GameScene
 
 

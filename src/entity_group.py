@@ -37,10 +37,14 @@ class EntityGroup:
         e.tile_size = self.tile_size
 
         self.entities.append(e)
+        e.on_entity_ready()
         return e
 
     def remove(self, e):
-        self.entities.remove(e)
+        try:
+            self.entities.remove(e)
+        except ValueError:
+            print(f"Tried to delete {e} from the group, but was not in list")
 
     def get_entity_at(self, x, y):
         for e in self.entities:
@@ -75,9 +79,11 @@ class EntityGroup:
                 os.remove(os.path.join(dir_name, item))
 
         for i, e in enumerate(self.entities):
+            if e.ignore:
+                continue
+
             data = {}
             for var in e.serialized_vars:
-                # print(f"saved '{var}' as {e.serialized_vars[var]()}")
                 data[var] = e.serialized_vars[var]()
 
             with open(f"../assets/saves/entity_{i}.json", "x") as f:

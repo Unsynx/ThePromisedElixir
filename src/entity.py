@@ -86,6 +86,21 @@ class Follower(Entity):
         self.y = self.target.y + self.offset_y
 
 
+class HealthBar(Follower):
+    def __init__(self, target):
+        super().__init__(target)
+        self.offset_y = -10
+        self.offset_x = 14
+
+        self.surface = pygame.surface.Surface((100, 10))
+        self.redraw()
+
+    def redraw(self):
+        self.surface.fill((0, 0, 0))
+        pygame.draw.rect(self.surface, (217, 33, 45),
+                         (0, 0, int(128 * self.target.health / self.target.max_health), 10))
+
+
 class WeaponVisual(Follower):
     def __init__(self, target: Entity, weapon: Weapon):
         super().__init__(target)
@@ -98,9 +113,11 @@ class MobileEntity(Entity):
     def __init__(self):
         super().__init__()
 
+        self.max_health = None
         self.health = None
         self.weapon = NoWeapon()
         self.weapon_visual = None
+        self.health_bar = None
 
         self.animation_x = None
         self.animation_y = None
@@ -110,6 +127,7 @@ class MobileEntity(Entity):
 
     def on_entity_ready(self):
         self.set_weapon(self.weapon)
+        self.health_bar = self.group.add_entity(HealthBar, self)
 
     def load(self, name: str, value):
         if name == "weapon":
@@ -152,12 +170,14 @@ class MobileEntity(Entity):
             return
 
         self.health -= damage
+        self.health_bar.redraw()
 
         if self.health <= 0:
             self.on_death()
 
     def on_death(self):
         self.group.remove(self.weapon_visual)
+        self.group.remove(self.health_bar)
         self.group.remove(self)
 
     def attack_logic(self, enemy, x, y):
@@ -244,6 +264,7 @@ class Enemy(MobileEntity):
     def __init__(self):
         super().__init__()
         self.health = 5
+        self.max_health = self.health
 
         self.surface = pygame.image.load("../assets/player/baddy.png")
 

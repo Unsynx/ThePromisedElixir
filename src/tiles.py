@@ -7,6 +7,34 @@ CHUNK_SIZE = 4
 TILE_SIZE = 128
 
 
+class Tile:
+    count = -1
+
+    def __init__(self, name: str, path, collision: bool):
+        self.count += 1
+
+        self.id = self.count
+        self.name = name
+        self.collider = collision
+
+        if path is None:
+            self.image = pygame.surface.Surface((0, 0))
+        else:
+            self.image = pygame.image.load(path)
+
+
+TILE_DATA = [
+        Tile("air", None, True),
+        Tile("ground", "../assets/tiles/ground.png", False),
+        Tile("start", "../assets/tiles/start_tile.png", False),
+        Tile("wall_c", "../assets/tiles/wall.png", False),
+        Tile("wall_s", "../assets/tiles/wall_s.png", False),
+        Tile("wall_l", "../assets/tiles/wall_l.png", False),
+        Tile("wall_r", "../assets/tiles/wall_r.png", False),
+        Tile("wall_top", "../assets/tiles/walltop.png", True),
+    ]
+
+
 class Camera:
     ARROW_CONTROLS = 0
     CENTER_FIRST_ENTITY = 1
@@ -141,29 +169,11 @@ class TileManager:
         tile = self.chunks[self.chunk_positions.index([chunk_x, chunk_y])].get_tile(
             x % self.chunk_size, y % self.chunk_size)
 
-        return tile, Chunk.tile_data[tile].collider
-
-
-class Tile:
-    def __init__(self, num: int, path, collider: bool):
-        self.name = num
-        self.collider = collider
-        if path is None:
-            self.image = pygame.surface.Surface((0, 0))
-        else:
-            self.image = pygame.image.load(path)
+        return tile, TILE_DATA[tile].collider
 
 
 # Define tiles here
 class Chunk:
-    tile_data = [
-        Tile(0, None, True),
-        Tile(1, "../assets/tiles/ground.png", False),
-        Tile(2, "../assets/tiles/start_tile.png", False),
-        Tile(3, "../assets/tiles/wall.png", False),
-        Tile(4, "../assets/tiles/walltop.png", True)
-    ]
-
     def __init__(self, x: int, y: int, size: int, tile_size: int):
         self.x = x
         self.y = y
@@ -194,7 +204,7 @@ class Chunk:
 
         for x in range(self.size):
             for y in range(self.size):
-                tile = self.tile_data[self.tiles[y][x]].image
+                tile = TILE_DATA[self.tiles[y][x]].image
                 self.surface.blit(tile, (x * self.tile_size, y * self.tile_size))
 
     def get_tile(self, x, y):

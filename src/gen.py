@@ -2,17 +2,13 @@ from scene_manager import Scene, SceneManager
 from gui import GuiManager, Guide, Text
 from tiles import CHUNK_SIZE
 import threading
-from tiles import TILE_SIZE
+from tiles import TILE_SIZE, TILE_DATA
 from entity import *
 from tiles import Chunk
 from chests import Chest
 from entity_group import EntityGroup
 import os
 from game import GameScene
-
-# coordinates for the player_only starting position
-global x
-global y
 
 
 class DrunkGeneration:
@@ -77,7 +73,7 @@ class DrunkGeneration:
             for tile_x in range(len(self.level[tile_y])):
                 if tile_y != len(self.level) - 1:
                     if self.level[tile_y][tile_x] == 0 and self.level[tile_y + 1][tile_x]:
-                        self.level[tile_y][tile_x] = 4
+                        self.level[tile_y][tile_x] = 7
                         self.level[tile_y + 1][tile_x] = 3
 
 
@@ -118,8 +114,6 @@ class LoadingScreen(Scene):
 
 
 def generate_dungeon(chunk_size, event, level):
-    global x
-    global y
     # Delete current world
     dir_name = "../assets/world"
     for item in os.listdir(dir_name):
@@ -145,7 +139,7 @@ def generate_dungeon(chunk_size, event, level):
     while True:
         r_x = randint(0, width * chunk_size - 1)
         r_y = randint(0, height * chunk_size - 1)
-        if not Chunk.tile_data[world[r_y][r_x]].collider:
+        if not TILE_DATA[world[r_y][r_x]].collider:
             group.add_entity(Staircase).set_position(r_x, r_y)
             break
 
@@ -153,7 +147,7 @@ def generate_dungeon(chunk_size, event, level):
     while i < 10:
         r_x = randint(0, width * chunk_size - 1)
         r_y = randint(0, height * chunk_size - 1)
-        if not Chunk.tile_data[world[r_y][r_x]].collider:
+        if not TILE_DATA[world[r_y][r_x]].collider:
             group.add_entity(Chest).set_position(r_x, r_y)
             i += 1
 
@@ -161,7 +155,7 @@ def generate_dungeon(chunk_size, event, level):
     while i < 10:
         r_x = randint(0, width * chunk_size - 1)
         r_y = randint(0, height * chunk_size - 1)
-        if not Chunk.tile_data[world[r_y][r_x]].collider:
+        if not TILE_DATA[world[r_y][r_x]].collider:
             group.add_entity(Enemy).set_position(r_x, r_y)
             i += 1
 

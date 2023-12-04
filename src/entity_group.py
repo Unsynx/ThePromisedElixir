@@ -6,14 +6,16 @@ import json
 import sys
 from entity import *
 from chests import Chest
+from particles import ParticleManager
 
 
 class EntityGroup:
-    def __init__(self, camera: Camera, screen: pygame.surface.Surface, tile_manager: TileManager, scene_manager: SceneManager, tile_size: int):
+    def __init__(self, camera: Camera, screen: pygame.surface.Surface, tile_manager: TileManager, scene_manager: SceneManager, particle_manager: ParticleManager, tile_size: int):
         self.camera = camera
         self.screen = screen
         self.tile_manager = tile_manager
         self.scene_manager = scene_manager
+        self.particle_manager = particle_manager
         self.tile_size = tile_size
 
         self.entities = []
@@ -34,6 +36,7 @@ class EntityGroup:
         e.screen = self.screen
         e.tile_manager = self.tile_manager
         e.scene_manager = self.scene_manager
+        e.particle_manager = self.particle_manager
         e.tile_size = self.tile_size
 
         self.entities.append(e)

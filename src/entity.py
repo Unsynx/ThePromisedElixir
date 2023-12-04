@@ -6,6 +6,7 @@ from constants import *
 from tween import Tween
 import sys
 from items import *
+from particles import HitEffect
 
 MOVEMENT_RADIUS = 3
 
@@ -17,6 +18,7 @@ class Entity:
         self.screen = None
         self.tile_manager = None
         self.scene_manager = None
+        self.particle_manager = None
         self.tile_size = None
         self.group = None
         self.type = type(self).__name__

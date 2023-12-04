@@ -4,6 +4,7 @@ from gui import GuiManager, Guide, Text, Button, ProgressBar
 import pygame
 from entity import Player
 from entity_group import EntityGroup
+from particles import ParticleManager
 
 
 # This is where the main gameplay will go
@@ -29,9 +30,10 @@ class GameScene(Scene):
         self.camera = Camera(self.screen.get_size(), TILE_SIZE, None)
         self.camera.mode = Camera.CENTER_FIRST_ENTITY_SMOOTH
         self.tileManager = TileManager(self.screen, TILE_SIZE, CHUNK_SIZE, self.camera)
+        self.particleManager = ParticleManager(self.screen, self.camera)
 
         # -------------- Entities and Player -------------- #
-        self.group = EntityGroup(self.camera, self.screen, self.tileManager, self.sceneManager, TILE_SIZE)
+        self.group = EntityGroup(self.camera, self.screen, self.tileManager, self.sceneManager, self.particleManager, TILE_SIZE)
         self.camera.entity_group = self.group
         self.player = None
 
@@ -107,6 +109,8 @@ class GameScene(Scene):
                 self.weapon_attack.set_value(f"{self.player.weapon.name} - {self.player.weapon.normal_attack.damage}dmg")
             except AttributeError:
                 self.weapon_attack.set_value("Hands - 1dmg")
+
+        self.particleManager.render()
 
     def render(self, screen: pygame.Surface):
         screen.fill((50, 60, 57))

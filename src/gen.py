@@ -128,7 +128,7 @@ def generate_dungeon(chunk_size, event, level):
     dungeon.set_wall_top_tiles()
     world = dungeon.level
 
-    group = EntityGroup(None, None, None, None, TILE_SIZE)
+    group = EntityGroup(None, None, None, None, None, TILE_SIZE)
     if level == 1:
         group.add_entity(Player).set_position(x, y)
     else:

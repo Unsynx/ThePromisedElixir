@@ -173,7 +173,7 @@ class MobileEntity(Entity):
 
         self.health -= damage
         self.health_bar.redraw()
-        # self.particle_manager.add_system(HitEffect(self.x + 64, self.y + 64))
+        self.particle_manager.add_system(HitEffect(self.x + 64, self.y + 64))
 
         if self.health <= 0:
             self.on_death()

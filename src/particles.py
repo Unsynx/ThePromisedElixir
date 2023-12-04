@@ -13,6 +13,7 @@ class ParticleSystem:
         self.vel_y = []
         self.lifetime = []
 
+        self.manager = None
         self.screen = None
         self.camera = None
 
@@ -31,24 +32,29 @@ class ParticleSystem:
         self.lifetime.pop(index)
 
     def update(self):
+        if len(self.particle_x) == 0:
+            self.manager.remove_system(self)
+            print("deleted system")
+            return
+
         for i in range(len(self.particle_x)):
-            try:
-                if self.lifetime[i] < time.time():
-                    self.delete_particle(i)
-                    i -= 1
-                    continue
-                self.tick(i)
-                print(f"p: {self.particle_x[i] - self.camera.rel_x, self.particle_y[i] - self.camera.rel_y}")
-                self.screen.blit(self.image, (int(self.particle_x[i]) - self.camera.rel_x,
-                                              int(self.particle_y[i]) - self.camera.rel_y))
-            except IndexError:
-                return
+            self.tick(i)
+            print(f"Particle drawn at {int(self.particle_x[i]) - self.camera.rel_x, int(self.particle_y[i]) - self.camera.rel_y}")
+            self.screen.blit(self.image, (int(self.particle_x[i]) - self.camera.rel_x,
+                                          int(self.particle_y[i]) - self.camera.rel_y))
+
+        for i in range(len(self.particle_x)):
+            if self.lifetime[i] < time.time():
+                self.delete_particle(i)
+                i -= 1
+                if i < 0:
+                    return
 
     def tick(self, index):
         self.particle_x[index] = self.particle_x[index] + self.vel_x[index]
-        self.vel_x[index] = self.vel_x[index] * 0.9
+        self.vel_x[index] = self.vel_x[index] * 0.95
         self.particle_y[index] = self.particle_y[index] + self.vel_y[index]
-        self.vel_x[index] = self.vel_x[index] * 0.9
+        self.vel_y[index] = self.vel_y[index] * 0.95
 
 
 class ParticleManager:
@@ -58,19 +64,14 @@ class ParticleManager:
         self.camera = camera
 
     def render(self):
-        i = 0
-        while i < len(self.systems):
-            if len(self.systems[i].particle_x) == 0:
-                self.remove_system(self.systems[i])
-                i -= 1
-                continue
-            self.systems[i].update()
-            print(f"updated {i}")
+        for p in self.systems:
+            p.update()
 
     def add_system(self, system: ParticleSystem):
         self.systems.append(system)
         system.screen = self.screen
         system.camera = self.camera
+        system.manager = self
 
     def remove_system(self, system: ParticleSystem):
         self.systems.remove(system)
@@ -78,7 +79,7 @@ class ParticleManager:
 
 class HitEffect(ParticleSystem):
     def __init__(self, x, y):
-        super().__init__("../assets/tiles/stairs.png")
+        super().__init__("../assets/tiles/start_tile.png")
 
         for _ in range(10):
-            self.add_particle(x, y, 0.1, 0.1, 3)
+            self.add_particle(x, y, random.randint(-10, 10), random.randint(-10, 10), 3)

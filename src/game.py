@@ -110,10 +110,9 @@ class GameScene(Scene):
             except AttributeError:
                 self.weapon_attack.set_value("Hands - 1dmg")
 
-        self.particleManager.render()
-
     def render(self, screen: pygame.Surface):
         screen.fill((50, 60, 57))
         self.tileManager.render()
         self.group.render()
         self.guiManager.render_guidelines()
+        self.particleManager.render()

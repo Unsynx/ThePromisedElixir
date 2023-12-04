@@ -134,6 +134,7 @@ class MobileEntity(Entity):
     def load(self, name: str, value):
         if name == "weapon":
             value = getattr(sys.modules[__name__], value)()
+            self.set_weapon(value)
         setattr(self, name, value)
 
     def move(self, x, y):

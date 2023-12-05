@@ -61,6 +61,11 @@ class EntityGroup:
                 return e
         return None
 
+    def get_entity(self, t: object):
+        for e in self.entities:
+            if type(e) == t:
+                return e
+
     def on_player_move(self, player):
         for e in self.entities:
             e.on_player_move(player)

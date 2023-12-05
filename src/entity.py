@@ -9,6 +9,7 @@ from items import *
 from particles import HitEffect
 
 MOVEMENT_RADIUS = 3
+PLAYER_MOVEMENT_DELAY = 0.1
 
 
 class Entity:
@@ -243,9 +244,14 @@ class Player(MobileEntity):
         self.recent_input_x = False
         self.recent_input_y = False
 
+        self.can_move = True
+
         self.surface = pygame.image.load("../assets/player/frog3.png")
 
     def input(self, pressed):
+        if not self.can_move:
+            return
+
         moved = False
 
         self.input_x = pressed[pygame.K_RIGHT] - pressed[pygame.K_LEFT]
@@ -272,7 +278,11 @@ class Player(MobileEntity):
             self.recent_input_y = True
 
         if moved:
-            self.group.on_player_move(self)
+            self.group.add_to_queue(self.group.on_player_move, PLAYER_MOVEMENT_DELAY, self)
+            self.can_move = False
+
+    def on_player_move(self, player):
+        self.can_move = True
 
 
 class Enemy(MobileEntity):

@@ -6,6 +6,9 @@ R_STAR = [[0, 0, 1, 0],
           [2, 1, 1, 1],
           [0, 0, 1, 0]]
 R_DOUBLE = [[2, 1, 1]]
+R_SWIRL = [[1, 1, 1],
+          [1, 2, 1],
+          [1, 1, 1]]
 
 
 class Weapon:
@@ -95,3 +98,7 @@ class NoWeapon(Weapon):
         self.offset_x = 50
 
 
+class FireKnife(Weapon):
+    def __init__(self):
+        super().__init__("../assets/weapons/flaming_knife.png", 3, R_SWIRL)
+        self.offset_x = 50

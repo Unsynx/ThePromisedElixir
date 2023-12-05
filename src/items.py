@@ -1,13 +1,28 @@
 import constants as c
 
 
-class Range:
+R_FRONT = [[2, 1]]
+R_STAR = [[0, 0, 1, 0],
+          [2, 1, 1, 1],
+          [0, 0, 1, 0]]
+R_DOUBLE = [[2, 1, 1]]
+
+
+class Weapon:
     ATTACK = 1
     CENTER = 2
 
-    def __init__(self, pattern):
+    def __init__(self, icon_path: str, damage: int, pattern):
+        self.name = type(self).__name__
+        self.icon_path = icon_path
+        self.damage = damage
         self.pattern = pattern
         self.center_x, self.center_y = self.get_pattern_center()
+
+        self.offset_x = 0
+        self.offset_y = 0
+
+        self.effect_excluded = []
 
     def get_pattern_center(self):
         for y in range(len(self.pattern)):
@@ -41,93 +56,42 @@ class Range:
 
         return enemies, not_hit_positions
 
-
-class Attack:
-    def __init__(self, damage: int, attack_range: Range, effect=None):
-        self.damage = damage
-        self.attack_range = attack_range
-        self.effect = effect
-
-
-class Weapon:
-    def __init__(self, icon_path: str, normal_attack: Attack, special_attack=None):
-        self.name = type(self).__name__
-        self.icon_path = icon_path
-        self.special_attack = special_attack
-        self.normal_attack = normal_attack
-
-        self.offset_x = 0
-        self.offset_y = 0
-
-    def __get__(self, instance, owner):
-        return self.name
-
     def for_non_hit(self, not_hit_positions, group):
         pass
 
-    def attack(self, player_x, player_y, attack_dir, group):
-        hit_enemies, not_hit_positions = self.normal_attack.attack_range.get_hit_enemies(player_x, player_y, attack_dir, group)
+    def attack(self, player_x, player_y, attack_dir, group, target):
+        hit_enemies, not_hit_positions = self.get_hit_enemies(player_x, player_y, attack_dir, group)
 
         for e in hit_enemies:
             if not e.intractable:
-                e.attack(self.normal_attack.damage)
+                e.attack(self.damage)
 
-        self.for_non_hit(not_hit_positions, group)
-
-
-class DoubleReach(Range):
-    def __init__(self):
-        super().__init__([
-            [2, 1, 1]
-        ])
-
-
-class NormalReach(Range):
-    def __init__(self):
-        super().__init__([
-            [2, 1]
-        ])
-
-
-class SpearNormalAttack(Attack):
-    def __init__(self):
-        super().__init__(2, DoubleReach())
-
-
-class Fists(Attack):
-    def __init__(self):
-        super().__init__(1, NormalReach())
+        if type(target) not in self.effect_excluded:
+            self.for_non_hit(not_hit_positions, group)
 
 
 class SimpleSpearWeapon(Weapon):
     def __init__(self):
-        super().__init__("../assets/weapons/spear.png", SpearNormalAttack())
+        super().__init__("../assets/weapons/spear.png", 2, R_DOUBLE)
         self.offset_x = 25
 
 
-class StarReach(Range):
+class IceWand(Weapon):
     def __init__(self):
-        super().__init__([
-            [0, 0, 1, 0],
-            [2, 1, 1, 1],
-            [0, 0, 1, 0]
-        ])
-
-
-class BigAttack(Attack):
-    def __init__(self):
-        super().__init__(5, StarReach())
-
-
-class FunnyExplosion(Weapon):
-    def __init__(self):
-        super().__init__("../assets/weapons/miles_mighty_sword.png", BigAttack())
+        super().__init__("../assets/weapons/ice_staff.png", 5, R_STAR)
+        from entity import IceCube
+        self.effect_excluded.append(IceCube)
         self.offset_x = 50
+
+    def for_non_hit(self, not_hit_positions, group):
+        from entity import IceCube
+        for pos in not_hit_positions:
+            group.add_entity(IceCube).set_position(pos[0], pos[1])
 
 
 class NoWeapon(Weapon):
     def __init__(self):
-        super().__init__("../assets/weapons/sword.png", Fists())
+        super().__init__("../assets/weapons/sword.png", 1, R_FRONT)
         self.offset_x = 50
 
 

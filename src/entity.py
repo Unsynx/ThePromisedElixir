@@ -27,6 +27,7 @@ class Entity:
 
         self.serialized_vars = {}
         self.ignore = False
+        self.health = None
 
         self.x = 0
         self.y = 0
@@ -72,6 +73,16 @@ class Entity:
 
     def update(self, dt):
         pass
+
+    def attack(self, damage):
+        if self.health is None:
+            return
+
+        self.health -= damage
+        self.particle_manager.add_system(HitEffect(self.x + 64, self.y + 64, damage))
+
+        if self.health <= 0:
+            self.on_death()
 
 
 class Follower(Entity):
@@ -168,21 +179,21 @@ class MobileEntity(Entity):
 
         return False
 
+    def on_death(self):
+        self.group.remove(self.weapon_visual)
+        self.group.remove(self.health_bar)
+        self.group.remove(self)
+
     def attack(self, damage):
         if self.health is None:
             return
 
         self.health -= damage
         self.health_bar.redraw()
-        self.particle_manager.add_system(HitEffect(self.x + 64, self.y + 64))
+        self.particle_manager.add_system(HitEffect(self.x + 64, self.y + 64, damage))
 
         if self.health <= 0:
             self.on_death()
-
-    def on_death(self):
-        self.group.remove(self.weapon_visual)
-        self.group.remove(self.health_bar)
-        self.group.remove(self)
 
     def attack_logic(self, enemy, x, y):
         if self.weapon is None:
@@ -200,7 +211,7 @@ class MobileEntity(Entity):
         else:
             raise "Not a valid attack"
 
-        self.weapon.attack(self.tile_x, self.tile_y, direction, self.group)
+        self.weapon.attack(self.tile_x, self.tile_y, direction, self.group, enemy)
 
     def update(self, dt):
         if self.animation_x is not None:
@@ -343,3 +354,13 @@ class Dialogue(Entity):
         if not type(entity) is Player:
             return
         self.scene_manager.set_scene(f"{self.dialogue_scene}")
+
+
+class IceCube(Entity):
+    def __init__(self):
+        super().__init__()
+        self.surface = pygame.image.load("../assets/weapons/icecube.png")
+        self.health = 1
+
+    def on_player_move(self, player):
+        pass

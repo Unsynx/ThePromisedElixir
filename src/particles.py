@@ -2,11 +2,12 @@ import random
 
 import pygame
 import time
+from gui import Text
 
 
 class ParticleSystem:
-    def __init__(self, image_path):
-        self.image = pygame.image.load(image_path)
+    def __init__(self, image: pygame.Surface):
+        self.image = image
         self.particle_x = []
         self.particle_y = []
         self.vel_x = []
@@ -78,8 +79,9 @@ class ParticleManager:
 
 
 class HitEffect(ParticleSystem):
-    def __init__(self, x, y):
-        super().__init__("../assets/tiles/start_tile.png")
+    def __init__(self, x, y, damage):
+        t = Text(f"-{damage}hp", Text.FONT_BASE, 48, (255, 255, 255))
+        super().__init__(t.surface)
 
-        for _ in range(10):
-            self.add_particle(x, y, random.randint(-10, 10), random.randint(-10, 10), 3)
+        for _ in range(1):
+            self.add_particle(x, y, random.randint(-5, 5), random.randint(-5, 5), 1)

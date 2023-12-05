@@ -3,7 +3,7 @@ from gui import *
 from entity import Entity, Player
 import pygame.surface
 from tiles import Camera, TileManager
-from items import SimpleSpearWeapon, IceWand, FireKnife
+from items import SimpleSpearWeapon, IceWand, FireKnife, MilesMuke
 from random import choice
 
 
@@ -57,7 +57,8 @@ class Chest(Entity):
         weapons = (
             SimpleSpearWeapon,
             IceWand,
-            FireKnife
+            FireKnife,
+            MilesMuke
         )
 
         self.scene_manager.set_scene("chest", choice(weapons)(), entity)

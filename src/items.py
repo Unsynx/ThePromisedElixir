@@ -9,6 +9,13 @@ R_DOUBLE = [[2, 1, 1]]
 R_SWIRL = [[1, 1, 1],
           [1, 2, 1],
           [1, 1, 1]]
+R_MUKE = [[0, 0, 1, 1, 1, 0, 0],
+          [0, 1, 1, 1, 1, 1, 0],
+          [1, 1, 1, 1, 1, 1, 1],
+          [1, 1, 1, 2, 1, 1, 1],
+          [1, 1, 1, 1, 1, 1, 1],
+          [0, 1, 1, 1, 1, 1, 0],
+          [0, 0, 1, 1, 1, 0, 0]]
 
 
 class Weapon:
@@ -33,6 +40,7 @@ class Weapon:
                 if self.pattern[y][x] == self.CENTER:
                     return x, y
 
+    # todo: Attack rotation is not working for some reason
     def get_hit_enemies(self, player_x, player_y, attack_dir, group):
         hit_positions = []
         for y in range(len(self.pattern)):
@@ -102,3 +110,17 @@ class FireKnife(Weapon):
     def __init__(self):
         super().__init__("../assets/weapons/flaming_knife.png", 3, R_SWIRL)
         self.offset_x = 50
+
+
+class MilesMuke(Weapon):
+    def __init__(self):
+        super().__init__("../assets/weapons/MassiveMuke.png", 100, R_MUKE)
+        from entity import IceCube
+        self.effect_excluded.append(IceCube)
+        self.offset_y = -100
+        self.offset_x = -10
+
+    def for_non_hit(self, not_hit_positions, group):
+        from entity import IceCube
+        for pos in not_hit_positions:
+            group.add_entity(IceCube).set_position(pos[0], pos[1])

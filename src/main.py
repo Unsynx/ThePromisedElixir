@@ -37,7 +37,7 @@ winScene = TempWinScreen(sceneManager)
 loseScene = TempLoseScreen(sceneManager)
 chestScene = ChestScreen(sceneManager)
 
-sceneManager.set_scene(splashScreen)
+sceneManager.set_scene(loadingScene, True)
 
 
 # ---------------- Main Loop ---------------- #

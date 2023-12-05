@@ -6,6 +6,7 @@ from constants import *
 from tween import Tween
 import sys
 from items import *
+from particles import HitEffect
 
 MOVEMENT_RADIUS = 3
 
@@ -17,6 +18,7 @@ class Entity:
         self.screen = None
         self.tile_manager = None
         self.scene_manager = None
+        self.particle_manager = None
         self.tile_size = None
         self.group = None
         self.type = type(self).__name__
@@ -24,6 +26,8 @@ class Entity:
         self.intractable = False
 
         self.serialized_vars = {}
+        self.ignore = False
+        self.health = None
 
         self.x = 0
         self.y = 0
@@ -43,6 +47,9 @@ class Entity:
     def load(self, name: str, value):
         setattr(self, name, value)
 
+    def on_entity_ready(self):
+        pass
+
     def set_position(self, tile_x, tile_y):
         self.tile_x = tile_x
         self.tile_y = tile_y
@@ -56,8 +63,7 @@ class Entity:
         pass
 
     def on_death(self):
-        print("Entity Dead")
-        self.group.entities.pop(self.group.entities.index(self))
+        self.group.remove(self)
 
     def input(self, pressed):
         pass
@@ -68,13 +74,63 @@ class Entity:
     def update(self, dt):
         pass
 
+    def attack(self, damage):
+        if self.health is None:
+            return
+
+        self.health -= damage
+        self.particle_manager.add_system(HitEffect(self.x + 64, self.y + 64, damage))
+
+        if self.health <= 0:
+            self.on_death()
+
+
+class Follower(Entity):
+    def __init__(self, target: Entity):
+        super().__init__()
+        self.target = target
+        self.ignore = True
+
+        self.offset_x = 0
+        self.offset_y = 0
+
+    def update(self, dt):
+        self.x = self.target.x + self.offset_x
+        self.y = self.target.y + self.offset_y
+
+
+class HealthBar(Follower):
+    def __init__(self, target):
+        super().__init__(target)
+        self.offset_y = -10
+        self.offset_x = 14
+
+        self.surface = pygame.surface.Surface((100, 10))
+        self.redraw()
+
+    def redraw(self):
+        self.surface.fill((0, 0, 0))
+        pygame.draw.rect(self.surface, (217, 33, 45),
+                         (0, 0, int(128 * self.target.health / self.target.max_health), 10))
+
+
+class WeaponVisual(Follower):
+    def __init__(self, target: Entity, weapon: Weapon):
+        super().__init__(target)
+        self.surface = pygame.image.load(weapon.icon_path)
+        self.offset_x = weapon.offset_x
+        self.offset_y = weapon.offset_y
+
 
 class MobileEntity(Entity):
     def __init__(self):
         super().__init__()
 
+        self.max_health = None
         self.health = None
         self.weapon = NoWeapon()
+        self.weapon_visual = None
+        self.health_bar = None
 
         self.animation_x = None
         self.animation_y = None
@@ -82,9 +138,14 @@ class MobileEntity(Entity):
         self.serialize("health", lambda: self.health)\
             .serialize("weapon", lambda: self.weapon.name)
 
+    def on_entity_ready(self):
+        self.set_weapon(self.weapon)
+        self.health_bar = self.group.add_entity(HealthBar, self)
+
     def load(self, name: str, value):
         if name == "weapon":
             value = getattr(sys.modules[__name__], value)()
+            self.set_weapon(value)
         setattr(self, name, value)
 
     def move(self, x, y):
@@ -118,11 +179,18 @@ class MobileEntity(Entity):
 
         return False
 
+    def on_death(self):
+        self.group.remove(self.weapon_visual)
+        self.group.remove(self.health_bar)
+        self.group.remove(self)
+
     def attack(self, damage):
         if self.health is None:
             return
 
         self.health -= damage
+        self.health_bar.redraw()
+        self.particle_manager.add_system(HitEffect(self.x + 64, self.y + 64, damage))
 
         if self.health <= 0:
             self.on_death()
@@ -143,7 +211,7 @@ class MobileEntity(Entity):
         else:
             raise "Not a valid attack"
 
-        self.weapon.attack(self.tile_x, self.tile_y, direction, self.group)
+        self.weapon.attack(self.tile_x, self.tile_y, direction, self.group, enemy)
 
     def update(self, dt):
         if self.animation_x is not None:
@@ -155,6 +223,8 @@ class MobileEntity(Entity):
 
     def set_weapon(self, weapon):
         self.weapon = weapon
+        self.group.remove(self.weapon_visual)
+        self.weapon_visual = self.group.add_entity(WeaponVisual, self, self.weapon)
 
 
 class Player(MobileEntity):
@@ -209,6 +279,7 @@ class Enemy(MobileEntity):
     def __init__(self):
         super().__init__()
         self.health = 5
+        self.max_health = self.health
 
         self.surface = pygame.image.load("../assets/player/baddy.png")
 
@@ -283,3 +354,13 @@ class Dialogue(Entity):
         if not type(entity) is Player:
             return
         self.scene_manager.set_scene(f"{self.dialogue_scene}")
+
+
+class IceCube(Entity):
+    def __init__(self):
+        super().__init__()
+        self.surface = pygame.image.load("../assets/weapons/icecube.png")
+        self.health = 1
+
+    def on_player_move(self, player):
+        pass

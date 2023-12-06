@@ -45,8 +45,11 @@ TILE_DATA = [
         Tile("wall_back_left", "../assets/tiles/back/tile_5.png", True),
         Tile("wall_back_left_corner", "../assets/tiles/back/tile_2.png", True),
         Tile("wall_back_right_corner", "../assets/tiles/back/tile_1.png", True),
-        Tile("wall_back_cap", "../assets/tiles/back/wall_back.png", True)
-    ] # 21
+        Tile("wall_back_cap", "../assets/tiles/back/wall_back.png", True),
+        Tile("ground2", "../assets/tiles/ground2.png", False),
+        Tile("ground3", "../assets/tiles/ground3.png", False),
+
+    ] # 23
 
 
 class Camera:

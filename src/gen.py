@@ -137,7 +137,14 @@ class DrunkGeneration:
                         case (1, 0, 1, 1):
                            # Back cap
                             duplicate[y][x] = 21
-
+        """
+        for y in range(len(self.level)):
+            for x in range(len(self.level[y])):
+                if randint(0, 8) == 1 & duplicate[y][x] == 1:
+                    if randint(0, 5) == 0:
+                        duplicate[y][x] = 23
+                    else:
+                        duplicate[y][x] = 22"""
 
         self.level = duplicate
 

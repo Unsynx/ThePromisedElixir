@@ -231,7 +231,7 @@ class MobileEntity(Entity):
 class Player(MobileEntity):
     def __init__(self):
         super().__init__()
-        self.health = 10
+        self.health = 100
         self.max_health = self.health
 
         self.input_x = 0
@@ -350,22 +350,6 @@ class Staircase(Entity):
 
         self.group.save()
         self.scene_manager.set_scene("loadingScreen", True)
-
-
-class Dialogue(Entity):
-    def __init__(self, camera: Camera, screen: pygame.surface.Surface, tile_manager: TileManager, tile_size: int,
-                 dialogue_scene):
-        super().__init__(camera, screen, tile_manager, tile_size)
-        self.dialogue_scene = dialogue_scene
-        self.surface = pygame.image.load("../assets/player/wise_old_druid_or_maybe_a_potion_seller.png")
-        self.intractable = True
-
-        self.scene_manager = None
-
-    def on_interact(self, entity):
-        if not type(entity) is Player:
-            return
-        self.scene_manager.set_scene(f"{self.dialogue_scene}")
 
 
 class IceCube(Entity):

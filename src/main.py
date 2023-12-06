@@ -6,6 +6,7 @@ from menu import *
 from game import GameScene
 from gen import LoadingScreen
 from chests import ChestScreen
+from dialogue import DialogueScene1
 
 
 # ---------------- Setup ---------------- #
@@ -36,6 +37,7 @@ loadingScene = LoadingScreen(sceneManager)
 winScene = TempWinScreen(sceneManager)
 loseScene = TempLoseScreen(sceneManager)
 chestScene = ChestScreen(sceneManager)
+dialogueScene1 = DialogueScene1(sceneManager)
 
 # sceneManager.set_scene(loadingScene, True)
 sceneManager.set_scene("splashScreen")

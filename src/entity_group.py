@@ -8,6 +8,7 @@ import json
 import sys
 from entity import *
 from chests import Chest
+from dialogue import Dialogue
 from particles import ParticleManager
 
 

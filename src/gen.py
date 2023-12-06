@@ -6,6 +6,7 @@ from gui import GuiManager, Guide, Text
 from tiles import TILE_SIZE, TILE_DATA, CHUNK_SIZE
 from entity import *
 from chests import Chest
+from dialogue import Dialogue
 from entity_group import EntityGroup
 from game import GameScene
 
@@ -157,6 +158,15 @@ def generate_dungeon(chunk_size, event, level):
         if not TILE_DATA[world[r_y][r_x]].collider:
             group.add_entity(Enemy).set_position(r_x, r_y)
             i += 1
+
+    spawned = False
+    while not spawned:
+        r_x = randint(0, width * chunk_size - 1)
+        r_y = randint(0, height * chunk_size - 1)
+        if not TILE_DATA[world[r_y][r_x]].collider:
+            group.add_entity(Dialogue).set_dialogue_number(1).set_position(r_x, r_y)
+            print(f"added dialogue at {r_x}, {r_y}")
+            spawned = True
 
     group.save()
 

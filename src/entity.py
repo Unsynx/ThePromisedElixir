@@ -234,6 +234,8 @@ class Player(MobileEntity):
         self.health = 10
         self.max_health = self.health
 
+        self.weapon = MilesMuke()
+
         self.input_x = 0
         self.input_y = 0
 

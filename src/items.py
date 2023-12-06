@@ -42,19 +42,20 @@ class Weapon:
 
     # todo: Attack rotation is not working for some reason
     def get_hit_enemies(self, player_x, player_y, attack_dir, group):
+        print(self.center_x, self.center_y)
         hit_positions = []
         for y in range(len(self.pattern)):
             for x in range(len(self.pattern[0])):
                 if self.pattern[y][x] == self.ATTACK:
                     match attack_dir:
                         case c.RIGHT:
-                            hit_positions.append([self.center_x + x, self.center_y - y])
+                            hit_positions.append([x - self.center_x, self.center_y - y])
                         case c.LEFT:
                             hit_positions.append([self.center_x - x, self.center_y - y])
                         case c.UP:
                             hit_positions.append([self.center_y - y, self.center_x - x])
                         case c.DOWN:
-                            hit_positions.append([self.center_y - y, self.center_x + x])
+                            hit_positions.append([self.center_y - y, x - self.center_x])
 
         enemies = []
         not_hit_positions = []

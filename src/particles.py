@@ -40,7 +40,6 @@ class ParticleSystem:
 
         for i in range(len(self.particle_x)):
             self.tick(i)
-            print(f"Particle drawn at {int(self.particle_x[i]) - self.camera.rel_x, int(self.particle_y[i]) - self.camera.rel_y}")
             self.screen.blit(self.image, (int(self.particle_x[i]) - self.camera.rel_x,
                                           int(self.particle_y[i]) - self.camera.rel_y))
 

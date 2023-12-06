@@ -93,7 +93,6 @@ class Guide:
 
         self.hide = False
 
-    # todo: make it that you can delete elements
     def add_element(self, e: GuiElement) -> GuiElement:
         """
         Adds an element to be rendered to the Guide

@@ -13,6 +13,7 @@ class GameScene(Scene):
         super().__init__(manager, "game")
 
         self.guiManager = GuiManager(self.screen)
+        self.player_alive = True
 
         # -------------- Debug GUI -------------- #
         self.debug = self.guiManager.add_guideline(
@@ -28,13 +29,12 @@ class GameScene(Scene):
         # -------------- Game Classes -------------- #
         # Set up camera and tile manager.
         self.camera = Camera(self.screen.get_size(), TILE_SIZE, None)
-        self.camera.mode = Camera.CENTER_FIRST_ENTITY_SMOOTH
         self.tileManager = TileManager(self.screen, TILE_SIZE, CHUNK_SIZE, self.camera)
         self.particleManager = ParticleManager(self.screen, self.camera)
 
         # -------------- Entities and Player -------------- #
         self.group = EntityGroup(self.camera, self.screen, self.tileManager, self.sceneManager, self.particleManager, TILE_SIZE)
-        self.camera.entity_group = self.group
+        self.camera.group = self.group
         self.player = None
 
         # -------------- Player UI -------------- #
@@ -89,7 +89,9 @@ class GameScene(Scene):
         if any(isinstance(x, Player) for x in self.group):
             self.player = self.group[0]  # Work around :(
         else:
-            self.sceneManager.set_scene("lose")
+            if self.player_alive:
+                self.player_alive = False
+                self.group.add_to_queue(self.sceneManager.set_scene, 1.5, "lose")
 
         self.group.update(dt)
         self.camera.update(dt)

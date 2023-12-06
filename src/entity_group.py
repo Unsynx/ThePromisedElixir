@@ -1,3 +1,5 @@
+import time
+
 import pygame.surface
 from tiles import Camera, TileManager
 from scene_manager import SceneManager
@@ -19,6 +21,10 @@ class EntityGroup:
         self.tile_size = tile_size
 
         self.entities = []
+
+        self.queue = []
+        self.queue_timer = []
+        self.queue_args = []
 
     def __get__(self):
         return self.entities
@@ -54,6 +60,11 @@ class EntityGroup:
             if e.tile_x == x and e.tile_y == y:
                 return e
         return None
+
+    def get_entity(self, t: object):
+        for e in self.entities:
+            if type(e) == t:
+                return e
 
     def on_player_move(self, player):
         for e in self.entities:
@@ -96,7 +107,26 @@ class EntityGroup:
         for e in self.entities:
             e.input(pressed)
 
+    def add_to_queue(self, func, delay, *args):
+        self.queue.append(func)
+        self.queue_timer.append(time.time() + delay)
+        self.queue_args.append(args)
+
+    def remove_from_queue(self, i):
+        self.queue.pop(i)
+        self.queue_timer.pop(i)
+        self.queue_args.pop(i)
+
     def update(self, dt):
+        delete = []
+        for i, timer in enumerate(self.queue_timer):
+            if time.time() > timer:
+                self.queue[i](*self.queue_args[i])
+                delete.append(i)
+        delete.reverse()
+        for i in delete:
+            self.remove_from_queue(i)
+
         for e in self.entities:
             e.update(dt)
 

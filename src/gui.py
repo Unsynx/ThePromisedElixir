@@ -93,7 +93,6 @@ class Guide:
 
         self.hide = False
 
-    # todo: make it that you can delete elements
     def add_element(self, e: GuiElement) -> GuiElement:
         """
         Adds an element to be rendered to the Guide
@@ -103,6 +102,14 @@ class Guide:
         """
         self.elements.append(e)
         return e
+
+    def delete_element(self, e):
+        if e is None:
+            return
+        try:
+            self.elements.remove(e)
+        except ValueError:
+            print("tried to delete element that did not exist")
 
     def render(self):
         if self.hide:

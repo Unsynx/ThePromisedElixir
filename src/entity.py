@@ -9,6 +9,7 @@ from items import *
 from particles import HitEffect
 
 MOVEMENT_RADIUS = 3
+PLAYER_MOVEMENT_DELAY = 0.15
 
 
 class Entity:
@@ -243,36 +244,47 @@ class Player(MobileEntity):
         self.recent_input_x = False
         self.recent_input_y = False
 
+        self.can_move = True
+
         self.surface = pygame.image.load("../assets/player/frog3.png")
 
     def input(self, pressed):
+        if not self.can_move:
+            return
+
         moved = False
 
         self.input_x = pressed[pygame.K_RIGHT] - pressed[pygame.K_LEFT]
         self.input_y = pressed[pygame.K_DOWN] - pressed[pygame.K_UP]
 
-        if self.recent_input_x and self.input_x != 0:
-            last_x_temp = self.tile_x
-            if self.move(self.input_x, 0):
-                self.last_x = last_x_temp  # only sets last_x to old x if moved is True
-                moved = True
+        if self.input_x != 0:
+            if not self.recent_input_x:
+                last_x_temp = self.tile_x
+                if self.move(self.input_x, 0):
+                    self.last_x = last_x_temp  # only sets last_x to old x if moved is True
+                    moved = True
 
-            self.recent_input_x = False
-        elif self.input_x == 0:
-            self.recent_input_x = True
+                self.recent_input_x = False
+            elif self.input_x == 0:
+                self.recent_input_x = True
 
-        if self.recent_input_y and self.input_y != 0:
-            last_y_temp = self.tile_y
-            if self.move(0, self.input_y):
-                self.last_y = last_y_temp
-                moved = True
+        if self.input_y != 0 and not moved:
+            if not self.recent_input_y:
+                last_y_temp = self.tile_y
+                if self.move(0, self.input_y):
+                    self.last_y = last_y_temp
+                    moved = True
 
-            self.recent_input_y = False
-        elif self.input_y == 0:
-            self.recent_input_y = True
+                self.recent_input_y = False
+            elif self.input_y == 0:
+                self.recent_input_y = True
 
         if moved:
-            self.group.on_player_move(self)
+            self.group.add_to_queue(self.group.on_player_move, PLAYER_MOVEMENT_DELAY, self)
+            self.can_move = False
+
+    def on_player_move(self, player):
+        self.can_move = True
 
 
 class Enemy(MobileEntity):

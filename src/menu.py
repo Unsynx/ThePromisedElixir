@@ -58,6 +58,7 @@ class CreditsMenu(Scene):
         self.grid.add_element(1, Text("Credits", Text.FONT_BASE, Text.SIZE_HEADER, (255, 255, 255)))
         self.grid.add_element(2, Text("Niklas Chaney", Text.FONT_BASE, Text.SIZE_MAIN, (255, 255, 255)))
         self.grid.add_element(2, Text("Alec Benton", Text.FONT_BASE, Text.SIZE_MAIN, (255, 255, 255)))
+        self.grid.add_element(8, Text('Miles "Triple Free" Sims-Kastelein-Henry--Bomb', Text.FONT_BASE, Text.SIZE_MAIN, (255, 255, 255)))
 
         self.center.add_element(self.grid)
 

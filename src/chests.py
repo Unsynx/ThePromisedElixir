@@ -3,7 +3,7 @@ from gui import *
 from entity import Entity, Player
 import pygame.surface
 from tiles import Camera, TileManager
-from items import SimpleSpearWeapon, IceWand
+from items import SimpleSpearWeapon, IceWand, FireKnife, MilesMuke
 from random import choice
 
 
@@ -26,10 +26,13 @@ class ChestScreen(Scene):
 
         self.logo_g = self.guiManager.add_guideline(
             Guide("logo", None, Guide.GL_VERTICAL, 0.5, Guide.ALIGN_CENTER_PADDED, Guide.REL_ALIGN_CENTER, 0))
-        self.text = self.logo_g.add_element(Text("You Lose!", Text.FONT_BASE, 128, (255, 255, 255)))
+        self.text = None
 
         self.weapon = None
         self.player = None
+
+    def on_scene_end(self):
+        self.logo_g.delete_element(self.text)
 
     def set_weapon(self):
         self.player.set_weapon(self.weapon)
@@ -37,7 +40,7 @@ class ChestScreen(Scene):
 
     def on_scene_start(self, weapon, player):
         self.weapon = weapon
-        self.text.set_value(weapon.name)
+        self.text = self.logo_g.add_element(Text(weapon.name, Text.FONT_BASE, 128, (255, 255, 255)))
         self.player = player
 
     def render(self, screen):
@@ -56,7 +59,9 @@ class Chest(Entity):
 
         weapons = (
             SimpleSpearWeapon,
-            IceWand
+            IceWand,
+            FireKnife,
+            MilesMuke
         )
 
         self.scene_manager.set_scene("chest", choice(weapons)(), entity)

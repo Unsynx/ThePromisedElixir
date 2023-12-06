@@ -36,7 +36,6 @@ creditsMenu = CreditsMenu(sceneManager)
 loadingScene = LoadingScreen(sceneManager)
 winScene = TempWinScreen(sceneManager)
 loseScene = TempLoseScreen(sceneManager)
-chestScene = ChestScreen(sceneManager)
 dialogueScene1 = DialogueScene1(sceneManager)
 
 # sceneManager.set_scene(loadingScene, True)

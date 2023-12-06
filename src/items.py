@@ -40,7 +40,6 @@ class Weapon:
                 if self.pattern[y][x] == self.CENTER:
                     return x, y
 
-    # todo: Attack rotation is not working for some reason
     def get_hit_enemies(self, player_x, player_y, attack_dir, group):
         print(self.center_x, self.center_y)
         hit_positions = []

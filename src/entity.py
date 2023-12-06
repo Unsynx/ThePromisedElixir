@@ -231,10 +231,10 @@ class MobileEntity(Entity):
 class Player(MobileEntity):
     def __init__(self):
         super().__init__()
-        self.health = 100
+        self.health = 10
         self.max_health = self.health
 
-        self.weapon = MilesMuke()
+        self.weapon = NoWeapon()
 
         self.input_x = 0
         self.input_y = 0

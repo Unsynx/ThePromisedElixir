@@ -104,6 +104,14 @@ class Guide:
         self.elements.append(e)
         return e
 
+    def delete_element(self, e):
+        if e is None:
+            return
+        try:
+            self.elements.remove(e)
+        except ValueError:
+            print("tried to delete element that did not exist")
+
     def render(self):
         if self.hide:
             return

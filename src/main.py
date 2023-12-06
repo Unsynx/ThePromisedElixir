@@ -35,7 +35,6 @@ creditsMenu = CreditsMenu(sceneManager)
 loadingScene = LoadingScreen(sceneManager)
 winScene = TempWinScreen(sceneManager)
 loseScene = TempLoseScreen(sceneManager)
-chestScene = ChestScreen(sceneManager)
 
 # sceneManager.set_scene(loadingScene, True)
 sceneManager.set_scene("splashScreen")

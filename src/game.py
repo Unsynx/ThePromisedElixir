@@ -72,6 +72,8 @@ class GameScene(Scene):
         for _ in range(len(self.tileManager.chunks)):
             self.tileManager.del_chunk(0)
 
+        self.group.on_scene_start(self.sceneManager.scene.name)
+
     def input(self, events, pressed):
         # Toggle Debug Menu
         if pressed[pygame.K_e] and self.debug_cool:

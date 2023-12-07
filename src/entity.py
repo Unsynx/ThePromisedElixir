@@ -113,7 +113,7 @@ class HealthBar(Follower):
     def redraw(self):
         self.surface.fill((0, 0, 0))
         pygame.draw.rect(self.surface, (217, 33, 45),
-                         (0, 0, int(128 * self.target.health / self.target.max_health), 10))
+                         (0, 0, int(100 * self.target.health / self.target.max_health), 10))
 
 
 class WeaponVisual(Follower):

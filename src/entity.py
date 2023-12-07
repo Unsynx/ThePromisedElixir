@@ -348,7 +348,7 @@ class Dummy(MobileEntity):
 class Staircase(Entity):
     def __init__(self):
         super().__init__()
-        self.surface = pygame.image.load("../assets/tiles/stairs.png")
+        self.surface = pygame.image.load("../assets/tiles/stairs2.png")
         self.intractable = True
 
     def on_interact(self, entity):

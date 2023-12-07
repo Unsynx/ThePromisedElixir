@@ -5,9 +5,11 @@ R_FRONT = [[2, 1]]
 R_STAR = [[0, 0, 1, 0],
           [2, 1, 1, 1],
           [0, 0, 1, 0]]
-R_CONE = [[1, 0],
-          [2, 1],
-          [1, 0]]
+R_SHIELD = [[1, 1, 0],
+            [0, 1, 1],
+            [2, 1, 1],
+            [0, 1, 1],
+            [1, 1, 0]]
 R_DOUBLE = [[2, 1, 1]]
 R_SWIRL = [[1, 1, 1],
           [1, 2, 1],
@@ -89,6 +91,12 @@ class Weapon:
         if type(target) not in self.effect_excluded:
             self.for_non_hit(not_hit_positions, group)
 
+    def effect(self, effect_entity, positions, group):
+        for pos in positions:
+            _, collider = group.tile_manager.get_tile(pos[0], pos[1])
+            if not collider:
+                group.add_entity(effect_entity).set_position(pos[0], pos[1])
+
 
 class SimpleSpearWeapon(Weapon):
     def __init__(self):
@@ -98,15 +106,15 @@ class SimpleSpearWeapon(Weapon):
 
 class IceWand(Weapon):
     def __init__(self):
-        super().__init__("../assets/weapons/ice_staff.png", 5, R_CONE)
+        super().__init__("../assets/weapons/ice_staff.png", 5, R_SHIELD)
         from entity import IceCube
         self.effect_excluded.append(IceCube)
         self.offset_x = 50
 
     def for_non_hit(self, not_hit_positions, group):
         from entity import IceCube
-        for pos in not_hit_positions:
-            group.add_entity(IceCube).set_position(pos[0], pos[1])
+        self.effect(IceCube, not_hit_positions, group)
+
 
 
 class NoWeapon(Weapon):
@@ -123,8 +131,7 @@ class FireKnife(Weapon):
 
     def for_non_hit(self, not_hit_positions, group):
         from entity import Fire
-        for pos in not_hit_positions:
-            group.add_entity(Fire).set_position(pos[0], pos[1])
+        self.effect(Fire, not_hit_positions, group)
 
 
 class MilesMuke(Weapon):
@@ -137,8 +144,7 @@ class MilesMuke(Weapon):
 
     def for_non_hit(self, not_hit_positions, group):
         from entity import Fire
-        for pos in not_hit_positions:
-            group.add_entity(Fire).set_position(pos[0], pos[1])
+        self.effect(Fire, not_hit_positions, group)
 
 
 class MorningStar(Weapon):
@@ -161,15 +167,15 @@ class Sword(Weapon):
 
 class FlameStaff(Weapon):
     def __init__(self):
-        super().__init__("../assets/weapons/fire_staff.png", 5, R_CONE)
+        super().__init__("../assets/weapons/fire_staff.png", 5, R_SHIELD)
         from entity import Fire
         self.effect_excluded.append(Fire)
         self.offset_x = 50
 
     def for_non_hit(self, not_hit_positions, group):
         from entity import Fire
-        for pos in not_hit_positions:
-            group.add_entity(Fire).set_position(pos[0], pos[1])
+        self.effect(Fire, not_hit_positions, group)
+
 
 
 class Sabre(Weapon):

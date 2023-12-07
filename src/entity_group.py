@@ -134,4 +134,5 @@ class EntityGroup:
     def render(self):
         # Add depth sorting option
         for e in self.entities:
-            e.render()
+            if e.visible:
+                e.render()

@@ -76,6 +76,7 @@ class DrunkGeneration:
                     if not self.level[y][x] == 0:
                         continue
 
+                    # The most evil match case statement ever written
                     match (self.level[y - 1][x], self.level[y + 1][x], self.level[y][x - 1], self.level[y][x + 1]):
                         # Above, Below, Left, Right
                         # 1 - Ground
@@ -135,7 +136,7 @@ class DrunkGeneration:
                             # Back right corner
                             duplicate[y][x] = 20
                         case (1, 0, 1, 1):
-                           # Back cap
+                            # Back cap
                             duplicate[y][x] = 21
         """
         for y in range(len(self.level)):

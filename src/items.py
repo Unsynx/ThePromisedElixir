@@ -5,6 +5,9 @@ R_FRONT = [[2, 1]]
 R_STAR = [[0, 0, 1, 0],
           [2, 1, 1, 1],
           [0, 0, 1, 0]]
+R_CONE = [[1, 0],
+          [2, 1],
+          [1, 0]]
 R_DOUBLE = [[2, 1, 1]]
 R_SWIRL = [[1, 1, 1],
           [1, 2, 1],
@@ -16,6 +19,9 @@ R_MUKE = [[0, 0, 1, 1, 1, 0, 0],
           [1, 1, 1, 1, 1, 1, 1],
           [0, 1, 1, 1, 1, 1, 0],
           [0, 0, 1, 1, 1, 0, 0]]
+R_SWIPE = [[0, 1],
+           [2, 1],
+           [0, 1]]
 
 
 class Weapon:
@@ -75,21 +81,24 @@ class Weapon:
 
         for e in hit_enemies:
             if not e.intractable:
-                e.attack(self.damage)
+                # Cannot attack all the effects you spawned in
+                if type(e) not in self.effect_excluded or e is target:
+                    e.attack(group.get_entity_at(player_x, player_y), self.damage)
 
+        # No infinite IceCubes
         if type(target) not in self.effect_excluded:
             self.for_non_hit(not_hit_positions, group)
 
 
 class SimpleSpearWeapon(Weapon):
     def __init__(self):
-        super().__init__("../assets/weapons/spear.png", 2, R_DOUBLE)
+        super().__init__("../assets/weapons/spear.png", 2, R_STAR)
         self.offset_x = 25
 
 
 class IceWand(Weapon):
     def __init__(self):
-        super().__init__("../assets/weapons/ice_staff.png", 5, R_STAR)
+        super().__init__("../assets/weapons/ice_staff.png", 5, R_CONE)
         from entity import IceCube
         self.effect_excluded.append(IceCube)
         self.offset_x = 50
@@ -102,25 +111,68 @@ class IceWand(Weapon):
 
 class NoWeapon(Weapon):
     def __init__(self):
-        super().__init__("../assets/weapons/sword.png", 1, R_FRONT)
-        self.offset_x = 50
+        super().__init__(None, 1, R_FRONT)
 
 
 class FireKnife(Weapon):
     def __init__(self):
         super().__init__("../assets/weapons/flaming_knife.png", 3, R_SWIRL)
         self.offset_x = 50
+        from entity import Fire
+        self.effect_excluded.append(Fire)
+
+    def for_non_hit(self, not_hit_positions, group):
+        from entity import Fire
+        for pos in not_hit_positions:
+            group.add_entity(Fire).set_position(pos[0], pos[1])
 
 
 class MilesMuke(Weapon):
     def __init__(self):
         super().__init__("../assets/weapons/MassiveMuke.png", 100, R_MUKE)
-        from entity import IceCube
-        self.effect_excluded.append(IceCube)
+        from entity import Fire
+        self.effect_excluded.append(Fire)
         self.offset_y = -100
         self.offset_x = -10
+
+    def for_non_hit(self, not_hit_positions, group):
+        from entity import Fire
+        for pos in not_hit_positions:
+            group.add_entity(Fire).set_position(pos[0], pos[1])
+
+
+class MorningStar(Weapon):
+    def __init__(self):
+        super().__init__("../assets/weapons/Morningstar.png", 3, R_SWIRL)
+        self.offset_x = 80
+
+
+class Knife(Weapon):
+    def __init__(self):
+        super().__init__("../assets/weapons/knife.png", 3, R_FRONT)
+        self.offset_x = 20
+
+
+class Sword(Weapon):
+    def __init__(self):
+        super().__init__("../assets/weapons/sword.png", 3, R_DOUBLE)
+        self.offset_x = 50
+
+
+class FlameStaff(Weapon):
+    def __init__(self):
+        super().__init__("../assets/weapons/fire_staff.png", 5, R_CONE)
+        from entity import IceCube
+        self.effect_excluded.append(IceCube)
+        self.offset_x = 50
 
     def for_non_hit(self, not_hit_positions, group):
         from entity import IceCube
         for pos in not_hit_positions:
             group.add_entity(IceCube).set_position(pos[0], pos[1])
+
+
+class Sabre(Weapon):
+    def __init__(self):
+        super().__init__("../assets/weapons/miles_mighty_sword.png", 3, R_SWIPE)
+        self.offset_x = 60

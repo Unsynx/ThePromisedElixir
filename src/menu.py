@@ -28,7 +28,7 @@ class MainMenu(Scene):
             return LoadingScreen(self.sceneManager)
 
         self.buttons.add_element(Button("New Game", 300, 75, lambda x: manager.set_scene(get_scene(), x), True))
-        self.buttons.add_element(Button("Load Game", 300, 75, lambda x: manager.set_scene(get_scene(), x), False))
+        # self.buttons.add_element(Button("Load Game", 300, 75, lambda x: manager.set_scene(get_scene(), x), False))
         self.buttons.add_element(Button("Credits", 300, 75, manager.set_scene, "creditsMenu"))
         self.buttons.add_element(Button("Quit", 300, 75, sys.exit))
 

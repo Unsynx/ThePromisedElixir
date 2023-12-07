@@ -33,7 +33,7 @@ class Dialogue(Entity):
     def __init__(self):
         super().__init__()
         self.dialogue_number = 0
-        self.surface = pygame.image.load("../assets/weapons/spear.png")
+        self.surface = pygame.image.load("../assets/player/book.png")
         self.intractable = True
 
         self.serialize("dialogue_number", lambda: self.dialogue_number)

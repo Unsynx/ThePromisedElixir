@@ -84,3 +84,17 @@ class HitEffect(ParticleSystem):
 
         for _ in range(1):
             self.add_particle(x, y, random.randint(-5, 5), random.randint(-5, 5), 1)
+
+
+class ChestClose(ParticleSystem):
+    def __init__(self, x, y):
+        super().__init__(pygame.image.load("../assets/player/Plank.png"))
+
+        for _ in range(6):
+            self.add_particle(x, y, random.randint(-5, 5), random.randint(-10, 0), 5)
+
+    def tick(self, index):
+        self.particle_x[index] = self.particle_x[index] + self.vel_x[index]
+        self.vel_x[index] = self.vel_x[index] * 0.99
+        self.particle_y[index] = self.particle_y[index] + self.vel_y[index]
+        self.vel_y[index] = self.vel_y[index] + 0.5

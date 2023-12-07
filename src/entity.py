@@ -25,6 +25,7 @@ class Entity:
         self.type = type(self).__name__
         self.surface = None
         self.intractable = False
+        self.visible = True
 
         self.serialized_vars = {}
         self.ignore = False
@@ -56,6 +57,7 @@ class Entity:
         self.tile_y = tile_y
         self.x = self.tile_size * tile_x
         self.y = self.tile_size * tile_y
+        return self
 
     def on_player_move(self, player):
         pass
@@ -75,7 +77,7 @@ class Entity:
     def update(self, dt):
         pass
 
-    def attack(self, damage):
+    def attack(self, entity, damage):
         if self.health is None:
             return
 
@@ -112,13 +114,16 @@ class HealthBar(Follower):
     def redraw(self):
         self.surface.fill((0, 0, 0))
         pygame.draw.rect(self.surface, (217, 33, 45),
-                         (0, 0, int(128 * self.target.health / self.target.max_health), 10))
+                         (0, 0, int(100 * self.target.health / self.target.max_health), 10))
 
 
 class WeaponVisual(Follower):
     def __init__(self, target: Entity, weapon: Weapon):
         super().__init__(target)
-        self.surface = pygame.image.load(weapon.icon_path)
+        if weapon.icon_path is None:
+            self.surface = pygame.Surface((0, 0))
+        else:
+            self.surface = pygame.image.load(weapon.icon_path)
         self.offset_x = weapon.offset_x
         self.offset_y = weapon.offset_y
 
@@ -185,7 +190,7 @@ class MobileEntity(Entity):
         self.group.remove(self.health_bar)
         self.group.remove(self)
 
-    def attack(self, damage):
+    def attack(self, entity, damage):
         if self.health is None:
             return
 
@@ -198,7 +203,7 @@ class MobileEntity(Entity):
 
     def attack_logic(self, enemy, x, y):
         if self.weapon is None:
-            enemy.attack(1)
+            enemy.attack(self, 1)
             return
 
         if x == -1:
@@ -231,10 +236,10 @@ class MobileEntity(Entity):
 class Player(MobileEntity):
     def __init__(self):
         super().__init__()
-        self.health = 100
+        self.health = 15
         self.max_health = self.health
 
-        self.weapon = MilesMuke()
+        self.weapon = NoWeapon()
 
         self.input_x = 0
         self.input_y = 0
@@ -343,7 +348,7 @@ class Dummy(MobileEntity):
 class Staircase(Entity):
     def __init__(self):
         super().__init__()
-        self.surface = pygame.image.load("../assets/tiles/stairs.png")
+        self.surface = pygame.image.load("../assets/tiles/stairs2.png")
         self.intractable = True
 
     def on_interact(self, entity):
@@ -357,8 +362,29 @@ class Staircase(Entity):
 class IceCube(Entity):
     def __init__(self):
         super().__init__()
-        self.surface = pygame.image.load("../assets/weapons/icecube.png")
-        self.health = 1
+        self.surface = pygame.image.load("../assets/weapons/icecube2.png")
+        self.health = None
+        self.lifetime = 9
+
+        self.serialize("lifetime", lambda: self.lifetime)
 
     def on_player_move(self, player):
-        pass
+        self.lifetime -= 1
+
+        if self.lifetime < 0:
+            self.visible = False
+            self.group.add_to_queue(self.on_death, 0)
+            return
+
+        self.surface = pygame.image.load(f"../assets/weapons/icecube{self.lifetime // 3}.png")
+
+
+class Fire(Entity):
+    def __init__(self):
+        super().__init__()
+        self.surface = pygame.image.load("../assets/weapons/Fire.png")
+        self.health = 1
+
+    def attack(self, entity, damage):
+        entity.attack(self, 2)
+        self.on_death()

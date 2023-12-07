@@ -9,8 +9,9 @@ from particles import ParticleManager
 
 # This is where the main gameplay will go
 class GameScene(Scene):
-    def __init__(self, manager: SceneManager):
+    def __init__(self, manager: SceneManager, level):
         super().__init__(manager, "game")
+        self.level = level
 
         self.guiManager = GuiManager(self.screen)
         self.player_alive = True
@@ -55,7 +56,8 @@ class GameScene(Scene):
         self.tut.add_element(Text("Movement - Arrows", Text.FONT_BASE, Text.SIZE_MAIN, (255, 255, 255)))
         self.tut.add_element(Text("Attack by moving into enemies", Text.FONT_BASE, Text.SIZE_MAIN, (255, 255, 255)))
         self.tut.add_element(Text("Collect weapons from chests", Text.FONT_BASE, Text.SIZE_MAIN, (255, 255, 255)))
-        self.tut.add_element(Text("Find the stairs to win!", Text.FONT_BASE, Text.SIZE_MAIN, (255, 255, 255)))
+        self.tut.add_element(Text("Find the stairs!", Text.FONT_BASE, Text.SIZE_MAIN, (255, 255, 255)))
+        self.tut.add_element(Text(f"Currently on level {self.level}", Text.FONT_BASE, Text.SIZE_HEADER, (255, 255, 255)))
 
         self.debug_cool = False
 
@@ -65,11 +67,14 @@ class GameScene(Scene):
         self.player = self.group[0]
 
         self.group[1].scene_manager = self.sceneManager  # Temp
-        self.camera.set_position(self.player.x, self.player.y)
+        self.camera.set_position(self.player.x + int(self.player.surface.get_width() * 0.5),
+                                 self.player.y + int(self.player.surface.get_height() * 0.5))
 
         # Resets loaded tiles when reloading world
         for _ in range(len(self.tileManager.chunks)):
             self.tileManager.del_chunk(0)
+
+        self.group.on_scene_start(self.sceneManager.scene.name)
 
     def input(self, events, pressed):
         # Toggle Debug Menu

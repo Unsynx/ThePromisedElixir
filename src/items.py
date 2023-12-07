@@ -162,14 +162,14 @@ class Sword(Weapon):
 class FlameStaff(Weapon):
     def __init__(self):
         super().__init__("../assets/weapons/fire_staff.png", 5, R_CONE)
-        from entity import IceCube
-        self.effect_excluded.append(IceCube)
+        from entity import Fire
+        self.effect_excluded.append(Fire)
         self.offset_x = 50
 
     def for_non_hit(self, not_hit_positions, group):
-        from entity import IceCube
+        from entity import Fire
         for pos in not_hit_positions:
-            group.add_entity(IceCube).set_position(pos[0], pos[1])
+            group.add_entity(Fire).set_position(pos[0], pos[1])
 
 
 class Sabre(Weapon):

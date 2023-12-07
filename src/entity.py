@@ -8,7 +8,7 @@ import sys
 from items import *
 from particles import HitEffect
 
-MOVEMENT_RADIUS = 3
+MOVEMENT_RADIUS = 4
 PLAYER_MOVEMENT_DELAY = 0.15
 
 

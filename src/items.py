@@ -116,7 +116,6 @@ class IceWand(Weapon):
         self.effect(IceCube, not_hit_positions, group)
 
 
-
 class NoWeapon(Weapon):
     def __init__(self):
         super().__init__(None, 1, R_FRONT)
@@ -175,7 +174,6 @@ class FlameStaff(Weapon):
     def for_non_hit(self, not_hit_positions, group):
         from entity import Fire
         self.effect(Fire, not_hit_positions, group)
-
 
 
 class Sabre(Weapon):

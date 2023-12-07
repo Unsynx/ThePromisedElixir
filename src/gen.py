@@ -1,4 +1,5 @@
 import copy
+import random
 import threading
 import os
 
@@ -169,7 +170,7 @@ class LoadingScreen(Scene):
 
         self.level += 1
         self.sceneManager.del_scene("game")
-        self.sceneManager.add_scene(GameScene(self.sceneManager))
+        self.sceneManager.add_scene(GameScene(self.sceneManager, self.level))
         self.completion_event = threading.Event()
 
         second_thread = threading.Thread(target=generate_dungeon, args=(CHUNK_SIZE, self.completion_event, self.level))
@@ -229,7 +230,14 @@ def generate_dungeon(chunk_size, event, level):
         r_x = randint(0, width * chunk_size - 1)
         r_y = randint(0, height * chunk_size - 1)
         if not TILE_DATA[world[r_y][r_x]].collider:
-            group.add_entity(Enemy).set_position(r_x, r_y)
+            e = group.add_entity(Enemy).set_position(r_x, r_y)
+            # Temporary difficulty scaling
+            if randint(0, 10) < level:
+                e.set_weapon(random.choice([
+                    Knife,
+                    SimpleSpearWeapon,
+                    Sword
+                ])())
             i += 1
 
     spawned = False

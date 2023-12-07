@@ -9,8 +9,9 @@ from particles import ParticleManager
 
 # This is where the main gameplay will go
 class GameScene(Scene):
-    def __init__(self, manager: SceneManager):
+    def __init__(self, manager: SceneManager, level):
         super().__init__(manager, "game")
+        self.level = level
 
         self.guiManager = GuiManager(self.screen)
         self.player_alive = True
@@ -55,7 +56,8 @@ class GameScene(Scene):
         self.tut.add_element(Text("Movement - Arrows", Text.FONT_BASE, Text.SIZE_MAIN, (255, 255, 255)))
         self.tut.add_element(Text("Attack by moving into enemies", Text.FONT_BASE, Text.SIZE_MAIN, (255, 255, 255)))
         self.tut.add_element(Text("Collect weapons from chests", Text.FONT_BASE, Text.SIZE_MAIN, (255, 255, 255)))
-        self.tut.add_element(Text("Find the stairs to win!", Text.FONT_BASE, Text.SIZE_MAIN, (255, 255, 255)))
+        self.tut.add_element(Text("Find the stairs!", Text.FONT_BASE, Text.SIZE_MAIN, (255, 255, 255)))
+        self.tut.add_element(Text(f"Currently on level {self.level}", Text.FONT_BASE, Text.SIZE_HEADER, (255, 255, 255)))
 
         self.debug_cool = False
 

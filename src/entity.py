@@ -57,6 +57,7 @@ class Entity:
         self.tile_y = tile_y
         self.x = self.tile_size * tile_x
         self.y = self.tile_size * tile_y
+        return self
 
     def on_player_move(self, player):
         pass

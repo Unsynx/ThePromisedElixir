@@ -2,6 +2,7 @@ import sys
 from scene_manager import Scene, SceneManager
 from gui import GuiManager, Guide, Button, Image, Grid, Text
 import pygame
+from gen import LoadingScreen
 
 
 class MainMenu(Scene):
@@ -20,8 +21,14 @@ class MainMenu(Scene):
         self.buttons = self.guiManager.add_guideline(
             Guide("buttons", None, Guide.GL_VERTICAL, 0.2, Guide.ALIGN_CENTER_PADDED, Guide.REL_ALIGN_CENTER, 50))
 
-        self.buttons.add_element(Button("New Game", 300, 75, manager.set_scene, "loadingScreen", True))
-        self.buttons.add_element(Button("Load Game", 300, 75, manager.set_scene, "loadingScreen", False))
+        self.sceneManager.del_scene("loadingScreen")
+
+        # So that we don't have a bunch of unused loading screens
+        def get_scene():
+            return LoadingScreen(self.sceneManager)
+
+        self.buttons.add_element(Button("New Game", 300, 75, lambda x: manager.set_scene(get_scene(), x), True))
+        self.buttons.add_element(Button("Load Game", 300, 75, lambda x: manager.set_scene(get_scene(), x), False))
         self.buttons.add_element(Button("Credits", 300, 75, manager.set_scene, "creditsMenu"))
         self.buttons.add_element(Button("Quit", 300, 75, sys.exit))
 

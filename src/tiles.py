@@ -31,8 +31,25 @@ TILE_DATA = [
         Tile("wall_s", "../assets/tiles/wall_s.png", False),
         Tile("wall_l", "../assets/tiles/wall_l.png", False),
         Tile("wall_r", "../assets/tiles/wall_r.png", False),
-        Tile("wall_top", "../assets/tiles/walltop.png", True),
-    ]
+        Tile("wall_top_continuous_topped", "../assets/tiles/walltop/wall_top_continuous_top.png", True),
+        Tile("wall_top_continuous", "../assets/tiles/walltop/walltop.png", True),
+        Tile("wall_top_extension", "../assets/tiles/walltop/wall_top_extension.png", True),
+        Tile("wall_top_left", "../assets/tiles/walltop/wall_top_left.png", True),
+        Tile("wall_top_right", "../assets/tiles/walltop/wall_top_right.png", True),
+        Tile("wall_top_left_topped", "../assets/tiles/walltop/wall_top_left_topped.png", True),
+        Tile("wall_top_right_topped", "../assets/tiles/walltop/wall_top_right_topped.png", True),
+        Tile("wall_top_single", "../assets/tiles/walltop/wall_top_single.png", True), # 14
+        Tile("wall_back_top", "../assets/tiles/back/tile_3.png", True),
+        Tile("wall_back_extension", "../assets/tiles/back/tile_4.png", True),
+        Tile("wall_back_right", "../assets/tiles/back/tile_6.png", True),
+        Tile("wall_back_left", "../assets/tiles/back/tile_5.png", True),
+        Tile("wall_back_left_corner", "../assets/tiles/back/tile_2.png", True),
+        Tile("wall_back_right_corner", "../assets/tiles/back/tile_1.png", True),
+        Tile("wall_back_cap", "../assets/tiles/back/wall_back.png", True),
+        Tile("ground2", "../assets/tiles/ground2.png", False),
+        Tile("ground3", "../assets/tiles/ground3.png", False),
+
+    ] # 23
 
 
 class Camera:

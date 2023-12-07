@@ -27,6 +27,10 @@ class EntityGroup:
         self.queue_timer = []
         self.queue_args = []
 
+        self.scene_queue_func = []
+        self.scene_queue_scenes = []
+        self.scene_queue_args = []
+
     def __get__(self):
         return self.entities
 
@@ -113,6 +117,20 @@ class EntityGroup:
         self.queue_timer.append(time.time() + delay)
         self.queue_args.append(args)
 
+    def execute_on_scene_start(self, func, scene, *args):
+        self.scene_queue_func.append(func)
+        self.scene_queue_scenes.append(scene)
+        self.scene_queue_args.append(args)
+
+    def on_scene_start(self, scene):
+        for i, sc in enumerate(self.scene_queue_scenes):
+            if sc == scene:
+                self.scene_queue_func[i](*self.scene_queue_args[i])
+                self.scene_queue_scenes.pop(i)
+                self.scene_queue_func.pop(i)
+                self.scene_queue_args.pop(i)
+                i -= 1
+
     def remove_from_queue(self, i):
         self.queue.pop(i)
         self.queue_timer.pop(i)
@@ -134,4 +152,5 @@ class EntityGroup:
     def render(self):
         # Add depth sorting option
         for e in self.entities:
-            e.render()
+            if e.visible:
+                e.render()

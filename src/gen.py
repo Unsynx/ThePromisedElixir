@@ -1,3 +1,5 @@
+import copy
+import random
 import threading
 import os
 
@@ -61,20 +63,94 @@ class DrunkGeneration:
         for tile_y in range(len(self.level)):
             for tile_x in range(len(self.level[tile_y])):
                 if self.level[tile_y][tile_x] == 1:
-                    self.level[tile_y][tile_x] = 2
                     return tile_x, tile_y
 
     def set_wall_top_tiles(self):
+        duplicate = copy.deepcopy(self.level)
         """
         Sets the wall top tile positions
         :return: nothing
         """
-        for tile_y in range(len(self.level)):
-            for tile_x in range(len(self.level[tile_y])):
-                if tile_y != len(self.level) - 1:
-                    if self.level[tile_y][tile_x] == 0 and self.level[tile_y + 1][tile_x]:
-                        self.level[tile_y][tile_x] = 7
-                        self.level[tile_y + 1][tile_x] = 3
+        for y in range(len(self.level)):
+            for x in range(len(self.level[y])):
+                if y != len(self.level) - 1 and x != len(self.level[0]) - 1:
+                    if not self.level[y][x] == 0:
+                        continue
+
+                    # The most evil match case statement ever written
+                    match (self.level[y - 1][x], self.level[y + 1][x], self.level[y][x - 1], self.level[y][x + 1]):
+                        # Above, Below, Left, Right
+                        # 1 - Ground
+                        # 0 - Wall
+                        case (1, 1, 1, 1):
+                            # Center, capped
+                            duplicate[y][x] = 14
+                            duplicate[y + 1][x] = 4
+                        case (0, 1, 1, 1):
+                            # Center, extended
+                            duplicate[y][x] = 9
+                            duplicate[y + 1][x] = 4
+                        case (0, 1, 0, 0):
+                            # Continuous
+                            duplicate[y][x] = 8
+                            duplicate[y + 1][x] = 3
+                        case (1, 1, 0, 0):
+                            # Continuous topped
+                            duplicate[y][x] = 7
+                            duplicate[y + 1][x] = 3
+                        case (0, 1, 0, 1):
+                            # Right corner
+                            duplicate[y][x] = 11
+                            duplicate[y + 1][x] = 6
+                        case (1, 1, 0, 1):
+                            # Right corner topped
+                            duplicate[y][x] = 13
+                            duplicate[y + 1][x] = 6
+                        case (1, 1, 0, 0):
+                            # Continuous topped
+                            duplicate[y][x] = 7
+                            duplicate[y + 1][x] = 3
+                        case (0, 1, 1, 0):
+                            # Left corner
+                            duplicate[y][x] = 10
+                            duplicate[y + 1][x] = 5
+                        case (1, 1, 1, 0):
+                            # Left corner topped
+                            duplicate[y][x] = 12
+                            duplicate[y + 1][x] = 5
+                        case (1, 0, 0, 0):
+                            # Back continuous
+                            duplicate[y][x] = 15
+                        case (0, 0, 1, 1):
+                            # Back extension
+                            duplicate[y][x] = 16
+                        case (0, 0, 0, 1):
+                            # Back Rightfacing wall
+                            duplicate[y][x] = 17
+                        case (0, 0, 1, 0):
+                            # Back left facing wall
+                            duplicate[y][x] = 18
+                        case (1, 0, 0, 1):
+                            # Back left corner
+                            duplicate[y][x] = 19
+                        case (1, 0, 1, 0):
+                            # Back right corner
+                            duplicate[y][x] = 20
+                        case (1, 0, 1, 1):
+                            # Back cap
+                            duplicate[y][x] = 21
+
+        self.level = duplicate
+
+        for y in range(len(self.level)):
+            for x in range(len(self.level[0])):
+                if randint(0, 8) == 1 and duplicate[y][x] == 1:
+                    if randint(0, 5) == 0:
+                        duplicate[y][x] = 23
+                    else:
+                        duplicate[y][x] = 22
+
+        self.level = duplicate
 
 
 class LoadingScreen(Scene):
@@ -96,7 +172,7 @@ class LoadingScreen(Scene):
 
         self.level += 1
         self.sceneManager.del_scene("game")
-        self.sceneManager.add_scene(GameScene(self.sceneManager))
+        self.sceneManager.add_scene(GameScene(self.sceneManager, self.level))
         self.completion_event = threading.Event()
 
         second_thread = threading.Thread(target=generate_dungeon, args=(CHUNK_SIZE, self.completion_event, self.level))
@@ -156,7 +232,14 @@ def generate_dungeon(chunk_size, event, level):
         r_x = randint(0, width * chunk_size - 1)
         r_y = randint(0, height * chunk_size - 1)
         if not TILE_DATA[world[r_y][r_x]].collider:
-            group.add_entity(Enemy).set_position(r_x, r_y)
+            e = group.add_entity(Enemy).set_position(r_x, r_y)
+            # Temporary difficulty scaling
+            if randint(0, 10) < level:
+                e.set_weapon(random.choice([
+                    Knife,
+                    SimpleSpearWeapon,
+                    Sword
+                ])())
             i += 1
 
     spawned = False

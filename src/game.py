@@ -101,6 +101,7 @@ class GameScene(Scene):
         self.group.update(dt)
         self.camera.update(dt)
         self.tileManager.update()
+        self.particleManager.update(dt)
 
         # Debug Menu
         self.fps.set_value(f"FPS: {str(round(dt * 60, 1))}")

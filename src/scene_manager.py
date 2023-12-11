@@ -1,4 +1,5 @@
 import pygame
+import time
 
 
 class SceneManager:
@@ -11,8 +12,32 @@ class SceneManager:
         self.dt = None
         self.screen = screen
 
+        self.queue = []
+        self.queue_timer = []
+        self.queue_args = []
+
+    def add_to_queue(self, func, delay, *args):
+        self.queue.append(func)
+        self.queue_timer.append(time.time() + delay)
+        self.queue_args.append(args)
+
+    def remove_from_queue(self, i):
+        self.queue.pop(i)
+        self.queue_timer.pop(i)
+        self.queue_args.pop(i)
+
     def add_scene(self, scene):
         self.sceneDict[scene.name] = scene
+
+    def update(self):
+        delete = []
+        for i, timer in enumerate(self.queue_timer):
+            if time.time() > timer:
+                self.queue[i](*self.queue_args[i])
+                delete.append(i)
+        delete.reverse()
+        for i in delete:
+            self.remove_from_queue(i)
 
     def del_scene(self, scene):
         try:

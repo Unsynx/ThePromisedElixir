@@ -6,7 +6,7 @@ from constants import *
 from tween import Tween
 import sys
 from items import *
-from particles import HitEffect
+from particles import HitEffect, PotionEffect, ConfusedEffect
 
 MOVEMENT_RADIUS = 4
 PLAYER_MOVEMENT_DELAY = 0.15
@@ -36,10 +36,10 @@ class Entity:
         self.tile_x = 0
         self.tile_y = 0
 
-        self.serialize("type", lambda: self.type)\
-            .serialize("x", lambda: self.x)\
-            .serialize("y", lambda: self.y)\
-            .serialize("tile_x", lambda: self.tile_x)\
+        self.serialize("type", lambda: self.type) \
+            .serialize("x", lambda: self.x) \
+            .serialize("y", lambda: self.y) \
+            .serialize("tile_x", lambda: self.tile_x) \
             .serialize("tile_y", lambda: self.tile_y)
 
     def serialize(self, name: str, var_func):
@@ -141,7 +141,7 @@ class MobileEntity(Entity):
         self.animation_x = None
         self.animation_y = None
 
-        self.serialize("health", lambda: self.health)\
+        self.serialize("health", lambda: self.health) \
             .serialize("weapon", lambda: self.weapon.name)
 
     def on_entity_ready(self):
@@ -321,20 +321,32 @@ class Enemy(MobileEntity):
         2) try to move toward player on closer axis
         3) try to move away from player on furthest axis
         4) try to move away from player on closest axis
-        
         this should guarantee that an entity always moves, even if its course is blocked by walls
         """
-
-        if abs_x >= abs_y:
-            if not self.move(x, 0):
-                if not self.move(0, y):
-                    if not self.move(-x, 0):
-                        self.move(0, -y)
-        if abs_y > abs_x:
-            if not self.move(0, y):
+        chance = 8  # 80% chance of moving toward player
+        if randint(1, 10) in [*range(1, chance)]:
+            if abs_x >= abs_y:
                 if not self.move(x, 0):
-                    if not self.move(0, -y):
-                        self.move(-x, 0)
+                    if not self.move(0, y):
+                        if not self.move(-x, 0):
+                            self.move(0, -y)
+            if abs_y > abs_x:
+                if not self.move(0, y):
+                    if not self.move(x, 0):
+                        if not self.move(0, -y):
+                            self.move(-x, 0)
+        else:
+            num = randint(1, 4)
+            match num:
+                case 1:
+                    self.move(1, 0)
+                case 2:
+                    self.move(-1, 0)
+                case 3:
+                    self.move(0, 1)
+                case 4:
+                    self.move(0, -1)
+            self.particle_manager.add_system(ConfusedEffect(self.x + 64, self.y + 64))
 
 
 class Dummy(MobileEntity):
@@ -343,6 +355,18 @@ class Dummy(MobileEntity):
         self.health = 1
 
         self.surface = pygame.image.load("../assets/player/baddy.png")
+
+
+class Potion(Entity):
+    def __init__(self):
+        super().__init__()
+        self.surface = pygame.image.load("../assets/weapons/MassiveMuke.png")
+        self.intractable = True
+    def on_interact(self, entity):
+        if not type(entity) is Player:
+            return
+        entity.health += 3
+        entity.particle_manager.add_system(PotionEffect(self.x + 64, self.y + 64, 3))
 
 
 class Staircase(Entity):

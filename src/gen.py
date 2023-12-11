@@ -242,6 +242,7 @@ def generate_dungeon(chunk_size, event, level):
                 ])())
             i += 1
 
+    # dialogue entity
     spawned = False
     while not spawned:
         r_x = randint(0, width * chunk_size - 1)
@@ -251,6 +252,14 @@ def generate_dungeon(chunk_size, event, level):
             print(f"added dialogue at {r_x}, {r_y}")
             spawned = True
 
+    # potion entity
+    i = 0
+    while i < 10:
+        r_x = randint(0, width * chunk_size - 1)
+        r_y = randint(0, height * chunk_size - 1)
+        if not TILE_DATA[world[r_y][r_x]].collider:
+            e = group.add_entity(Potion).set_position(r_x, r_y)
+            i += 1
     group.save()
 
     # --------------------- REPLACE ABOVE --------------------- #

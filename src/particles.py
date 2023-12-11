@@ -86,6 +86,24 @@ class HitEffect(ParticleSystem):
             self.add_particle(x, y, random.randint(-5, 5), random.randint(-5, 5), 1)
 
 
+class PotionEffect(ParticleSystem):
+    def __init__(self, x, y, hp_gain):
+        t = Text(f"+{hp_gain}hp", Text.FONT_BASE, 48, (255, 255, 255))
+        super().__init__(t.surface)
+
+        for _ in range(1):
+            self.add_particle(x, y, random.randint(-5, 5), random.randint(-5, 5), 1)
+
+
+class ConfusedEffect(ParticleSystem):
+    def __init__(self, x, y):
+        t = Text("?", Text.FONT_BASE, 48, (255, 255, 255))
+        super().__init__(t.surface)
+
+        for _ in range(1):
+            self.add_particle(x, y, random.randint(-5, 5), random.randint(-5, 5), 1)
+
+
 class ChestClose(ParticleSystem):
     def __init__(self, x, y):
         super().__init__(pygame.image.load("../assets/player/Plank.png"))

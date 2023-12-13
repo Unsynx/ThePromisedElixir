@@ -99,7 +99,7 @@ class PotionEffect(ParticleSystem):
         super().__init__(t.surface)
 
         for _ in range(1):
-            self.add_particle(x, y, random.randint(-5, 5), random.randint(-5, 5), 1)
+            self.add_particle(x, y, random.uniform(-0.5, 0.5), random.uniform(-0.5, 0.5), 1)
 
 
 class ConfusedEffect(ParticleSystem):
@@ -108,7 +108,7 @@ class ConfusedEffect(ParticleSystem):
         super().__init__(t.surface)
 
         for _ in range(1):
-            self.add_particle(x, y, random.randint(-5, 5), random.randint(-5, 5), 1)
+            self.add_particle(x, y, random.uniform(-0.5, 0.5), random.uniform(-0.5, 0.5), 1)
 
 
 class ChestClose(ParticleSystem):

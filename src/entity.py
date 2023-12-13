@@ -323,8 +323,8 @@ class Enemy(MobileEntity):
         4) try to move away from player on closest axis
         this should guarantee that an entity always moves, even if its course is blocked by walls
         """
-        chance = 8  # 80% chance of moving toward player
-        if randint(1, 10) in [*range(1, chance)]:
+        chance = 80  # 80% chance of moving toward player
+        if randint(1, 100) in [*range(1, chance)]:
             if abs_x >= abs_y:
                 if not self.move(x, 0):
                     if not self.move(0, y):

@@ -336,17 +336,7 @@ class Enemy(MobileEntity):
                         if not self.move(0, -y):
                             self.move(-x, 0)
         else:
-            num = randint(1, 4)
-            match num:
-                case 1:
-                    self.move(1, 0)
-                case 2:
-                    self.move(-1, 0)
-                case 3:
-                    self.move(0, 1)
-                case 4:
-                    self.move(0, -1)
-            self.particle_manager.add_system(ConfusedEffect(self.x + 64, self.y + 64))
+            self.particle_manager.add_system(ConfusedEffect(self.x + 64, self.y - 64))
 
 
 class Dummy(MobileEntity):

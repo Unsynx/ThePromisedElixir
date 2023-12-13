@@ -108,7 +108,7 @@ class ConfusedEffect(ParticleSystem):
         super().__init__(t.surface)
 
         for _ in range(1):
-            self.add_particle(x, y, random.uniform(-0.5, 0.5), random.uniform(-0.5, 0.5), 1)
+            self.add_particle(x, y, 0, 0, .5)
 
 
 class ChestClose(ParticleSystem):

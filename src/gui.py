@@ -326,6 +326,11 @@ class Image(GuiElement):
     def __init__(self, path: str):
         super().__init__(pygame.image.load(path))
 
+    def scale_by(self, factor):
+        self.surface = pygame.transform.scale_by(self.surface, factor)
+        self.width, self.height = self.surface.get_size()
+        return self
+
 
 class Grid(GuiElement):
     def __init__(self, width: int, height: int, rows: int):
@@ -395,3 +400,31 @@ class ProgressBar(GuiElement):
         self.surface.blit(corner, (self.width - self.corner_size, 0))
 
         self.surface.set_colorkey((255, 0, 255))
+
+
+class WeaponPatternImage(GuiElement):
+    def __init__(self, pattern):
+        self.width = len(pattern[0])
+        self.height = len(pattern)
+        PADDING = 10
+        SQUARE_SIZE = 50
+
+        surf = pygame.Surface(((SQUARE_SIZE + PADDING) * self.width - PADDING,
+                              (SQUARE_SIZE + PADDING) * self.height - PADDING))
+
+        surf.set_colorkey((0, 0, 0))
+
+        for x in range(self.width):
+            for y in range(self.height):
+                match pattern[y][x]:
+                    case 0:
+                        color = (0, 0, 0)
+                    case 1:
+                        color = (255, 255, 255)
+                    case 2:
+                        color = (128, 128, 128)
+
+                pygame.draw.rect(surf, color, ((SQUARE_SIZE + PADDING) * x, (SQUARE_SIZE + PADDING) * y,
+                                                         SQUARE_SIZE, SQUARE_SIZE), border_radius=10)
+
+        super().__init__(surf)

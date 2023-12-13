@@ -133,6 +133,7 @@ class TempLoseScreen(Scene):
             Guide("buttons", None, Guide.GL_HORIZONTAL, 0.9, Guide.ALIGN_CENTER_PADDED, Guide.REL_ALIGN_CENTER, 50))
 
         self.buttons.add_element(Button("Home", 300, 75, manager.set_scene, "mainMenu"))
+        self.buttons.add_element(Button("Retry", 300, 75, manager.set_scene, "loadingScreen", True))
         self.buttons.add_element(Button("Quit", 300, 75, sys.exit))
 
         self.logo_g = self.guiManager.add_guideline(

@@ -5,14 +5,16 @@ import pygame.surface
 from tiles import Camera, TileManager
 from items import *
 from random import choice
-from particles import ChestClose
+from particles import ChestClose, ParticleManager
 
 
 class ChestScreen(Scene):
-    def __init__(self, manager: SceneManager):
+    def __init__(self, manager: SceneManager, particle_manager: ParticleManager, pos):
         super().__init__(manager, "chest")
 
         self.guiManager = GuiManager(self.sceneManager.screen)
+        self.particle_manager = particle_manager
+        self.x, self.y = pos
 
         self.back = self.guiManager.add_guideline(
             Guide("img", None, Guide.GL_VERTICAL, 0, Guide.ALIGN_LEFT, Guide.REL_ALIGN_BOTTOM, 0))
@@ -27,11 +29,15 @@ class ChestScreen(Scene):
 
         self.logo_g = self.guiManager.add_guideline(
             Guide("logo", None, Guide.GL_VERTICAL, 0.5, Guide.ALIGN_CENTER_PADDED, Guide.REL_ALIGN_CENTER, 0))
+        self.chest_g = self.guiManager.add_guideline(
+            Guide("chest", None, Guide.GL_VERTICAL, 0.5, Guide.ALIGN_CENTER_PADDED, Guide.REL_ALIGN_CENTER, 0))
+        self.chest = self.chest_g.add_element(Image("../assets/player/chest.png").scale_by(2))
 
         self.weapon = None
         self.player = None
 
     def on_scene_end(self):
+        # self.particle_manager.add_system(ChestClose(self.x, self.y))
         self.sceneManager.del_scene(self)
 
     def set_weapon(self):
@@ -40,11 +46,31 @@ class ChestScreen(Scene):
 
     def on_scene_start(self, weapon, player):
         self.weapon = weapon
+
+        self.logo_g.add_element(Image(weapon.icon_path).scale_by(2))
         self.logo_g.add_element(Text(weapon.name, Text.FONT_BASE, 128, (255, 255, 255)))
+        self.logo_g.add_element(WeaponPatternImage(self.weapon.pattern))
+        self.logo_g.add_element(Text(f"{weapon.damage}dmg", Text.FONT_BASE, Text.SIZE_HEADER, (255, 255, 255)))
+
+        self.logo_g.hide = True
         self.player = player
 
+        def set_visibility():
+            self.logo_g.hide = False
+            self.chest_g.hide = True
+            x = self.screen.get_width() / 2 + self.particle_manager.camera.rel_x
+            y = self.screen.get_height() / 2 + self.particle_manager.camera.rel_y
+            self.particle_manager.add_system(ChestClose(x, y))
+
+        self.sceneManager.add_to_queue(set_visibility, 0.5)
+
+    def update(self, dt: float):
+        self.particle_manager.update(dt)
+
     def render(self, screen):
+        screen.fill((0, 0, 0))
         self.guiManager.render_guidelines()
+        self.particle_manager.render()
 
 
 class Chest(Entity):
@@ -69,6 +95,5 @@ class Chest(Entity):
             Sabre
         )
 
-        self.scene_manager.set_scene(ChestScreen(self.scene_manager), choice(weapons)(), entity)
-        self.group.execute_on_scene_start(self.particle_manager.add_system, "game", ChestClose(self.x, self.y))
+        self.scene_manager.set_scene(ChestScreen(self.scene_manager, self.particle_manager, (self.x, self.y)), choice(weapons)(), entity)
         self.group.remove(self)

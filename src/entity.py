@@ -336,7 +336,7 @@ class Enemy(MobileEntity):
                         if not self.move(0, -y):
                             self.move(-x, 0)
         else:
-            self.particle_manager.add_system(ConfusedEffect(self.x + 64, self.y - 64))
+            self.particle_manager.add_system(ConfusedEffect(self.x + 60, self.y - 64))
 
 
 class Dummy(MobileEntity):
@@ -354,6 +354,9 @@ class Potion(Entity):
         self.intractable = True
     def on_interact(self, entity):
         if not type(entity) is Player:
+            return
+
+        if entity.health >= entity.max_health:
             return
         entity.health += 3
         entity.particle_manager.add_system(PotionEffect(self.x + 64, self.y + 64, 3))

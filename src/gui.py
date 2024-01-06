@@ -236,11 +236,9 @@ class GuiManager:
 
 
 class CornerSquare(GuiElement):
-    STYLE_ORNATE = "../assets/gui/corners/StyleOrnateCorner.png"
-    STYLE_SIMPLE = "../assets/gui/corners/StyleSimpleCorner.png"
-    STYLE_SIMPLE_HOVERED = "../assets/gui/corners/StyleSimpleCornerHovered.png"
+    STYLE_SIMPLE = "../assets/gui/corners/SmoothFillCorner.png"
 
-    def __init__(self, width: int, height: int, style: str):
+    def __init__(self, width: int, height: int, color, style: str):
         super().__init__(pygame.Surface((width, height)))
         self.corner_size = 0
 
@@ -248,19 +246,14 @@ class CornerSquare(GuiElement):
         self.height = height
 
         self.style = style
+        self.color = color
 
         self.draw()
 
     def draw(self):
         corner = pygame.image.load(self.style)
         self.corner_size = corner.get_width()
-
-        # Draw corners
-        # todo make better
-        if self.style == self.STYLE_SIMPLE_HOVERED:
-            self.surface.fill((62, 58, 95))
-        else:
-            self.surface.fill((34, 32, 53))
+        self.surface.fill((0, 255, 255))
 
         pygame.draw.rect(self.surface, (255, 255, 255), self.surface.get_rect(), 4)
         self.surface.blit(corner, (0, 0))
@@ -270,6 +263,10 @@ class CornerSquare(GuiElement):
         self.surface.blit(corner, (self.width - self.corner_size, self.height - self.corner_size))
         corner = pygame.transform.rotate(corner, 90)
         self.surface.blit(corner, (self.width - self.corner_size, 0))
+
+        pa = pygame.PixelArray(self.surface)
+        pa.replace((0, 255, 255), self.color)
+        pa.close()
 
         # Make transparent
         self.surface.set_colorkey((255, 0, 255))
@@ -298,15 +295,17 @@ class Text(GuiElement):
 
 
 class Button(GuiElement):
-    def __init__(self, text, width, height, func, *args):
+    def __init__(self, text, width, height, color, hover_color, func, *args):
         super().__init__(pygame.Surface((width, height)))
+        self.color = color
+        self.hover_color = hover_color
 
         self.dummy_manager = GuiManager(self.surface)
         self.line = self.dummy_manager.add_guideline(
             Guide("dummy", None, Guide.GL_HORIZONTAL, 0.5, Guide.ALIGN_CENTER_PADDED, Guide.REL_ALIGN_CENTER, 0))
 
-        self.back = CornerSquare(width, height, CornerSquare.STYLE_SIMPLE)
-        self.back_hovered = CornerSquare(width, height, CornerSquare.STYLE_SIMPLE_HOVERED)
+        self.back = CornerSquare(width, height, color, CornerSquare.STYLE_SIMPLE)
+        self.back_hovered = CornerSquare(width, height, hover_color, CornerSquare.STYLE_SIMPLE)
         self.line.add_element(Text(text, Text.FONT_BASE, Text.SIZE_MAIN, (255, 255, 255)))
 
         self.draw()
@@ -327,6 +326,36 @@ class Button(GuiElement):
                 self.func(*self.args)
 
 
+class BasicButton(Button):
+    def __init__(self, text: str, width: int, height: int, func, *args):
+        super().__init__(text, width, height, (0, 0, 0), (50, 50, 50), func, *args)
+
+        self.move_dist = 12
+        self.duration = 100
+
+        self.anim = Tween(self.visual_offset_x, 0, 200)
+        self.flipped = False
+
+    def update(self):
+
+        self.draw()
+        if self.hovered:
+            if not self.flipped:
+                self.anim = Tween(self.visual_offset_x, self.move_dist, self.duration, Tween.quad_out_easing)
+                self.flipped = True
+
+            if pygame.mouse.get_pressed()[0]:
+                self.func(*self.args)
+        else:
+            if self.flipped:
+                self.anim = Tween(self.visual_offset_x, 0, self.duration, Tween.quad_in_easing)
+                self.flipped = False
+
+        self.anim.update()
+        self.visual_offset_x = self.anim.get_current_value()
+
+
+
 class Image(GuiElement):
     def __init__(self, path: str):
         super().__init__(pygame.image.load(path))
@@ -341,7 +370,7 @@ class Grid(GuiElement):
     def __init__(self, width: int, height: int, rows: int):
         super().__init__(pygame.Surface((width, height)))
 
-        self.back = CornerSquare(width, height, CornerSquare.STYLE_ORNATE)
+        self.back = CornerSquare(width, height, (0,0,0), CornerSquare.STYLE_SIMPLE)
 
         self.dummy_manager = GuiManager(self.surface)
 

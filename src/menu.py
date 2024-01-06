@@ -1,6 +1,6 @@
 import sys
 from scene_manager import Scene, SceneManager
-from gui import GuiManager, Guide, Button, Image, Grid, Text
+from gui import GuiManager, Guide, BasicButton, Image, Grid, Text
 import pygame
 from gen import LoadingScreen
 
@@ -27,10 +27,10 @@ class MainMenu(Scene):
         def get_scene():
             return LoadingScreen(self.sceneManager)
 
-        self.buttons.add_element(Button("New Game", 300, 75, lambda x: manager.set_scene(get_scene(), x), True))
+        self.buttons.add_element(BasicButton("New Game", 300, 75, lambda x: manager.set_scene(get_scene(), x), True))
         # self.buttons.add_element(Button("Load Game", 300, 75, lambda x: manager.set_scene(get_scene(), x), False))
-        self.buttons.add_element(Button("Credits", 300, 75, manager.set_scene, "creditsMenu"))
-        self.buttons.add_element(Button("Quit", 300, 75, sys.exit))
+        self.buttons.add_element(BasicButton("Credits", 300, 75, manager.set_scene, "creditsMenu"))
+        self.buttons.add_element(BasicButton("Quit", 300, 75, sys.exit))
 
         # ------ Logo ------
         self.logo_g = self.guiManager.add_guideline(
@@ -70,7 +70,7 @@ class CreditsMenu(Scene):
         self.center.add_element(self.grid)
 
         # ------ Button ------
-        self.center.add_element(Button("Main Menu", 300, 75, manager.set_scene, "mainMenu"))
+        self.center.add_element(BasicButton("Main Menu", 300, 75, manager.set_scene, "mainMenu"))
 
     def update(self, dt):
         self.screen.fill((0, 0, 0))
@@ -106,8 +106,8 @@ class TempWinScreen(Scene):
         self.buttons = self.guiManager.add_guideline(
             Guide("buttons", None, Guide.GL_HORIZONTAL, 0.9, Guide.ALIGN_CENTER_PADDED, Guide.REL_ALIGN_CENTER, 50))
 
-        self.buttons.add_element(Button("Home", 300, 75, manager.set_scene, "mainMenu"))
-        self.buttons.add_element(Button("Quit", 300, 75, sys.exit))
+        self.buttons.add_element(BasicButton("Home", 300, 75, manager.set_scene, "mainMenu"))
+        self.buttons.add_element(BasicButton("Quit", 300, 75, sys.exit))
 
         self.logo_g = self.guiManager.add_guideline(
             Guide("logo", None, Guide.GL_VERTICAL, 0.5, Guide.ALIGN_CENTER_PADDED, Guide.REL_ALIGN_CENTER, 0))
@@ -132,9 +132,9 @@ class TempLoseScreen(Scene):
         self.buttons = self.guiManager.add_guideline(
             Guide("buttons", None, Guide.GL_HORIZONTAL, 0.9, Guide.ALIGN_CENTER_PADDED, Guide.REL_ALIGN_CENTER, 50))
 
-        self.buttons.add_element(Button("Home", 300, 75, manager.set_scene, "mainMenu"))
-        self.buttons.add_element(Button("Retry", 300, 75, manager.set_scene, "loadingScreen", True, True))
-        self.buttons.add_element(Button("Quit", 300, 75, sys.exit))
+        self.buttons.add_element(BasicButton("Home", 300, 75, manager.set_scene, "mainMenu"))
+        self.buttons.add_element(BasicButton("Retry", 300, 75, manager.set_scene, "loadingScreen", True, True))
+        self.buttons.add_element(BasicButton("Quit", 300, 75, sys.exit))
 
         self.logo_g = self.guiManager.add_guideline(
             Guide("logo", None, Guide.GL_VERTICAL, 0.5, Guide.ALIGN_CENTER_PADDED, Guide.REL_ALIGN_CENTER, 0))

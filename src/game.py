@@ -1,6 +1,6 @@
 from tiles import Camera, TileManager, CHUNK_SIZE, TILE_SIZE
 from scene_manager import Scene, SceneManager
-from gui import GuiManager, Guide, Text, Button, ProgressBar, LevelIntro
+from gui import GuiManager, Guide, Text, BasicButton, ProgressBar, LevelIntro
 import pygame
 from entity import Player
 from entity_group import EntityGroup
@@ -46,8 +46,8 @@ class GameScene(Scene):
             ProgressBar(750, 25, ProgressBar.SMOOTH, (155, 43, 45), (0, 0, 0)))
 
         # Temp: Save + Load
-        self.debug.add_element(Button("Save", 300, 80, self.group.save))
-        self.debug.add_element(Button("Load", 300, 80, self.group.load))
+        self.debug.add_element(BasicButton("Save", 300, 80, self.group.save))
+        self.debug.add_element(BasicButton("Load", 300, 80, self.group.load))
 
         # -------------- Tutorial UI -------------- #
         if level == 1:

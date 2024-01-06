@@ -19,7 +19,7 @@ class DialogueScene1(Scene):
 
         self.buttons = self.guiManager.add_guideline(
             Guide("buttons", None, Guide.GL_HORIZONTAL, 0.9, Guide.ALIGN_CENTER_PADDED, Guide.REL_ALIGN_CENTER, 50))
-        self.buttons.add_element(Button("Continue", 300, 75, manager.set_scene, "game", False))
+        self.buttons.add_element(BasicButton("Continue", 300, 75, manager.set_scene, "game", False))
 
         self.logo_g = self.guiManager.add_guideline(
             Guide("logo", None, Guide.GL_VERTICAL, 0.5, Guide.ALIGN_CENTER_PADDED, Guide.REL_ALIGN_CENTER, 0))

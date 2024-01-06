@@ -357,6 +357,7 @@ class Potion(Entity):
         super().__init__()
         self.surface = pygame.image.load("../assets/weapons/MassiveMuke.png")
         self.intractable = True
+
     def on_interact(self, entity):
         if not type(entity) is Player:
             return
@@ -364,6 +365,8 @@ class Potion(Entity):
         if entity.health >= entity.max_health:
             return
         entity.health += 3
+        if entity.health > entity.max_health:
+            entity.health = entity.max_health
         entity.particle_manager.add_system(PotionEffect(self.x + 64, self.y + 64, 3))
 
 

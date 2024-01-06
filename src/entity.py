@@ -195,7 +195,8 @@ class MobileEntity(Entity):
             return
 
         self.health -= damage
-        self.health_bar.redraw()
+        if self.health_bar:
+            self.health_bar.redraw()
         self.particle_manager.add_system(HitEffect(self.x + 64, self.y + 64, damage))
 
         if self.health <= 0:
@@ -254,6 +255,10 @@ class Player(MobileEntity):
         self.can_move = True
 
         self.surface = pygame.image.load("../assets/player/frog3.png")
+
+    def on_entity_ready(self):
+        self.set_weapon(self.weapon)
+        self.health_bar = None
 
     def input(self, pressed):
         if not self.can_move:

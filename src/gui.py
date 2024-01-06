@@ -1,4 +1,5 @@
 import pygame
+from tween import Tween
 
 
 class GuiElement:
@@ -15,6 +16,9 @@ class GuiElement:
 
         self.x = 0
         self.y = 0
+
+        self.visual_offset_x = 0
+        self.visual_offset_y = 0
 
         self.hide = False
 
@@ -163,7 +167,7 @@ class Guide:
             element.is_hovered(final_x, final_y)
             element.update()
             if not element.hide:
-                self.manager.screen.blit(element.surface, (final_x, final_y))
+                self.manager.screen.blit(element.surface, (final_x + element.visual_offset_x, final_y + element.visual_offset_y))
 
 
 class GuiManager:
@@ -428,3 +432,35 @@ class WeaponPatternImage(GuiElement):
                                                          SQUARE_SIZE, SQUARE_SIZE), border_radius=10)
 
         super().__init__(surf)
+
+
+class LevelIntro(Text):
+    def __init__(self, text: str):
+        super().__init__(text, self.FONT_BASE, 128, (255, 255, 255))
+        img = pygame.image.load("../assets/gui/intro.png")
+        text = pygame.Surface.copy(self.surface)
+        self.surface = pygame.Surface([
+            img.get_width() * 2 + text.get_width() + 50,
+            max(text.get_height(), img.get_height())
+        ])
+        self.surface.blit(img, (0, 0))
+        self.surface.blit(text, (img.get_width() + 25, 0))
+        img = pygame.transform.rotate(img, 180)
+        self.surface.blit(img, (img.get_width() + text.get_width() + 50, 0))
+        self.surface.set_colorkey((0, 0, 0))
+
+        self.width, self.height = self.surface.get_size()
+
+        self.anim = None
+        self.visual_offset_y = -250
+
+    def start(self):
+        self.anim = Tween(-250, -1000, 2000, Tween.quad_in_easing)
+
+    def update(self):
+        if self.anim is not None:
+            self.anim.update()
+            self.visual_offset_y = self.anim.get_current_value()
+            if self.visual_offset_y == self.anim.end_value:
+                self.hide = True
+

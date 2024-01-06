@@ -1,6 +1,6 @@
 from tiles import Camera, TileManager, CHUNK_SIZE, TILE_SIZE
 from scene_manager import Scene, SceneManager
-from gui import GuiManager, Guide, Text, Button, ProgressBar
+from gui import GuiManager, Guide, Text, Button, ProgressBar, LevelIntro
 import pygame
 from entity import Player
 from entity_group import EntityGroup
@@ -50,14 +50,19 @@ class GameScene(Scene):
         self.debug.add_element(Button("Load", 300, 80, self.group.load))
 
         # -------------- Tutorial UI -------------- #
-        self.tut = self.guiManager.add_guideline(
-            Guide("tut", None, Guide.GL_VERTICAL, 0.5, Guide.ALIGN_TOP, Guide.REL_ALIGN_CENTER, 5))
-        self.tut.add_element(Text("Instructions:", Text.FONT_BASE, Text.SIZE_HEADER, (255, 255, 255)))
-        self.tut.add_element(Text("Movement - Arrows", Text.FONT_BASE, Text.SIZE_MAIN, (255, 255, 255)))
-        self.tut.add_element(Text("Attack by moving into enemies", Text.FONT_BASE, Text.SIZE_MAIN, (255, 255, 255)))
-        self.tut.add_element(Text("Collect weapons from chests", Text.FONT_BASE, Text.SIZE_MAIN, (255, 255, 255)))
-        self.tut.add_element(Text("Find the stairs!", Text.FONT_BASE, Text.SIZE_MAIN, (255, 255, 255)))
-        self.tut.add_element(Text(f"Currently on level {self.level}", Text.FONT_BASE, Text.SIZE_HEADER, (255, 255, 255)))
+        if level == 1:
+            self.tut = self.guiManager.add_guideline(
+                Guide("tut", None, Guide.GL_VERTICAL, 0.005, Guide.ALIGN_TOP, Guide.REL_ALIGN_RIGHT, 10))
+            self.tut.add_element(Text("Instructions:", Text.FONT_BASE, Text.SIZE_HEADER, (255, 255, 255)))
+            self.tut.add_element(Text("Movement - Arrows", Text.FONT_BASE, Text.SIZE_MAIN, (255, 255, 255)))
+            self.tut.add_element(Text("Attack by moving into enemies", Text.FONT_BASE, Text.SIZE_MAIN, (255, 255, 255)))
+            self.tut.add_element(Text("Collect weapons from chests", Text.FONT_BASE, Text.SIZE_MAIN, (255, 255, 255)))
+            self.tut.add_element(Text("Find the stairs!", Text.FONT_BASE, Text.SIZE_MAIN, (255, 255, 255)))
+
+        self.intro = self.guiManager.add_guideline(
+                Guide("intro", None, Guide.GL_VERTICAL, 0.5, Guide.REL_ALIGN_CENTER, Guide.REL_ALIGN_CENTER, 5))
+        self.card = self.intro.add_element(LevelIntro(f"Level {self.level}"))
+        self.group.add_to_queue(self.card.start, 1.25)
 
         self.debug_cool = False
 

@@ -166,9 +166,12 @@ class LoadingScreen(Scene):
         self.completion_event = None
         self.level = 0
 
-    def on_scene_start(self, new):
+    def on_scene_start(self, new, restart=False):
         if not new:
             self.sceneManager.set_scene("game", True)
+
+        if restart:
+            self.level = 0
 
         self.level += 1
         self.sceneManager.del_scene("game")
@@ -186,6 +189,7 @@ class LoadingScreen(Scene):
     def render(self, screen: pygame.Surface):
         self.screen.fill((0, 0, 0))
         self.guiManager.render_guidelines()
+
 
 def generate_dungeon(chunk_size, event, level):
     # Delete current world

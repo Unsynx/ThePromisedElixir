@@ -37,6 +37,8 @@ class Weapon:
         self.pattern = pattern
         self.center_x, self.center_y = self.get_pattern_center()
 
+        self.tier = None
+
         self.offset_x = 0
         self.offset_y = 0
 
@@ -102,6 +104,7 @@ class SimpleSpearWeapon(Weapon):
     def __init__(self):
         super().__init__("../assets/weapons/spear.png", 2, R_STAR)
         self.offset_x = 25
+        self.tier = c.TIER_0
 
 
 class IceWand(Weapon):
@@ -155,12 +158,14 @@ class MorningStar(Weapon):
 class Knife(Weapon):
     def __init__(self):
         super().__init__("../assets/weapons/knife.png", 3, R_FRONT)
+        self.tier = c.TIER_0
         self.offset_x = 20
 
 
 class Sword(Weapon):
     def __init__(self):
         super().__init__("../assets/weapons/sword.png", 3, R_DOUBLE)
+        self.tier = c.TIER_0
         self.offset_x = 50
 
 

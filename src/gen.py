@@ -7,7 +7,7 @@ from scene_manager import Scene, SceneManager
 from gui import GuiManager, Guide, Text
 from tiles import TILE_SIZE, TILE_DATA, CHUNK_SIZE
 from entity import *
-from chests import Chest
+from chests import Chest, Loot
 from dialogue import Dialogue
 from entity_group import EntityGroup
 from game import GameScene
@@ -174,7 +174,6 @@ class LoadingScreen(Scene):
         self.sceneManager.del_scene("game")
         self.sceneManager.add_scene(GameScene(self.sceneManager, self.level))
         self.completion_event = threading.Event()
-
         second_thread = threading.Thread(target=generate_dungeon, args=(CHUNK_SIZE, self.completion_event, self.level))
         second_thread.start()
 
@@ -187,7 +186,6 @@ class LoadingScreen(Scene):
     def render(self, screen: pygame.Surface):
         self.screen.fill((0, 0, 0))
         self.guiManager.render_guidelines()
-
 
 def generate_dungeon(chunk_size, event, level):
     # Delete current world
@@ -224,9 +222,10 @@ def generate_dungeon(chunk_size, event, level):
         r_x = randint(0, width * chunk_size - 1)
         r_y = randint(0, height * chunk_size - 1)
         if not TILE_DATA[world[r_y][r_x]].collider:
-            group.add_entity(Chest).set_position(r_x, r_y)
+            group.add_entity(Chest).set_position(r_x, r_y).set_floor(level)
             i += 1
 
+    loot = Loot()
     i = 0
     while i < 10:
         r_x = randint(0, width * chunk_size - 1)
@@ -235,11 +234,7 @@ def generate_dungeon(chunk_size, event, level):
             e = group.add_entity(Enemy).set_position(r_x, r_y)
             # Temporary difficulty scaling
             if randint(0, 10) < level:
-                e.set_weapon(random.choice([
-                    Knife,
-                    SimpleSpearWeapon,
-                    Sword
-                ])())
+                e.set_weapon(loot.get_weapon(level, -2))
             i += 1
 
     # dialogue entity
@@ -278,3 +273,10 @@ def generate_dungeon(chunk_size, event, level):
 
     event.set()
     return
+
+
+"""loot = Loot()
+for i in range(25):
+    for j in range(5):
+        w = loot.get_weapon(i + 1)
+        print(f"floor {i + 1}: tier{w.tier}")"""

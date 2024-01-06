@@ -2,10 +2,10 @@ from scene_manager import SceneManager, Scene
 from gui import *
 from entity import Entity, Player
 import pygame.surface
-from tiles import Camera, TileManager
-from items import *
-from random import choice
 from particles import ChestClose, ParticleManager
+import constants as c
+from items import Weapon, NoWeapon
+from random import randint, choice
 
 
 class ChestScreen(Scene):
@@ -73,27 +73,77 @@ class ChestScreen(Scene):
         self.particle_manager.render()
 
 
+class Loot:
+    DIFFICULTY_SCALE = 10
+    FLOOR_SCALE = 5
+
+    def __init__(self):
+        self.tier0_weapons = []
+        self.tier1_weapons = []
+        self.tier2_weapons = []
+        self.tier3_weapons = []
+        self.tier4_weapons = []
+
+        for w in Weapon.__subclasses__():
+            match w().tier:
+                case c.TIER_0:
+                    self.tier0_weapons.append(w)
+                case c.TIER_1:
+                    self.tier1_weapons.append(w)
+                case c.TIER_2:
+                    self.tier2_weapons.append(w)
+                case c.TIER_3:
+                    self.tier3_weapons.append(w)
+                case c.TIER_4:
+                    self.tier4_weapons.append(w)
+                case _:
+                    pass
+
+    def get_weapon(self, floor, offset=0):
+        floor -= offset
+        num = randint(0, min(100, floor * self.FLOOR_SCALE))
+        num += floor * self.DIFFICULTY_SCALE
+
+        if floor < 1:
+            return NoWeapon()
+
+        tier = None
+        if num < 50:
+            tier = self.tier0_weapons
+        elif num < 100:
+            tier = self.tier1_weapons
+        elif num < 150:
+            tier = self.tier2_weapons
+        elif num < 200:
+            tier = self.tier3_weapons
+        else:
+            tier = self.tier4_weapons
+
+        try:
+            return choice(tier)()
+        except IndexError:
+            print("No weapon in tier. returning no weapon")
+            return NoWeapon()
+
+
 class Chest(Entity):
+    loot = Loot()
+
     def __init__(self):
         super().__init__()
         self.surface = pygame.image.load("../assets/player/chest.png")
         self.intractable = True
+        self.floor = None
+
+        self.serialize("floor", lambda: self.floor)
+
+    def set_floor(self, floor):
+        self.floor = floor
+        return self
 
     def on_interact(self, entity: Entity):
         if not type(entity) is Player:
             return
 
-        weapons = (
-            SimpleSpearWeapon,
-            IceWand,
-            FireKnife,
-            MilesMuke,
-            MorningStar,
-            Knife,
-            Sword,
-            FlameStaff,
-            Sabre
-        )
-
-        self.scene_manager.set_scene(ChestScreen(self.scene_manager, self.particle_manager, (self.x, self.y)), choice(weapons)(), entity)
+        self.scene_manager.set_scene(ChestScreen(self.scene_manager, self.particle_manager, (self.x, self.y)), self.loot.get_weapon(self.floor), entity)
         self.group.remove(self)

@@ -294,6 +294,7 @@ class Text(GuiElement):
     def set_value(self, value):
         self.text = value
         self.surface = self.draw()
+        self.width, self.height = self.surface.get_size()
 
 
 class Button(GuiElement):
@@ -367,6 +368,7 @@ class Grid(GuiElement):
 
 class ProgressBar(GuiElement):
     BASIC = "../assets/gui/corners/SimpleFIllCorner.png"
+    SMOOTH = "../assets/gui/corners/SmoothFillCorner.png"
 
     DEFAULT_BACK_COLOR = (34, 32, 53)
 

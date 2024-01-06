@@ -40,10 +40,10 @@ class GameScene(Scene):
 
         # -------------- Player UI -------------- #
         self.player_ui = self.guiManager.add_guideline(
-            Guide("player_ui", None, Guide.GL_HORIZONTAL, 1, Guide.ALIGN_CENTER_PADDED, Guide.REL_ALIGN_TOP, 10))
-        self.health_bar = self.player_ui.add_element(
-            ProgressBar(750, 20, ProgressBar.BASIC, (255, 255, 255), (0, 0, 0)))
+            Guide("player_ui", None, Guide.GL_VERTICAL, 0.5, Guide.ALIGN_BOTTOM, Guide.REL_ALIGN_CENTER, 10))
         self.weapon_attack = self.player_ui.add_element(Text("", Text.FONT_BASE, Text.SIZE_MAIN, (255, 255, 255)))
+        self.health_bar = self.player_ui.add_element(
+            ProgressBar(750, 25, ProgressBar.SMOOTH, (155, 43, 45), (0, 0, 0)))
 
         # Temp: Save + Load
         self.debug.add_element(Button("Save", 300, 80, self.group.save))
@@ -118,10 +118,7 @@ class GameScene(Scene):
         # Player UI
         if self.player:
             self.health_bar.set_value(self.player.health / self.player.max_health)
-            try:
-                self.weapon_attack.set_value(f"{self.player.weapon.name} - {self.player.weapon.normal_attack.damage}dmg")
-            except AttributeError:
-                self.weapon_attack.set_value("Hands - 1dmg")
+            self.weapon_attack.set_value(f"{self.player.weapon.name} - {self.player.weapon.damage}dmg")
 
     def render(self, screen: pygame.Surface):
         screen.fill((50, 60, 57))

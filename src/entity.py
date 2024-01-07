@@ -247,7 +247,7 @@ class Player(MobileEntity):
         self.health = 15
         self.max_health = self.health
 
-        self.weapon = FireKnife()
+        self.weapon = NoWeapon()
 
         self.input_x = 0
         self.input_y = 0

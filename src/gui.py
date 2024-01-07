@@ -355,7 +355,6 @@ class BasicButton(Button):
         self.visual_offset_x = self.anim.get_current_value()
 
 
-
 class Image(GuiElement):
     def __init__(self, path: str):
         super().__init__(pygame.image.load(path))
@@ -444,6 +443,10 @@ class WeaponPatternImage(GuiElement):
         PADDING = 10
         SQUARE_SIZE = 50
 
+        atck = pygame.image.load("../assets/weapons/attack_icon.png")
+        plyr = pygame.image.load("../assets/weapons/player_icon.png")
+        no = pygame.Surface((0, 0))
+
         surf = pygame.Surface(((SQUARE_SIZE + PADDING) * self.width - PADDING,
                               (SQUARE_SIZE + PADDING) * self.height - PADDING))
 
@@ -453,14 +456,14 @@ class WeaponPatternImage(GuiElement):
             for y in range(self.height):
                 match pattern[y][x]:
                     case 0:
-                        color = (0, 0, 0)
+                        t = no
                     case 1:
-                        color = (255, 255, 255)
-                    case 2:
-                        color = (128, 128, 128)
+                        t = atck
+                    case _:
+                        t = plyr
 
-                pygame.draw.rect(surf, color, ((SQUARE_SIZE + PADDING) * x, (SQUARE_SIZE + PADDING) * y,
-                                                         SQUARE_SIZE, SQUARE_SIZE), border_radius=10)
+                surf.blit(t, ((SQUARE_SIZE + PADDING) * x, (SQUARE_SIZE + PADDING) * y,
+                                        SQUARE_SIZE, SQUARE_SIZE))
 
         super().__init__(surf)
 

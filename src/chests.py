@@ -101,7 +101,7 @@ class Loot:
 
     def get_weapon(self, floor, offset=0):
         floor -= offset
-        num = randint(0, min(100, floor * self.FLOOR_SCALE))
+        num = randint(0, max(0, min(100, floor * self.FLOOR_SCALE)))
         num += floor * self.DIFFICULTY_SCALE
 
         if floor < 1:
@@ -114,7 +114,7 @@ class Loot:
             tier = self.tier1_weapons
         elif num < 150:
             tier = self.tier2_weapons
-        elif num < 220:
+        elif num < 250:
             tier = self.tier3_weapons
         else:
             tier = self.tier4_weapons

@@ -238,7 +238,7 @@ def generate_dungeon(chunk_size, event, level):
             e = group.add_entity(Enemy).set_position(r_x, r_y)
             # Temporary difficulty scaling
             if randint(0, 10) < level:
-                e.set_weapon(loot.get_weapon(level, -2))
+                e.set_weapon(loot.get_weapon(level, 2))
             i += 1
 
     # dialogue entity
@@ -278,8 +278,8 @@ def generate_dungeon(chunk_size, event, level):
     event.set()
     return
 
-"""
-loot = Loot()
+
+"""loot = Loot()
 for i in range(25):
     for j in range(5):
         w = loot.get_weapon(i + 1)

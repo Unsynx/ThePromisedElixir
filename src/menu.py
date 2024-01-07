@@ -29,7 +29,7 @@ class MainMenu(Scene):
 
         # ------ Buttons ------
         self.buttons = self.guiManager.add_guideline(
-            Guide("buttons", None, Guide.GL_VERTICAL, 0.2, Guide.ALIGN_CENTER_PADDED, Guide.REL_ALIGN_CENTER, 50))
+            Guide("buttons", None, Guide.GL_HORIZONTAL, 0.95, Guide.ALIGN_LEFT_PADDING, Guide.REL_ALIGN_TOP, 30))
 
         self.sceneManager.del_scene("loadingScreen")
 
@@ -44,13 +44,13 @@ class MainMenu(Scene):
 
         # ------ Logo ------
         self.logo_g = self.guiManager.add_guideline(
-            Guide("logo", None, Guide.GL_VERTICAL, 0.75, Guide.ALIGN_CENTER_PADDED, Guide.REL_ALIGN_CENTER, 0))
+            Guide("logo", None, Guide.GL_VERTICAL, 0.25, Guide.ALIGN_CENTER_PADDED, Guide.REL_ALIGN_CENTER, 0))
         self.logo_g.add_element(Image("../assets/gui/images/logo_shadow.png"))
 
         # ------ Version Text ------
         self.text = self.guiManager.add_guideline(
-            Guide("text", None, Guide.GL_VERTICAL, 0, Guide.ALIGN_BOTTOM, Guide.REL_ALIGN_RIGHT, 25))
-        self.text.add_element(Text("  In Development", Text.FONT_BASE, Text.SIZE_MAIN, (255, 255, 255)))
+            Guide("text", None, Guide.GL_HORIZONTAL, 0.97, Guide.ALIGN_RIGHT, Guide.REL_ALIGN_TOP, 25))
+        self.text.add_element(Text("In Development    ", Text.FONT_BASE, Text.SIZE_MAIN, (255, 255, 255)))
 
     def update(self, dt):
         pass
@@ -58,9 +58,16 @@ class MainMenu(Scene):
     def render(self, screen):
         x, y = pygame.mouse.get_pos()
         self.screen.blit(self.background, (0, 0))
-        self.screen.blit(self.cliff, (x * 0.01, 0))
-        self.screen.blit(self.glow, (x * 0.01 + 700, 130))
-        self.screen.blit(self.player, (x * 0.01, 0))
+        self.screen.blit(self.cliff, (x * 0.03, 0))
+        rot_img = pygame.transform.rotate(self.glow, int(time.time() * -8) % 360)
+        offset_x = (rot_img.get_width() - self.glow.get_width()) // 2
+        offset_y = (rot_img.get_height() - self.glow.get_height()) // 2
+
+        self.screen.blit(rot_img, (x * 0.03 + 700 - offset_x, 125 - offset_y))
+
+
+
+        self.screen.blit(self.player, (x * 0.03, 0))
         self.guiManager.render_guidelines()
 
 
@@ -88,6 +95,7 @@ class CreditsMenu(Scene):
         self.grid.add_element(6, Text("https://creativecommons.org/licenses/by/4.0/", Text.FONT_BASE, Text.SIZE_MAIN, (255, 255, 255)))
         self.grid.add_element(7, Text("Creepy Forest - Augmentality (Brandon Morris)", Text.FONT_BASE, Text.SIZE_MAIN, (255, 255, 255)))
         self.grid.add_element(8, Text("https://creativecommons.org/publicdomain/zero/1.0/", Text.FONT_BASE, Text.SIZE_MAIN, (255, 255, 255)))
+        self.grid.add_element(9, Text("Additional credits in assets/sfx/credits.txt", Text.FONT_BASE, Text.SIZE_MAIN, (255, 255, 255)))
 
         self.center.add_element(self.grid)
 

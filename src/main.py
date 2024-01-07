@@ -23,8 +23,6 @@ pygame.display.set_caption("Game")
 clock = pygame.time.Clock()
 
 
-
-
 # ---- Scene Manager ---- #
 sceneManager = SceneManager(screen)
 

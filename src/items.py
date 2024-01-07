@@ -1,3 +1,4 @@
+import pygame.mixer
 import constants as c
 
 
@@ -39,6 +40,7 @@ class Weapon:
         self.damage = damage
         self.pattern = pattern
         self.center_x, self.center_y = self.get_pattern_center()
+        self.sound_path = "../assets/sfx/attack.wav"
 
         self.tier = None
 
@@ -96,6 +98,12 @@ class Weapon:
         if type(target) not in self.effect_excluded:
             self.for_non_hit(not_hit_positions, group)
 
+        from entity import Player
+        if type(group.get_entity_at(player_x, player_y)) == Player:
+            s = pygame.mixer.Sound(self.sound_path)
+            s.set_volume(c.SFX_VOLUME)
+            s.play()
+
     def effect(self, effect_entity, positions, group):
         for pos in positions:
             _, collider = group.tile_manager.get_tile(pos[0], pos[1])
@@ -126,6 +134,7 @@ class IceWand(Weapon):
 class NoWeapon(Weapon):
     def __init__(self):
         super().__init__(None, 1, R_FRONT)
+        self.sound_path = "../assets/sfx/punch.wav"
 
 
 class FireKnife(Weapon):

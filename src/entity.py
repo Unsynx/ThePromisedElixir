@@ -308,14 +308,15 @@ class Player(MobileEntity):
                 self.recent_input_y = True
 
         if moved:
+            s = choice(self.steps)
+            s.set_volume(c.SFX_VOLUME)
+            s.play()
+
             self.group.add_to_queue(self.group.on_player_move, PLAYER_MOVEMENT_DELAY, self)
             self.can_move = False
 
     def on_player_move(self, player):
         self.can_move = True
-        s = choice(self.steps)
-        s.set_volume(c.SFX_VOLUME)
-        s.play()
 
 
 class Enemy(MobileEntity):

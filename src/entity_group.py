@@ -150,14 +150,22 @@ class EntityGroup:
             e.update(dt)
 
     def render(self):
-        # Add depth sorting option
+        # Simple sort order
+        movable_entity_classes = MobileEntity.__subclasses__()
+        follower_entity_classes = Follower.__subclasses__()
+        movable_entities = []
+        follower_entities = []
+
         for e in self.entities:
-            from entity import Player
-            if e.visible and not type(e) == Player:
+            if type(e) in movable_entity_classes:
+                movable_entities.append(e)
+            elif type(e) in follower_entity_classes:
+                follower_entities.append(e)
+            else:
                 e.render()
 
-        # Temporary work around for player to be on top of traps
-        try:
-            self.get_entity(Player).render()
-        except AttributeError:
-            pass
+        for e in movable_entities:
+            e.render()
+
+        for e in follower_entities:
+            e.render()

@@ -191,6 +191,49 @@ class LoadingScreen(Scene):
         self.guiManager.render_guidelines()
 
 
+class EntitySpawner:
+    def __init__(self, width, height, chunk_size, group, world):
+        self.width = width
+        self.height = height
+        self.chunk_size = chunk_size
+        self.group = group
+        self.world = world
+
+    def spawn_entity(self, entity, count, can_spawn_on_other=False, neighbors=0):
+        entities = []
+        i = 0
+        while i < count:
+            r_x = randint(0, self.width * self.chunk_size - 1)
+            r_y = randint(0, self.height * self.chunk_size - 1)
+
+            if not TILE_DATA[self.world[r_y][r_x]].collider:
+                if not can_spawn_on_other and self.group.get_entity_at(r_x, r_y) is not None:
+                    continue
+
+                e = self.group.add_entity(entity).set_position(r_x, r_y)
+                entities.append(e)
+
+                j = 0
+                while j < neighbors:
+                    if randint(0, 1) == 0:
+                        r_x += 1
+                    else:
+                        r_y += 1
+
+                    if not TILE_DATA[self.world[r_y][r_x]].collider:
+                        if not can_spawn_on_other and self.group.get_entity_at(r_x, r_y) is not None:
+                            continue
+
+                        e = self.group.add_entity(entity).set_position(r_x, r_y)
+                        entities.append(e)
+
+                        j += 1
+
+                i += 1
+
+        return entities
+
+
 def generate_dungeon(chunk_size, event, level):
     # Delete current world
     dir_name = "../assets/world"
@@ -208,79 +251,36 @@ def generate_dungeon(chunk_size, event, level):
     world = dungeon.level
 
     group = EntityGroup(None, None, None, None, None, TILE_SIZE)
+
+    spawner = EntitySpawner(width, height, chunk_size, group, world)
+
     if level == 1:
         group.add_entity(Player).set_position(x, y)
     else:
         group.load(True)
         group[0].set_position(x, y)
 
-    while True:
-        r_x = randint(0, width * chunk_size - 1)
-        r_y = randint(0, height * chunk_size - 1)
-        if not TILE_DATA[world[r_y][r_x]].collider:
-            group.add_entity(Staircase).set_position(r_x, r_y)
-            break
+    spawner.spawn_entity(Staircase, 1)
 
-    i = 0
-    while i < 10:
-        r_x = randint(0, width * chunk_size - 1)
-        r_y = randint(0, height * chunk_size - 1)
-        if not TILE_DATA[world[r_y][r_x]].collider:
-            group.add_entity(Chest).set_position(r_x, r_y).set_floor(level)
-            i += 1
+    chest = spawner.spawn_entity(Chest, 10)
+    for e in chest:
+        e.set_floor(level)
 
-    loot = Loot()
-    i = 0
-    while i < 10:
-        r_x = randint(0, width * chunk_size - 1)
-        r_y = randint(0, height * chunk_size - 1)
-        if not TILE_DATA[world[r_y][r_x]].collider:
-            e = group.add_entity(Enemy).set_position(r_x, r_y)
-            # Temporary difficulty scaling
-            if randint(0, 10) < level:
-                e.set_weapon(loot.get_weapon(level, 2))
-            i += 1
-
-        # Traps
     if level > 5:
-        i = 0
-        while i < min(25, level * 2):
-            r_x = randint(0, width * chunk_size - 1)
-            r_y = randint(0, height * chunk_size - 1)
-            if randint(0, 1) == 1:
-                for x in range(3):
-                    try:
-                        if not TILE_DATA[world[r_y][r_x + x]].collider:
-                            group.add_entity(Trap).set_position(r_x + x, r_y)
-                    except IndexError:
-                        continue
-            else:
-                for y in range(3):
-                    try:
-                        if not TILE_DATA[world[r_y + y][r_x]].collider:
-                            group.add_entity(Trap).set_position(r_x, r_y + y)
-                    except IndexError:
-                        continue
-            i += 1
+        spawner.spawn_entity(Trap, min(25, level * 2), neighbors=2)
 
-    # dialogue entity
-    spawned = False
-    while not spawned:
-        r_x = randint(0, width * chunk_size - 1)
-        r_y = randint(0, height * chunk_size - 1)
-        if not TILE_DATA[world[r_y][r_x]].collider:
-            group.add_entity(Dialogue).set_dialogue_number(1).set_position(r_x, r_y)
-            print(f"added dialogue at {r_x}, {r_y}")
-            spawned = True
+    enemies = spawner.spawn_entity(Enemy, 10)
+    loot = Loot()
+    for e in enemies:
+        if randint(0, 10) < level:
+            e.set_weapon(loot.get_weapon(level, 2))
 
-    # potion entity
-    i = 0
-    while i < 10:
-        r_x = randint(0, width * chunk_size - 1)
-        r_y = randint(0, height * chunk_size - 1)
-        if not TILE_DATA[world[r_y][r_x]].collider:
-            e = group.add_entity(Potion).set_position(r_x, r_y)
-            i += 1
+    book = spawner.spawn_entity(Dialogue, 1)
+    for e in book:
+        e.set_dialogue_number(1)
+
+    spawner.spawn_entity(Potion, 10)
+
     group.save()
 
     # --------------------- REPLACE ABOVE --------------------- #

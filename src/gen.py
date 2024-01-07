@@ -241,6 +241,28 @@ def generate_dungeon(chunk_size, event, level):
                 e.set_weapon(loot.get_weapon(level, 2))
             i += 1
 
+        # Traps
+    if level > 5:
+        i = 0
+        while i < min(25, level * 2):
+            r_x = randint(0, width * chunk_size - 1)
+            r_y = randint(0, height * chunk_size - 1)
+            if randint(0, 1) == 1:
+                for x in range(3):
+                    try:
+                        if not TILE_DATA[world[r_y][r_x + x]].collider:
+                            group.add_entity(Trap).set_position(r_x + x, r_y)
+                    except IndexError:
+                        continue
+            else:
+                for y in range(3):
+                    try:
+                        if not TILE_DATA[world[r_y + y][r_x]].collider:
+                            group.add_entity(Trap).set_position(r_x, r_y + y)
+                    except IndexError:
+                        continue
+            i += 1
+
     # dialogue entity
     spawned = False
     while not spawned:

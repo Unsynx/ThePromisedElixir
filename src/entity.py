@@ -26,6 +26,8 @@ class Entity:
         self.surface = None
         self.intractable = False
         self.visible = True
+        self.can_walk_over = False
+        self.must_be_attacked_directly = False
 
         self.serialized_vars = {}
         self.ignore = False
@@ -166,7 +168,9 @@ class MobileEntity(Entity):
                     e.on_interact(self)
                 else:
                     self.attack_logic(e, x, 0)
-                    # self.x += x * 64
+                    if e.can_walk_over:
+                        self.tile_x += x
+                        self.animation_x = Tween(self.x, self.tile_x * self.tile_size, 100)
                 return True
 
         if y != 0:
@@ -180,7 +184,10 @@ class MobileEntity(Entity):
                     e.on_interact(self)
                 else:
                     self.attack_logic(e, 0, y)
-                    # self.y += y * 64
+                    if e.can_walk_over:
+                        self.tile_y += y
+                        self.animation_y = Tween(self.y, self.tile_y * self.tile_size, 100)
+
                 return True
 
         return False
@@ -240,7 +247,7 @@ class Player(MobileEntity):
         self.health = 15
         self.max_health = self.health
 
-        self.weapon = NoWeapon()
+        self.weapon = FireKnife()
 
         self.input_x = 0
         self.input_y = 0
@@ -390,6 +397,7 @@ class IceCube(Entity):
         self.surface = pygame.image.load("../assets/weapons/icecube2.png")
         self.health = None
         self.lifetime = 9
+        self.must_be_attacked_directly = True
 
         self.serialize("lifetime", lambda: self.lifetime)
 
@@ -409,7 +417,26 @@ class Fire(Entity):
         super().__init__()
         self.surface = pygame.image.load("../assets/weapons/Fire.png")
         self.health = 1
+        self.must_be_attacked_directly = True
 
     def attack(self, entity, damage):
         entity.attack(self, 2)
         self.on_death()
+
+
+class Trap(Entity):
+    def __init__(self):
+        super().__init__()
+        self.surface = pygame.image.load("../assets/player/Trap1.png")
+        self.can_walk_over = True
+        self.health = None
+        self.hits = 1
+        self.must_be_attacked_directly = True
+
+    def attack(self, entity, damage):
+        entity.attack(self, 3)
+        self.hits += 1
+        if self.hits > 4:
+            self.on_death()
+            return
+        self.surface = pygame.image.load(f"../assets/player/Trap{self.hits}.png")

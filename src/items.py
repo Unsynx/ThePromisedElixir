@@ -87,10 +87,10 @@ class Weapon:
         hit_enemies, not_hit_positions = self.get_hit_enemies(player_x, player_y, attack_dir, group)
 
         for e in hit_enemies:
-            if not e.intractable:
-                # Cannot attack all the effects you spawned in
-                if type(e) not in self.effect_excluded or e is target:
-                    e.attack(group.get_entity_at(player_x, player_y), self.damage)
+            if e != target and e.must_be_attacked_directly:
+                continue
+
+            e.attack(group.get_entity_at(player_x, player_y), self.damage)
 
         # No infinite IceCubes
         if type(target) not in self.effect_excluded:

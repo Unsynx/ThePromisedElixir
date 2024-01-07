@@ -152,5 +152,12 @@ class EntityGroup:
     def render(self):
         # Add depth sorting option
         for e in self.entities:
-            if e.visible:
+            from entity import Player
+            if e.visible and not type(e) == Player:
                 e.render()
+
+        # Temporary work around for player to be on top of traps
+        try:
+            self.get_entity(Player).render()
+        except AttributeError:
+            pass

@@ -454,7 +454,7 @@ class Trap(Entity):
         self.must_be_attacked_directly = True
 
     def attack(self, entity, damage):
-        if type(entity) == Trap:
+        if type(entity) not in MobileEntity.__subclasses__():
             return
 
         entity.attack(self, 3)

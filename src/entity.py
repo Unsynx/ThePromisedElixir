@@ -355,7 +355,7 @@ class Dummy(MobileEntity):
 class Potion(Entity):
     def __init__(self):
         super().__init__()
-        self.surface = pygame.image.load("../assets/weapons/MassiveMuke.png")
+        self.surface = pygame.image.load("../assets/weapons/Potion.png")
         self.intractable = True
 
     def on_interact(self, entity):
@@ -368,6 +368,7 @@ class Potion(Entity):
         if entity.health > entity.max_health:
             entity.health = entity.max_health
         entity.particle_manager.add_system(PotionEffect(self.x + 64, self.y + 64, 3))
+        self.on_death()
 
 
 class Staircase(Entity):

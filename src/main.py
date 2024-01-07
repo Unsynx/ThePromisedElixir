@@ -4,6 +4,7 @@ from scene_manager import SceneManager
 from screeninfo import get_monitors
 from menu import *
 from dialogue import DialogueScene1
+import constants as c
 
 # ---------------- Setup ---------------- #
 pygame.init()
@@ -13,7 +14,6 @@ pygame.mixer.init()
 primary_monitor = get_monitors()[0]
 screen = pygame.display.set_mode((primary_monitor.width, primary_monitor.height), pygame.SCALED, vsync=1)
 # screen = pygame.display.set_mode((1920, 1080), pygame.SCALED, vsync=1)
-FRAMERATE = 60
 
 # Nice comment
 
@@ -40,7 +40,7 @@ sceneManager.set_scene("splashScreen")
 # ---------------- Main Loop ---------------- #
 running = True
 while running:
-    dt = clock.tick(FRAMERATE) * 0.010 * FRAMERATE
+    dt = clock.tick(c.FRAMERATE) * 0.010 * c.FRAMERATE
     sceneManager.dt = dt
 
     events = pygame.event.get()

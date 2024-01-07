@@ -9,6 +9,9 @@ from random import randint, choice
 
 
 class ChestScreen(Scene):
+    sound = pygame.mixer.Sound("../assets/sfx/box_break.wav")
+    sound.set_volume(c.SFX_VOLUME)
+
     def __init__(self, manager: SceneManager, particle_manager: ParticleManager, pos):
         super().__init__(manager, "chest")
 
@@ -60,6 +63,7 @@ class ChestScreen(Scene):
             self.chest_g.hide = True
             x = self.screen.get_width() / 2 + self.particle_manager.camera.rel_x
             y = self.screen.get_height() / 2 + self.particle_manager.camera.rel_y
+            self.sound.play()
             self.particle_manager.add_system(ChestClose(x, y))
 
         self.sceneManager.add_to_queue(set_visibility, 0.5)

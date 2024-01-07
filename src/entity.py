@@ -1,7 +1,7 @@
 import pygame.surface
 from tiles import Camera, TileManager, Chunk
 from math import copysign
-from random import randint
+from random import randint, choice
 from constants import *
 from tween import Tween
 import sys
@@ -10,6 +10,8 @@ from particles import HitEffect, PotionEffect, ConfusedEffect
 
 MOVEMENT_RADIUS = 4
 PLAYER_MOVEMENT_DELAY = 0.15
+
+pygame.mixer.init()
 
 
 class Entity:
@@ -242,6 +244,13 @@ class MobileEntity(Entity):
 
 
 class Player(MobileEntity):
+    steps = [
+        pygame.mixer.Sound("../assets/sfx/footstep1.wav"),
+        pygame.mixer.Sound("../assets/sfx/footstep2.wav"),
+        pygame.mixer.Sound("../assets/sfx/footstep3.wav"),
+        pygame.mixer.Sound("../assets/sfx/footstep4.wav")
+    ]
+
     def __init__(self):
         super().__init__()
         self.health = 15
@@ -304,6 +313,9 @@ class Player(MobileEntity):
 
     def on_player_move(self, player):
         self.can_move = True
+        s = choice(self.steps)
+        s.set_volume(c.SFX_VOLUME)
+        s.play()
 
 
 class Enemy(MobileEntity):
@@ -360,6 +372,9 @@ class Dummy(MobileEntity):
 
 
 class Potion(Entity):
+    sound = pygame.mixer.Sound("../assets/sfx/gulp.wav")
+    sound.set_volume(c.SFX_VOLUME)
+
     def __init__(self):
         super().__init__()
         self.surface = pygame.image.load("../assets/weapons/Potion.png")
@@ -372,7 +387,8 @@ class Potion(Entity):
         entity.health += 3
         if entity.health > entity.max_health:
             entity.health = entity.max_health
-        
+
+        self.sound.play()
         entity.particle_manager.add_system(PotionEffect(self.x + 64, self.y + 64, 3))
         self.on_death()
 
@@ -425,6 +441,9 @@ class Fire(Entity):
 
 
 class Trap(Entity):
+    sound = pygame.mixer.Sound("../assets/sfx/trap.wav")
+    sound.set_volume(c.SFX_VOLUME)
+
     def __init__(self):
         super().__init__()
         self.surface = pygame.image.load("../assets/player/Trap1.png")
@@ -435,6 +454,7 @@ class Trap(Entity):
 
     def attack(self, entity, damage):
         entity.attack(self, 3)
+        self.sound.play()
         self.hits += 1
         if self.hits > 4:
             self.on_death()

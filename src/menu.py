@@ -1,4 +1,6 @@
 import sys
+import time
+
 from scene_manager import Scene, SceneManager
 from gui import GuiManager, Guide, BasicButton, Image, Grid, Text
 import pygame
@@ -6,16 +8,16 @@ from gen import LoadingScreen
 
 
 class MainMenu(Scene):
+    background = pygame.image.load("../assets/MainScreenBack.png")
+    cliff = pygame.image.load("../assets/MainScreenCliff.png")
+    player = pygame.image.load("../assets/MainScreenFrog.png")
+    glow = pygame.image.load("../assets/Glow.png")
+    glow = pygame.transform.scale_by(glow, 0.25)
+
     def __init__(self, manager: SceneManager):
         super().__init__(manager, "mainMenu")
 
         self.guiManager = GuiManager(self.sceneManager.screen)
-
-        # ------ Backdrop ------
-        self.back = self.guiManager.add_guideline(
-            Guide("img", None, Guide.GL_VERTICAL, 0, Guide.ALIGN_LEFT, Guide.REL_ALIGN_BOTTOM, 0))
-
-        self.back.add_element(Image("../assets/gui/images/backdrop1.png"))
 
         # ------ Buttons ------
         self.buttons = self.guiManager.add_guideline(
@@ -46,6 +48,11 @@ class MainMenu(Scene):
         pass
 
     def render(self, screen):
+        x, y = pygame.mouse.get_pos()
+        self.screen.blit(self.background, (0, 0))
+        self.screen.blit(self.cliff, (x * 0.01, 0))
+        self.screen.blit(self.glow, (x * 0.01 + 700, 130))
+        self.screen.blit(self.player, (x * 0.01, 0))
         self.guiManager.render_guidelines()
 
 

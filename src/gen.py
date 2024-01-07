@@ -278,9 +278,29 @@ def generate_dungeon(chunk_size, event, level):
     event.set()
     return
 
-
-"""loot = Loot()
+"""
+loot = Loot()
 for i in range(25):
     for j in range(5):
         w = loot.get_weapon(i + 1)
-        print(f"floor {i + 1}: tier{w.tier}")"""
+        print(f"floor {i + 1}: tier{w.tier}")
+"""
+
+"""
+loot = Loot()
+for w in loot.tier0_weapons:
+    w = w()
+    print(f"tier0 {w.name}, {w.damage}dmg")
+for w in loot.tier1_weapons:
+    w = w()
+    print(f"tier1 {w.name}, {w.damage}dmg")
+for w in loot.tier2_weapons:
+    w = w()
+    print(f"tier2 {w.name}, {w.damage}dmg")
+for w in loot.tier3_weapons:
+    w = w()
+    print(f"tier3 {w.name}, {w.damage}dmg")
+for w in loot.tier4_weapons:
+    w = w()
+    print(f"tier4 {w.name}, {w.damage}dmg")
+"""

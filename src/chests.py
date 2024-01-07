@@ -74,8 +74,8 @@ class ChestScreen(Scene):
 
 
 class Loot:
-    DIFFICULTY_SCALE = 10
-    FLOOR_SCALE = 5
+    DIFFICULTY_SCALE = 15
+    FLOOR_SCALE = 15
 
     def __init__(self):
         self.tier0_weapons = []
@@ -114,7 +114,7 @@ class Loot:
             tier = self.tier1_weapons
         elif num < 150:
             tier = self.tier2_weapons
-        elif num < 200:
+        elif num < 220:
             tier = self.tier3_weapons
         else:
             tier = self.tier4_weapons

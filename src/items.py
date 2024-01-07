@@ -11,6 +11,9 @@ R_SHIELD = [[1, 1, 0],
             [0, 1, 1],
             [1, 1, 0]]
 R_DOUBLE = [[2, 1, 1]]
+R_LONG = [[0, 1, 0, 0],
+          [2, 1, 1, 1],
+          [0, 1, 0, 0]]
 R_SWIRL = [[1, 1, 1],
           [1, 2, 1],
           [1, 1, 1]]
@@ -102,7 +105,7 @@ class Weapon:
 
 class SimpleSpearWeapon(Weapon):
     def __init__(self):
-        super().__init__("../assets/weapons/spear.png", 2, R_STAR)
+        super().__init__("../assets/weapons/spear.png", 2, R_DOUBLE)
         self.offset_x = 25
         self.tier = c.TIER_0
 
@@ -113,6 +116,7 @@ class IceWand(Weapon):
         from entity import IceCube
         self.effect_excluded.append(IceCube)
         self.offset_x = 50
+        self.tier = c.TIER_3
 
     def for_non_hit(self, not_hit_positions, group):
         from entity import IceCube
@@ -126,8 +130,10 @@ class NoWeapon(Weapon):
 
 class FireKnife(Weapon):
     def __init__(self):
-        super().__init__("../assets/weapons/flaming_knife.png", 3, R_SWIRL)
+        super().__init__("../assets/weapons/flaming_knife.png", 3, R_SWIPE)
         self.offset_x = 50
+        self.tier = c.TIER_1
+
         from entity import Fire
         self.effect_excluded.append(Fire)
 
@@ -143,6 +149,7 @@ class MilesMuke(Weapon):
         self.effect_excluded.append(Fire)
         self.offset_y = -100
         self.offset_x = -10
+        self.tier = c.TIER_4
 
     def for_non_hit(self, not_hit_positions, group):
         from entity import Fire
@@ -153,11 +160,12 @@ class MorningStar(Weapon):
     def __init__(self):
         super().__init__("../assets/weapons/Morningstar.png", 3, R_SWIRL)
         self.offset_x = 80
+        self.tier = c.TIER_1
 
 
 class Knife(Weapon):
     def __init__(self):
-        super().__init__("../assets/weapons/knife.png", 3, R_FRONT)
+        super().__init__("../assets/weapons/knife.png", 2, R_FRONT)
         self.tier = c.TIER_0
         self.offset_x = 20
 
@@ -171,10 +179,11 @@ class Sword(Weapon):
 
 class FlameStaff(Weapon):
     def __init__(self):
-        super().__init__("../assets/weapons/fire_staff.png", 5, R_SHIELD)
+        super().__init__("../assets/weapons/fire_staff.png", 4, R_SHIELD)
         from entity import Fire
         self.effect_excluded.append(Fire)
         self.offset_x = 50
+        self.tier = c.TIER_2
 
     def for_non_hit(self, not_hit_positions, group):
         from entity import Fire
@@ -185,3 +194,89 @@ class Sabre(Weapon):
     def __init__(self):
         super().__init__("../assets/weapons/miles_mighty_sword.png", 3, R_SWIPE)
         self.offset_x = 60
+        self.tier = c.TIER_1
+
+
+class Hammer(Weapon):
+    def __init__(self):
+        super().__init__("../assets/weapons/Hammer.png", 4, R_STAR)
+        self.offset_x = 45
+        self.tier = c.TIER_1
+
+
+class Icicle(Weapon):
+    def __init__(self):
+        super().__init__("../assets/weapons/Iceicle.png", 3, R_DOUBLE)
+        self.offset_x = 35
+        self.tier = c.TIER_1
+
+        from entity import IceCube
+        self.effect_excluded.append(IceCube)
+
+    def for_non_hit(self, not_hit_positions, group):
+        from entity import IceCube
+        self.effect(IceCube, not_hit_positions, group)
+
+
+class LargeAxe(Weapon):
+    def __init__(self):
+        super().__init__("../assets/weapons/LargeAxe.png", 4, R_SWIRL)
+        self.offset_x = 55
+        self.tier = c.TIER_2
+
+
+class LooseSpear(Weapon):
+    def __init__(self):
+        super().__init__("../assets/weapons/LooseSpear.png", 5, R_LONG)
+        self.offset_x = 55
+        self.tier = c.TIER_2
+
+
+class RustyAxe(Weapon):
+    def __init__(self):
+        super().__init__("../assets/weapons/RustyAxe.png", 5, R_FRONT)
+        self.offset_x = 55
+        self.tier = c.TIER_1
+
+
+class SpectreBlade(Weapon):
+    def __init__(self):
+        super().__init__("../assets/weapons/SpectreBlade.png", 7, R_SWIPE)
+        self.offset_x = 45
+        self.tier = c.TIER_3
+
+
+class WoodenClub(Weapon):
+    def __init__(self):
+        super().__init__("../assets/weapons/WoodenClub.png", 5, R_STAR)
+        self.offset_x = 65
+        self.tier = c.TIER_2
+
+
+class FirePolearm(Weapon):
+    def __init__(self):
+        super().__init__("../assets/weapons/FirePolarm.png", 4, R_LONG)
+        self.offset_x = 45
+        self.tier = c.TIER_2
+
+        from entity import Fire
+        self.effect_excluded.append(Fire)
+
+    def for_non_hit(self, not_hit_positions, group):
+        from entity import Fire
+        self.effect(Fire, not_hit_positions, group)
+
+
+class FireKatana(Weapon):
+    def __init__(self):
+        super().__init__("../assets/weapons/FireKatana.png", 7, R_SWIPE)
+        self.offset_x = 45
+        self.offset_y = -10
+        self.tier = c.TIER_3
+
+        from entity import Fire
+        self.effect_excluded.append(Fire)
+
+    def for_non_hit(self, not_hit_positions, group):
+        from entity import Fire
+        self.effect(Fire, not_hit_positions, group)

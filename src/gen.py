@@ -2,6 +2,7 @@ import copy
 import random
 import threading
 import os
+import math
 
 from scene_manager import Scene, SceneManager
 from gui import GuiManager, Guide, Text
@@ -200,6 +201,7 @@ class EntitySpawner:
         self.world = world
 
     def spawn_entity(self, entity, count, can_spawn_on_other=False, neighbors=0, specific_spawn_tile=None):
+        print(f"spawing {count} of {entity}")
         entities = []
         i = 0
         while i < count:
@@ -213,8 +215,10 @@ class EntitySpawner:
                     if TILE_DATA[self.world[r_y][r_x]].name != specific_spawn_tile:
                         continue
 
+                print("spawned")
                 e = self.group.add_entity(entity).set_position(r_x, r_y)
                 entities.append(e)
+                i += 1
 
                 j = 0
                 while j < neighbors:
@@ -234,8 +238,6 @@ class EntitySpawner:
                     except IndexError:
                         j = neighbors
 
-                i += 1
-
         return entities
 
 
@@ -246,10 +248,17 @@ def generate_dungeon(chunk_size, event, level):
         if item.endswith(".txt"):
             os.remove(os.path.join(dir_name, item))
 
-    width = 10
-    height = 10
+    # Level size
+    match level:
+        case 1:
+            width = 3
+            height = 3
 
-    dungeon = DrunkGeneration(height * CHUNK_SIZE, width * chunk_size, 600, 3)
+        case _:
+            width = min(10, level + 3)
+            height = min(10, level + 3)
+
+    dungeon = DrunkGeneration(height * CHUNK_SIZE, width * CHUNK_SIZE, int((4/6)*width*height*CHUNK_SIZE), 3)
     dungeon.generate_level()
     x, y = dungeon.set_starting_square()
     dungeon.set_wall_top_tiles()
@@ -265,26 +274,52 @@ def generate_dungeon(chunk_size, event, level):
         group.load(True)
         group[0].set_position(x, y)
 
+    # Staircase
     spawner.spawn_entity(Staircase, 1, specific_spawn_tile="ground")
 
-    chest = spawner.spawn_entity(Chest, 10)
+    # Chests
+    match level:
+        case 1:
+            n = 1
+        case 2:
+            n = 2
+        case 3:
+            n = 2
+        case 4:
+            n = 4
+        case _:
+            n = min(math.floor(level * 1.25), 10)
+    chest = spawner.spawn_entity(Chest, n)
     for e in chest:
         e.set_floor(level)
 
+    # Traps
     if level > 5:
-        spawner.spawn_entity(Trap, min(25, level * 2), neighbors=2)
+        spawner.spawn_entity(Trap, min(25, (level - 5) * 4), neighbors=2)
 
-    enemies = spawner.spawn_entity(Enemy, 10)
+    # Enemies
+    match level:
+        case 1:
+            n = 0
+        case 2:
+            n = 2
+        case 3:
+            n = 4
+        case _:
+            n = min(math.floor(level * 1.5), 12)
+
+    enemies = spawner.spawn_entity(Enemy, n)
     loot = Loot()
     for e in enemies:
-        if randint(0, 10) < level:
-            e.set_weapon(loot.get_weapon(level, 2))
+        if randint(0, 10) < level - 3:
+            e.set_weapon(loot.get_weapon(level, 3))
 
-    book = spawner.spawn_entity(Dialogue, 1)
-    for e in book:
-        e.set_dialogue_number(1)
+    match level:
+        case 2:
+            book = spawner.spawn_entity(Dialogue, 1)
+            book[0].set_dialogue_number(1)
 
-    spawner.spawn_entity(Potion, 10)
+    spawner.spawn_entity(Potion, max(0, min(math.floor((level - 2) * 1.25), 5)))
 
     group.save()
 
@@ -296,8 +331,8 @@ def generate_dungeon(chunk_size, event, level):
             with open(f"../assets/world/chunk_{w}_{h}.txt", "x") as f:
                 for i in range(chunk_size):
                     row = world[(h * chunk_size) + i][(chunk_size * w):(chunk_size * (w + 1))]
-                    for c, li in enumerate(list(map(str, row))):
-                        if c != 0:
+                    for c1, li in enumerate(list(map(str, row))):
+                        if c1 != 0:
                             f.write(", ")
                         f.write(f"{li}")
                     f.write("\n")
@@ -305,12 +340,29 @@ def generate_dungeon(chunk_size, event, level):
     event.set()
     return
 
-
-"""loot = Loot()
+"""
+loot = Loot()
 for i in range(25):
-    for j in range(5):
+    tier0 = 0
+    tier1 = 0
+    tier2 = 0
+    tier3 = 0
+    tier4 = 0
+    for j in range(100):
         w = loot.get_weapon(i + 1)
-        print(f"floor {i + 1}: tier{w.tier}")
+        match w.tier:
+            case c.TIER_0:
+                tier0 += 1
+            case c.TIER_1:
+                tier1 += 1
+            case c.TIER_2:
+                tier2 += 1
+            case c.TIER_3:
+                tier3 += 1
+            case c.TIER_4:
+                tier4 += 1
+
+    print(f"Floor {i+1}: {tier0} Tier0, {tier1} Tier1, {tier2} Tier2, {tier3} Tier3, {tier4} Tier4")
 """
 
 """

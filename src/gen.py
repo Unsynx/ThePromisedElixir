@@ -199,7 +199,7 @@ class EntitySpawner:
         self.group = group
         self.world = world
 
-    def spawn_entity(self, entity, count, can_spawn_on_other=False, neighbors=0):
+    def spawn_entity(self, entity, count, can_spawn_on_other=False, neighbors=0, specific_spawn_tile=None):
         entities = []
         i = 0
         while i < count:
@@ -209,6 +209,9 @@ class EntitySpawner:
             if not TILE_DATA[self.world[r_y][r_x]].collider:
                 if not can_spawn_on_other and self.group.get_entity_at(r_x, r_y) is not None:
                     continue
+                if specific_spawn_tile is not None:
+                    if TILE_DATA[self.world[r_y][r_x]].name != specific_spawn_tile:
+                        continue
 
                 e = self.group.add_entity(entity).set_position(r_x, r_y)
                 entities.append(e)
@@ -219,15 +222,17 @@ class EntitySpawner:
                         r_x += 1
                     else:
                         r_y += 1
+                    try:
+                        if not TILE_DATA[self.world[r_y][r_x]].collider:
+                            if not can_spawn_on_other and self.group.get_entity_at(r_x, r_y) is not None:
+                                continue
 
-                    if not TILE_DATA[self.world[r_y][r_x]].collider:
-                        if not can_spawn_on_other and self.group.get_entity_at(r_x, r_y) is not None:
-                            continue
+                            e = self.group.add_entity(entity).set_position(r_x, r_y)
+                            entities.append(e)
 
-                        e = self.group.add_entity(entity).set_position(r_x, r_y)
-                        entities.append(e)
-
-                        j += 1
+                            j += 1
+                    except IndexError:
+                        j = neighbors
 
                 i += 1
 
@@ -260,7 +265,7 @@ def generate_dungeon(chunk_size, event, level):
         group.load(True)
         group[0].set_position(x, y)
 
-    spawner.spawn_entity(Staircase, 1)
+    spawner.spawn_entity(Staircase, 1, specific_spawn_tile="ground")
 
     chest = spawner.spawn_entity(Chest, 10)
     for e in chest:

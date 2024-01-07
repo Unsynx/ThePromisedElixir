@@ -362,11 +362,10 @@ class Potion(Entity):
         if not type(entity) is Player:
             return
 
-        if entity.health >= entity.max_health:
-            return
         entity.health += 3
         if entity.health > entity.max_health:
             entity.health = entity.max_health
+        
         entity.particle_manager.add_system(PotionEffect(self.x + 64, self.y + 64, 3))
         self.on_death()
 

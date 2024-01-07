@@ -454,6 +454,9 @@ class Trap(Entity):
         self.must_be_attacked_directly = True
 
     def attack(self, entity, damage):
+        if type(entity) == Trap:
+            return
+
         entity.attack(self, 3)
         self.sound.play()
         self.hits += 1

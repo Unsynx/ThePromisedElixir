@@ -62,11 +62,7 @@ class MainMenu(Scene):
         rot_img = pygame.transform.rotate(self.glow, int(time.time() * -8) % 360)
         offset_x = (rot_img.get_width() - self.glow.get_width()) // 2
         offset_y = (rot_img.get_height() - self.glow.get_height()) // 2
-
         self.screen.blit(rot_img, (x * 0.03 + 700 - offset_x, 125 - offset_y))
-
-
-
         self.screen.blit(self.player, (x * 0.03, 0))
         self.guiManager.render_guidelines()
 

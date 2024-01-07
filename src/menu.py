@@ -166,5 +166,8 @@ class TempLoseScreen(Scene):
             Guide("logo", None, Guide.GL_VERTICAL, 0.5, Guide.ALIGN_CENTER_PADDED, Guide.REL_ALIGN_CENTER, 0))
         self.logo_g.add_element(Text("You Lose!", Text.FONT_BASE, 128, (255, 255, 255)))
 
+    def on_scene_start(self, *args):
+        self.logo_g.add_element(Text(f"You made it to floor {args[0]}", Text.FONT_BASE, Text.SIZE_HEADER, (255, 255, 255)))
+
     def render(self, screen):
         self.guiManager.render_guidelines()

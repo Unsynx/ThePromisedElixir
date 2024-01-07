@@ -101,7 +101,7 @@ class GameScene(Scene):
         else:
             if self.player_alive:
                 self.player_alive = False
-                self.group.add_to_queue(self.sceneManager.set_scene, 1.5, "lose")
+                self.group.add_to_queue(self.sceneManager.set_scene, 1.5, "lose", self.level)
 
         self.group.update(dt)
         self.camera.update(dt)

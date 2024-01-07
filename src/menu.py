@@ -5,6 +5,7 @@ from scene_manager import Scene, SceneManager
 from gui import GuiManager, Guide, BasicButton, Image, Grid, Text
 import pygame
 from gen import LoadingScreen
+import constants as c
 
 
 class MainMenu(Scene):
@@ -13,6 +14,13 @@ class MainMenu(Scene):
     player = pygame.image.load("../assets/MainScreenFrog.png")
     glow = pygame.image.load("../assets/Glow.png")
     glow = pygame.transform.scale_by(glow, 0.25)
+
+    def on_scene_start(self, *args):
+        if args.__contains__(True):
+            pygame.mixer.music.fadeout(1000)
+            pygame.mixer.music.load("../assets/music/forest_compressed.ogg")
+            pygame.mixer.music.set_volume(c.MUSIC_VOLUME)
+            pygame.mixer.music.play(-1)
 
     def __init__(self, manager: SceneManager):
         super().__init__(manager, "mainMenu")
@@ -66,13 +74,20 @@ class CreditsMenu(Scene):
             "center", self.guiManager, Guide.GL_VERTICAL, 0.5, Guide.ALIGN_CENTER_PADDED, Guide.REL_ALIGN_CENTER, 75))
 
         # ------ Grid ------
-        self.grid = Grid(1000, 750, 10)
-        self.grid[2].padding = 250
+        self.grid = Grid(1000, 850, 10)
+        self.grid[0].padding = 250
+        self.grid[0].offset_y = 20
+        self.grid[4].offset_y = 20
 
-        self.grid.add_element(1, Text("Credits", Text.FONT_BASE, Text.SIZE_HEADER, (255, 255, 255)))
-        self.grid.add_element(2, Text("Niklas Chaney", Text.FONT_BASE, Text.SIZE_MAIN, (255, 255, 255)))
-        self.grid.add_element(2, Text("Alec Benton", Text.FONT_BASE, Text.SIZE_MAIN, (255, 255, 255)))
-        self.grid.add_element(8, Text('Miles "Triple Free" Sims-Kastelein-Henry--Bomb', Text.FONT_BASE, Text.SIZE_MAIN, (255, 255, 255)))
+        self.grid.add_element(0, Text("Credits:", Text.FONT_BASE, Text.SIZE_HEADER, (255, 255, 255)))
+        self.grid.add_element(1, Text("Programming and Art - Niklas Chaney", Text.FONT_BASE, Text.SIZE_MAIN, (255, 255, 255)))
+        self.grid.add_element(2, Text("Programming - Alec Benton", Text.FONT_BASE, Text.SIZE_MAIN, (255, 255, 255)))
+        self.grid.add_element(3, Text('Testing - M.SKH,  T.H,  N.A,  K.S,  O.A,  E.M', Text.FONT_BASE, Text.SIZE_MAIN, (255, 255, 255)))
+        self.grid.add_element(4, Text("Sounds:", Text.FONT_BASE, Text.SIZE_HEADER, (255, 255, 255)))
+        self.grid.add_element(5, Text("Ambience_Cave_00 - LittleRobotSoundFactory", Text.FONT_BASE, Text.SIZE_MAIN, (255, 255, 255)))
+        self.grid.add_element(6, Text("https://creativecommons.org/licenses/by/4.0/", Text.FONT_BASE, Text.SIZE_MAIN, (255, 255, 255)))
+        self.grid.add_element(7, Text("Creepy Forest - Augmentality (Brandon Morris)", Text.FONT_BASE, Text.SIZE_MAIN, (255, 255, 255)))
+        self.grid.add_element(8, Text("https://creativecommons.org/publicdomain/zero/1.0/", Text.FONT_BASE, Text.SIZE_MAIN, (255, 255, 255)))
 
         self.center.add_element(self.grid)
 
@@ -92,7 +107,7 @@ class SplashScreen(Scene):
     def update(self, dt):
         print("Splash")
 
-        self.sceneManager.set_scene("mainMenu")
+        self.sceneManager.set_scene("mainMenu", True)
 
     def render(self, screen: pygame.Surface):
         pass
@@ -139,7 +154,7 @@ class TempLoseScreen(Scene):
         self.buttons = self.guiManager.add_guideline(
             Guide("buttons", None, Guide.GL_HORIZONTAL, 0.9, Guide.ALIGN_CENTER_PADDED, Guide.REL_ALIGN_CENTER, 50))
 
-        self.buttons.add_element(BasicButton("Home", 300, 75, manager.set_scene, "mainMenu"))
+        self.buttons.add_element(BasicButton("Home", 300, 75, manager.set_scene, "mainMenu", True))
         self.buttons.add_element(BasicButton("Retry", 300, 75, manager.set_scene, "loadingScreen", True, True))
         self.buttons.add_element(BasicButton("Quit", 300, 75, sys.exit))
 

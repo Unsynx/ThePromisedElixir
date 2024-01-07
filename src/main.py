@@ -3,15 +3,11 @@ import sys
 from scene_manager import SceneManager
 from screeninfo import get_monitors
 from menu import *
-from game import GameScene
-from gen import LoadingScreen
-from chests import ChestScreen
 from dialogue import DialogueScene1
-
 
 # ---------------- Setup ---------------- #
 pygame.init()
-
+pygame.mixer.init()
 
 # Makes the display whatever resolution your display is and ignores windows scaling
 primary_monitor = get_monitors()[0]
@@ -25,6 +21,8 @@ pygame.display.set_caption("Game")
 # pygame.display.set_icon()
 
 clock = pygame.time.Clock()
+
+
 
 
 # ---- Scene Manager ---- #

@@ -170,6 +170,8 @@ class MobileEntity(Entity):
                     e.on_interact(self)
                 else:
                     self.attack_logic(e, x, 0)
+                    self.x += x * 48
+                    self.animation_x = Tween(self.x, self.tile_x * self.tile_size, 75)
                     if e.can_walk_over:
                         self.tile_x += x
                         self.animation_x = Tween(self.x, self.tile_x * self.tile_size, 100)
@@ -186,6 +188,8 @@ class MobileEntity(Entity):
                     e.on_interact(self)
                 else:
                     self.attack_logic(e, 0, y)
+                    self.y += y * 48
+                    self.animation_y = Tween(self.y, self.tile_y * self.tile_size, 75)
                     if e.can_walk_over:
                         self.tile_y += y
                         self.animation_y = Tween(self.y, self.tile_y * self.tile_size, 100)

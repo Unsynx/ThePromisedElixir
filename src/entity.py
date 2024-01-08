@@ -488,7 +488,7 @@ class HealthUp(Entity):
 class MiniBoss(Enemy):
     def __init__(self):
         super().__init__()
-        self.health = 10
+        self.health = 12
         self.max_health = self.health
 
         self.surface = pygame.image.load("../assets/player/frog.png")
@@ -508,3 +508,12 @@ class Rat(Enemy):
         self.max_health = self.health
 
         self.surface = pygame.image.load("../assets/weapons/knife.png")
+
+
+class Enemy2(Enemy):
+    def __init__(self):
+        super().__init__()
+        self.health = 8
+        self.max_health = self.health
+
+        self.surface = pygame.image.load("../assets/weapons/best_swod.png")

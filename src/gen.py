@@ -310,7 +310,8 @@ def generate_dungeon(chunk_size, event, level):
     for e in chest:
         e.set_floor(level)
 
-    # Enemies
+    # ------------------------- Enemies -------------------------
+    # tier 1
     match level:
         case 1:
             n = 0
@@ -329,6 +330,7 @@ def generate_dungeon(chunk_size, event, level):
         if randint(0, 10) < level - 3:
             e.set_weapon(loot.get_weapon(level, 3))
 
+    # Rats
     match level:
         case 2:
             spawner.spawn_entity(Rat, 1, neighbors=1)
@@ -338,6 +340,21 @@ def generate_dungeon(chunk_size, event, level):
             if level > 9:
                 spawner.spawn_entity(Rat, 3, neighbors=2)
 
+    # mini boss
+    if level % 5 == 4:
+        spawner.spawn_entity(MiniBoss, 1)
+
+    # tier 2
+    if level > 12:
+        n = min(math.floor((level - 12) * 2), 12)
+
+        enemies = spawner.spawn_entity(Enemy2, n)
+        loot = Loot()
+        for e in enemies:
+            if randint(0, 10) < level - 9:
+                e.set_weapon(loot.get_weapon(level, 9))
+
+    # ------------------------------------------------------------
     # Traps
     if level > 5:
         spawner.spawn_entity(Trap, min(10, (level - 5) * 2), neighbors=2,
@@ -347,8 +364,6 @@ def generate_dungeon(chunk_size, event, level):
         book = spawner.spawn_entity(Dialogue, 1)
         book[0].set_dialogue_number(level)
 
-    if level % 5 == 4:
-        spawner.spawn_entity(MiniBoss, 1)
 
     spawner.spawn_entity(Potion, max(0, min(math.floor((level - 2) * 1.25), 5)))
 

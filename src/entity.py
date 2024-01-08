@@ -275,6 +275,12 @@ class Player(MobileEntity):
     def on_entity_ready(self):
         self.set_weapon(self.weapon)
         self.health_bar = None
+        self.can_move = False
+
+        def set_can_move(val):
+            self.can_move = val
+
+        self.group.add_to_queue(set_can_move, 0.1, True)
 
     def input(self, pressed):
         if not self.can_move:

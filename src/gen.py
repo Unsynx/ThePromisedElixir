@@ -299,10 +299,6 @@ def generate_dungeon(chunk_size, event, level):
     for e in chest:
         e.set_floor(level)
 
-    # Traps
-    if level > 5:
-        spawner.spawn_entity(Trap, min(25, (level - 5) * 4), neighbors=2)
-
     # Enemies
     match level:
         case 1:
@@ -319,6 +315,10 @@ def generate_dungeon(chunk_size, event, level):
     for e in enemies:
         if randint(0, 10) < level - 3:
             e.set_weapon(loot.get_weapon(level, 3))
+
+    # Traps
+    if level > 5:
+        spawner.spawn_entity(Trap, min(10, (level - 5) * 2), neighbors=2)
 
     match level:
         case 2:

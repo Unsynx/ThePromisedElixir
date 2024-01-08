@@ -499,3 +499,12 @@ class MiniBoss(Enemy):
         self.group.remove(self.weapon_visual)
         self.group.remove(self.health_bar)
         self.group.remove(self)
+
+
+class Rat(Enemy):
+    def __init__(self):
+        super().__init__()
+        self.health = 3
+        self.max_health = self.health
+
+        self.surface = pygame.image.load("../assets/weapons/knife.png")

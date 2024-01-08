@@ -6,7 +6,7 @@ from constants import *
 from tween import Tween
 import sys
 from items import *
-from particles import HitEffect, PotionEffect, ConfusedEffect
+from particles import HitEffect, PotionEffect, ConfusedEffect, MaxHealthUp
 
 MOVEMENT_RADIUS = 4
 PLAYER_MOVEMENT_DELAY = 0.15
@@ -481,7 +481,7 @@ class HealthUp(Entity):
         entity.health = entity.max_health
 
         self.sound.play()
-        entity.particle_manager.add_system(PotionEffect(self.x + 64, self.y + 64, 3))
+        entity.particle_manager.add_system(MaxHealthUp(self.x + 64, self.y + 64, 3))
         self.on_death()
 
 

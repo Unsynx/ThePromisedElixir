@@ -102,6 +102,15 @@ class PotionEffect(ParticleSystem):
             self.add_particle(x, y, random.uniform(-0.5, 0.5), random.uniform(-0.5, 0.5), 1)
 
 
+class MaxHealthUp(ParticleSystem):
+    def __init__(self, x, y, hp_gain):
+        t = Text(f"+{hp_gain} Max HP", Text.FONT_BASE, 48, (255, 255, 255))
+        super().__init__(t.surface)
+
+        for _ in range(1):
+            self.add_particle(x, y, random.uniform(-0.5, 0.5), random.uniform(-0.5, 0.5), 1)
+
+
 class ConfusedEffect(ParticleSystem):
     def __init__(self, x, y):
         t = Text("?", Text.FONT_BASE, 48, (255, 255, 255))

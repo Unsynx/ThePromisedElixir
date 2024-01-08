@@ -336,6 +336,9 @@ def generate_dungeon(chunk_size, event, level):
         book = spawner.spawn_entity(Dialogue, 1)
         book[0].set_dialogue_number(level)
 
+    if level % 5 == 4:
+        spawner.spawn_entity(MiniBoss, 1)
+
     spawner.spawn_entity(Potion, max(0, min(math.floor((level - 2) * 1.25), 5)))
 
     group.save()

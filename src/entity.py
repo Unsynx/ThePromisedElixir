@@ -370,14 +370,6 @@ class Enemy(MobileEntity):
             self.particle_manager.add_system(ConfusedEffect(self.x + 60, self.y - 64))
 
 
-class Dummy(MobileEntity):
-    def __init__(self):
-        super().__init__()
-        self.health = 1
-
-        self.surface = pygame.image.load("../assets/player/baddy.png")
-
-
 class Potion(Entity):
     sound = pygame.mixer.Sound("../assets/sfx/gulp.wav")
     sound.set_volume(c.SFX_VOLUME)
@@ -470,3 +462,40 @@ class Trap(Entity):
             self.on_death()
             return
         self.surface = pygame.image.load(f"../assets/player/Trap{self.hits}.png")
+
+
+class HealthUp(Entity):
+    sound = pygame.mixer.Sound("../assets/sfx/gulp.wav")
+    sound.set_volume(c.SFX_VOLUME)
+
+    def __init__(self):
+        super().__init__()
+        self.surface = pygame.image.load("../assets/weapons/WoodenClub.png")
+        self.intractable = True
+
+    def on_interact(self, entity):
+        if not type(entity) is Player:
+            return
+
+        entity.max_health += 3
+        entity.health = entity.max_health
+
+        self.sound.play()
+        entity.particle_manager.add_system(PotionEffect(self.x + 64, self.y + 64, 3))
+        self.on_death()
+
+
+class MiniBoss(Enemy):
+    def __init__(self):
+        super().__init__()
+        self.health = 10
+        self.max_health = self.health
+
+        self.surface = pygame.image.load("../assets/player/frog.png")
+
+    def on_death(self):
+        self.group.add_entity(HealthUp).set_position(self.tile_x, self.tile_y)
+
+        self.group.remove(self.weapon_visual)
+        self.group.remove(self.health_bar)
+        self.group.remove(self)

@@ -4,6 +4,7 @@ import threading
 import os
 import math
 
+import src.dialogue
 from scene_manager import Scene, SceneManager
 from gui import GuiManager, Guide, Text
 from tiles import TILE_SIZE, TILE_DATA, CHUNK_SIZE
@@ -331,10 +332,9 @@ def generate_dungeon(chunk_size, event, level):
         spawner.spawn_entity(Trap, min(10, (level - 5) * 2), neighbors=2,
                              specific_spawn_tile=["ground", "ground2", "ground3"])
 
-    match level:
-        case 2:
-            book = spawner.spawn_entity(Dialogue, 1)
-            book[0].set_dialogue_number(1)
+    if level in c.DIALOGUE.keys():
+        book = spawner.spawn_entity(Dialogue, 1)
+        book[0].set_dialogue_number(level)
 
     spawner.spawn_entity(Potion, max(0, min(math.floor((level - 2) * 1.25), 5)))
 

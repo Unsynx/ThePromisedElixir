@@ -2,14 +2,12 @@ from scene_manager import SceneManager, Scene
 from gui import *
 from entity import Entity, Player
 import pygame.surface
-from tiles import Camera, TileManager
-
-dialogue_1_text = "The dialogue system works"
+import constants as c
 
 
-class DialogueScene1(Scene):
+class DialogueScene(Scene):
     def __init__(self, manager: SceneManager):
-        super().__init__(manager, "dialogue1")
+        super().__init__(manager, "dialogue")
 
         self.guiManager = GuiManager(self.sceneManager.screen)
 
@@ -23,7 +21,14 @@ class DialogueScene1(Scene):
 
         self.logo_g = self.guiManager.add_guideline(
             Guide("logo", None, Guide.GL_VERTICAL, 0.5, Guide.ALIGN_CENTER_PADDED, Guide.REL_ALIGN_CENTER, 0))
-        self.text = self.logo_g.add_element(Text(f"{dialogue_1_text}", Text.FONT_BASE, 64, (255, 255, 255)))
+        self.text = None
+
+    def on_scene_start(self, *args):
+        num = args[0]
+        print(num)
+
+        for line in c.DIALOGUE[num]:
+            self.logo_g.add_element(Text(line, Text.FONT_BASE, 64, (255, 255, 255)))
 
     def render(self, screen):
         self.guiManager.render_guidelines()
@@ -46,4 +51,8 @@ class Dialogue(Entity):
         if not type(entity) is Player:
             return
 
-        self.scene_manager.set_scene(f"dialogue{self.dialogue_number}")
+        self.scene_manager.del_scene("dialogue")
+        self.scene_manager.add_scene(DialogueScene(self.scene_manager))
+        self.scene_manager.set_scene("dialogue", self.dialogue_number)
+
+        self.group.remove(self)

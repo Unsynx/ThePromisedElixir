@@ -16,3 +16,7 @@ MUSIC_VOLUME = 0.5
 SFX_VOLUME = 0.2
 
 FRAMERATE = 60
+
+DIALOGUE = {
+    1: ["Hello, World", "This is a test of the dialogue system"]
+}

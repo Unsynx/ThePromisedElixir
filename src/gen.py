@@ -207,7 +207,15 @@ class EntitySpawner:
         self.world = world
 
     def spawn_entity(self, entity, count, can_spawn_on_other=False, neighbors=0, specific_spawn_tile=None):
-        print(f"spawing {count} of {entity}")
+        spawn_tile = []
+        if specific_spawn_tile is not None:
+            if type(specific_spawn_tile) is str:
+                spawn_tile.append(specific_spawn_tile)
+            else:
+                spawn_tile.extend(specific_spawn_tile)
+
+        print(spawn_tile)
+
         entities = []
         i = 0
         while i < count:
@@ -218,10 +226,9 @@ class EntitySpawner:
                 if not can_spawn_on_other and self.group.get_entity_at(r_x, r_y) is not None:
                     continue
                 if specific_spawn_tile is not None:
-                    if TILE_DATA[self.world[r_y][r_x]].name != specific_spawn_tile:
+                    if TILE_DATA[self.world[r_y][r_x]].name not in spawn_tile:
                         continue
 
-                print("spawned")
                 e = self.group.add_entity(entity).set_position(r_x, r_y)
                 entities.append(e)
                 i += 1
@@ -236,6 +243,9 @@ class EntitySpawner:
                         if not TILE_DATA[self.world[r_y][r_x]].collider:
                             if not can_spawn_on_other and self.group.get_entity_at(r_x, r_y) is not None:
                                 continue
+                            if specific_spawn_tile is not None:
+                                if TILE_DATA[self.world[r_y][r_x]].name not in spawn_tile:
+                                    continue
 
                             e = self.group.add_entity(entity).set_position(r_x, r_y)
                             entities.append(e)
@@ -318,7 +328,8 @@ def generate_dungeon(chunk_size, event, level):
 
     # Traps
     if level > 5:
-        spawner.spawn_entity(Trap, min(10, (level - 5) * 2), neighbors=2)
+        spawner.spawn_entity(Trap, min(10, (level - 5) * 2), neighbors=2,
+                             specific_spawn_tile=["ground", "ground2", "ground3"])
 
     match level:
         case 2:

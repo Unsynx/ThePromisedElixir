@@ -215,8 +215,6 @@ class EntitySpawner:
             else:
                 spawn_tile.extend(specific_spawn_tile)
 
-        print(spawn_tile)
-
         entities = []
         i = 0
         while i < count:

@@ -34,8 +34,8 @@ winScene = TempWinScreen(sceneManager)
 loseScene = TempLoseScreen(sceneManager)
 
 # sceneManager.set_scene(loadingScene, True)
-# sceneManager.set_scene("splashScreen")
-sceneManager.set_scene(DialogueScene(sceneManager), max(c.DIALOGUE.keys()))
+sceneManager.set_scene("splashScreen")
+# sceneManager.set_scene(DialogueScene(sceneManager), max(c.DIALOGUE.keys()))
 
 
 # ---------------- Main Loop ---------------- #

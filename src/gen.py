@@ -341,7 +341,7 @@ def generate_dungeon(chunk_size, event, level):
                 spawner.spawn_entity(Rat, 3, neighbors=2)
 
     # mini boss
-    if level % 5 == 4:
+    if level % 5 == 0:
         spawner.spawn_entity(MiniBoss, 1)
 
     # tier 2

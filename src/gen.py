@@ -10,7 +10,7 @@ from gui import GuiManager, Guide, Text
 from tiles import TILE_SIZE, TILE_DATA, CHUNK_SIZE
 from entity import *
 from chests import Chest, Loot
-from dialogue import Dialogue
+from dialogue import Dialogue, FinalDialogue
 from entity_group import EntityGroup
 from game import GameScene
 
@@ -361,9 +361,11 @@ def generate_dungeon(chunk_size, event, level):
                              specific_spawn_tile=["ground", "ground2", "ground3"])
 
     if level in c.DIALOGUE.keys():
-        book = spawner.spawn_entity(Dialogue, 1)
+        if level == 19:
+            book = spawner.spawn_entity(FinalDialogue, 1)
+        else:
+            book = spawner.spawn_entity(Dialogue, 1)
         book[0].set_dialogue_number(level)
-
 
     spawner.spawn_entity(Potion, max(0, min(math.floor((level - 2) * 1.25), 5)))
 

@@ -71,3 +71,9 @@ class Dialogue(Entity):
         self.scene_manager.set_scene("dialogue", self.dialogue_number)
 
         self.group.remove(self)
+
+
+class FinalDialogue(Dialogue):
+    def __init__(self):
+        super().__init__()
+        self.surface = pygame.image.load("../assets/player/BookDead.png")

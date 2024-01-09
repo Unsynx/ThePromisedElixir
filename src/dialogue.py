@@ -15,20 +15,35 @@ class DialogueScene(Scene):
             Guide("img", None, Guide.GL_VERTICAL, 0, Guide.ALIGN_LEFT, Guide.REL_ALIGN_BOTTOM, 0))
         self.back.add_element(Image("../assets/gui/images/backdrop1.png"))
 
+        self.anim = None
+
+        self.bg = self.guiManager.add_guideline(
+            Guide("book", None, Guide.GL_VERTICAL, 0, Guide.ALIGN_LEFT, Guide.REL_ALIGN_BOTTOM, 0))
+        self.book = self.bg.add_element(Image("../assets/Book.png"))
+
         self.buttons = self.guiManager.add_guideline(
             Guide("buttons", None, Guide.GL_HORIZONTAL, 0.9, Guide.ALIGN_CENTER_PADDED, Guide.REL_ALIGN_CENTER, 50))
         self.buttons.add_element(BasicButton("Continue", 300, 75, manager.set_scene, "game", False))
 
         self.logo_g = self.guiManager.add_guideline(
-            Guide("logo", None, Guide.GL_VERTICAL, 0.5, Guide.ALIGN_CENTER_PADDED, Guide.REL_ALIGN_CENTER, 0))
+            Guide("logo", None, Guide.GL_VERTICAL, 0.15, Guide.ALIGN_CENTER_PADDED, Guide.REL_ALIGN_RIGHT, 0))
         self.text = None
 
     def on_scene_start(self, *args):
         num = args[0]
-        print(num)
-
         for line in c.DIALOGUE[num]:
-            self.logo_g.add_element(Text(line, Text.FONT_BASE, 64, (255, 255, 255)))
+            self.logo_g.add_element(Text(line, Text.FONT_BASE, 64, (0, 0, 0)))
+
+        self.anim = Tween(1000, 0, 250, Tween.quad_in_easing)
+
+    def update(self, dt: float):
+        if self.anim:
+            self.anim.update()
+            y = self.anim.get_current_value()
+            self.book.visual_offset_y = y
+            self.logo_g.offset_y = y
+            if y == 0:
+                self.anim = None
 
     def render(self, screen):
         self.guiManager.render_guidelines()

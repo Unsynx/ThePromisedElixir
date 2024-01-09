@@ -474,7 +474,7 @@ class HealthUp(Entity):
 
     def __init__(self):
         super().__init__()
-        self.surface = pygame.image.load("../assets/weapons/WoodenClub.png")
+        self.surface = pygame.image.load("../assets/player/HealthUp.png")
         self.intractable = True
 
     def on_interact(self, entity):
@@ -495,7 +495,7 @@ class MiniBoss(Enemy):
         self.health = 12
         self.max_health = self.health
 
-        self.surface = pygame.image.load("../assets/player/frog.png")
+        self.surface = pygame.image.load("../assets/player/Construct.png")
 
     def on_death(self):
         self.group.add_entity(HealthUp).set_position(self.tile_x, self.tile_y)
@@ -511,7 +511,7 @@ class Rat(Enemy):
         self.health = 3
         self.max_health = self.health
 
-        self.surface = pygame.image.load("../assets/weapons/knife.png")
+        self.surface = pygame.image.load("../assets/player/Rat.png")
 
 
 class Enemy2(Enemy):
@@ -520,4 +520,4 @@ class Enemy2(Enemy):
         self.health = 8
         self.max_health = self.health
 
-        self.surface = pygame.image.load("../assets/weapons/best_swod.png")
+        self.surface = pygame.image.load("../assets/player/corrupt_enemy.png")

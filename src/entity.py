@@ -284,7 +284,7 @@ class Player(MobileEntity):
         def set_can_move(val):
             self.can_move = val
 
-        self.group.add_to_queue(set_can_move, 0.1, True)
+        self.group.add_to_queue(set_can_move, PLAYER_MOVEMENT_DELAY, True)
 
     def input(self, pressed):
         if not self.can_move:

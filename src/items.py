@@ -28,6 +28,9 @@ R_MUKE = [[0, 0, 1, 1, 1, 0, 0],
 R_SWIPE = [[0, 1],
            [2, 1],
            [0, 1]]
+R_SUMMON = [[1, 1, 1, 1, 1],
+            [0, 2, 1, 1, 1],
+            [1, 1, 1, 1, 1]]
 
 
 class Weapon:
@@ -190,7 +193,6 @@ class MilesMuke(Weapon):
         self.effect_excluded.append(Fire)
         self.offset_y = -100
         self.offset_x = -10
-        self.tier = c.TIER_4
 
     def for_non_hit(self, not_hit_positions, group):
         from entity import Fire
@@ -321,3 +323,18 @@ class FireKatana(Weapon):
     def for_non_hit(self, not_hit_positions, group):
         from entity import Fire
         self.effect(Fire, not_hit_positions, group)
+
+
+class IceBane(Weapon):
+    def __init__(self):
+        super().__init__("../assets/weapons/ice_bane.png", 12, R_SUMMON)
+        self.offset_x = 65
+        self.tier = c.TIER_4
+
+        from entity import IceCube
+        self.effect_excluded.append(IceCube)
+
+    def for_non_hit(self, not_hit_positions, group):
+        from entity import IceCube
+        self.effect(IceCube, not_hit_positions, group)
+

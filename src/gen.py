@@ -262,7 +262,7 @@ def generate_dungeon(chunk_size, event, level):
     for item in os.listdir(dir_name):
         if item.endswith(".txt"):
             os.remove(os.path.join(dir_name, item))
-
+            
     # Level size
     match level:
         case 1:
@@ -307,6 +307,11 @@ def generate_dungeon(chunk_size, event, level):
     chest = spawner.spawn_entity(Chest, n)
     for e in chest:
         e.set_floor(level)
+
+    # Traps
+    if level > 5:
+        spawner.spawn_entity(Trap, min(10, (level - 5) * 2), neighbors=2,
+                             specific_spawn_tile=["ground", "ground2", "ground3"])
 
     # ------------------------- Enemies -------------------------
     # tier 1
@@ -353,10 +358,6 @@ def generate_dungeon(chunk_size, event, level):
                 e.set_weapon(loot.get_weapon(level, 9))
 
     # ------------------------------------------------------------
-    # Traps
-    if level > 5:
-        spawner.spawn_entity(Trap, min(10, (level - 5) * 2), neighbors=2,
-                             specific_spawn_tile=["ground", "ground2", "ground3"])
 
     if level in c.DIALOGUE.keys():
         if level == 19:

@@ -56,7 +56,6 @@ class Weapon:
                     return x, y
 
     def get_hit_enemies(self, player_x, player_y, attack_dir, group):
-        print(self.center_x, self.center_y)
         hit_positions = []
         for y in range(len(self.pattern)):
             for x in range(len(self.pattern[0])):
@@ -74,11 +73,11 @@ class Weapon:
         enemies = []
         not_hit_positions = []
         for pos in hit_positions:
-            e = group.get_entity_at(player_x + pos[0], player_y + pos[1])
-            if e is None:
+            e = group.get_entity_at(player_x + pos[0], player_y + pos[1], True)
+            if len(e) == 0:
                 not_hit_positions.append([pos[0] + player_x, pos[1] + player_y])
             else:
-                enemies.append(e)
+                enemies.extend(e)
 
         return enemies, not_hit_positions
 
@@ -86,23 +85,48 @@ class Weapon:
         pass
 
     def attack(self, player_x, player_y, attack_dir, group, target):
-        hit_enemies, not_hit_positions = self.get_hit_enemies(player_x, player_y, attack_dir, group)
-
-        for e in hit_enemies:
-            if e != target and e.must_be_attacked_directly:
-                continue
-
-            e.attack(group.get_entity_at(player_x, player_y), self.damage)
-
-        # No infinite IceCubes
-        if type(target) not in self.effect_excluded:
-            self.for_non_hit(not_hit_positions, group)
-
+        # Sound
         from entity import Player
         if type(group.get_entity_at(player_x, player_y)) == Player:
             s = pygame.mixer.Sound(self.sound_path)
             s.set_volume(c.SFX_VOLUME)
             s.play()
+
+        # logic
+        hit_enemies, not_hit_positions = self.get_hit_enemies(player_x, player_y, attack_dir, group)
+
+        x = target.tile_x
+        y = target.tile_y
+
+        entities = group.get_entity_at(x, y, return_all=True)
+        # Checks if multiple entities on attacked position
+        if len(entities) > 1:
+            from entity import Trap
+            for e in entities:
+                if type(e) == Trap:
+                    hit_enemies.remove(e)
+                    print("removed trap")
+        else:
+            from entity import Trap
+            print(f"Attacking one enemy. {entities}")
+            if type(entities[0]) == Trap:
+                print(f"{entities} is trap")
+                # don't attack anything but trap when stepping on trap
+                not_hit_positions = []
+                hit_enemies = entities
+
+        # No infinite IceCubes
+        if type(target) not in self.effect_excluded:
+            print(f"effect {not_hit_positions}")
+            self.for_non_hit(not_hit_positions, group)
+
+        # attack all hit enemies
+        attacker = group.get_entity_at(player_x, player_y)
+        for e in hit_enemies:
+            if e != target and e.must_be_attacked_directly:
+                continue
+
+            e.attack(attacker, self.damage)
 
     def effect(self, effect_entity, positions, group):
         for pos in positions:

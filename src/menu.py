@@ -9,10 +9,10 @@ import constants as c
 
 
 class MainMenu(Scene):
-    background = pygame.image.load("../assets/MainScreenBack.png")
-    cliff = pygame.image.load("../assets/MainScreenCliff.png")
-    player = pygame.image.load("../assets/MainScreenFrog.png")
-    glow = pygame.image.load("../assets/Glow.png")
+    background = pygame.image.load("../assets/menu/MainScreenBack.png")
+    cliff = pygame.image.load("../assets/menu/MainScreenCliff.png")
+    player = pygame.image.load("../assets/menu/MainScreenFrog.png")
+    glow = pygame.image.load("../assets/menu/Glow.png")
     glow = pygame.transform.scale_by(glow, 0.25)
 
     def on_scene_start(self, *args):
@@ -106,10 +106,10 @@ class CreditsMenu(Scene):
 
 
 class SplashScreen(Scene):
-    sound = pygame.mixer.Sound("../assets/jingle.wav")
+    sound = pygame.mixer.Sound("../assets/menu/jingle.wav")
 
-    image1 = pygame.image.load("../assets/splash_1.png")
-    image2 = pygame.image.load("../assets/splash_2.png")
+    image1 = pygame.image.load("../assets/menu/splash_1.png")
+    image2 = pygame.image.load("../assets/menu/splash_2.png")
 
     def __init__(self, manager: SceneManager):
         super().__init__(manager, "splashScreen")

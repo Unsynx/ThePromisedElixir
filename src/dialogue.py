@@ -23,7 +23,7 @@ class DialogueScene(Scene):
 
         self.bg = self.guiManager.add_guideline(
             Guide("book", None, Guide.GL_VERTICAL, 0, Guide.ALIGN_LEFT, Guide.REL_ALIGN_BOTTOM, 0))
-        self.book = self.bg.add_element(Image("../assets/Book.png"))
+        self.book = self.bg.add_element(Image("../assets/gui/Book.png"))
 
         self.buttons = self.guiManager.add_guideline(
             Guide("buttons", None, Guide.GL_HORIZONTAL, 0.9, Guide.ALIGN_CENTER_PADDED, Guide.REL_ALIGN_CENTER, 50))

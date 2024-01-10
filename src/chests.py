@@ -33,7 +33,12 @@ class ChestScreen(Scene):
         self.buttons.add_element(BasicButton("Don't Equip", 300, 75, manager.set_scene, "game", False))
 
         self.logo_g = self.guiManager.add_guideline(
-            Guide("logo", None, Guide.GL_VERTICAL, 0.5, Guide.ALIGN_CENTER_PADDED, Guide.REL_ALIGN_CENTER, 0))
+            Guide("logo", None, Guide.GL_VERTICAL, 0.5, Guide.ALIGN_LEFT_PADDING, Guide.REL_ALIGN_CENTER, 100))
+        self.weapon_g = self.guiManager.add_guideline(
+            Guide("wep", None, Guide.GL_VERTICAL, 0.5, Guide.ALIGN_CENTER_PADDED, Guide.REL_ALIGN_CENTER, 10))
+        self.old_weapon_g = self.guiManager.add_guideline(
+            Guide("wep2", None, Guide.GL_VERTICAL, 0.2, Guide.ALIGN_CENTER_PADDED, Guide.REL_ALIGN_CENTER, 10))
+
         self.chest_g = self.guiManager.add_guideline(
             Guide("chest", None, Guide.GL_VERTICAL, 0.5, Guide.ALIGN_CENTER_PADDED, Guide.REL_ALIGN_CENTER, 0))
         self.chest = self.chest_g.add_element(Image("../assets/player/chest.png").scale_by(2))
@@ -57,16 +62,33 @@ class ChestScreen(Scene):
 
         self.weapon = weapon
 
-        self.logo_g.add_element(Image(weapon.icon_path).scale_by(2))
-        self.logo_g.add_element(Text(weapon.name, Text.FONT_BASE, 128, (255, 255, 255)))
-        self.logo_g.add_element(WeaponPatternImage(self.weapon.pattern))
-        self.logo_g.add_element(Text(f"{weapon.damage}dmg", Text.FONT_BASE, Text.SIZE_HEADER, (255, 255, 255)))
+        self.logo_g.add_element(Text(f"{weapon.name} - Tier {weapon.tier}", Text.FONT_BASE, 128, (255, 255, 255)))
+        self.weapon_g.add_element(Image(weapon.icon_path).scale_by(2))
+        self.weapon_g.add_element(WeaponPatternImage(self.weapon.pattern))
+        self.weapon_g.add_element(Text(f"{weapon.damage}dmg", Text.FONT_BASE, Text.SIZE_HEADER, (255, 255, 255)))
+
+        old = player.weapon
+        self.old_weapon_g.add_element(Text(f"Current Weapon:", Text.FONT_BASE, Text.SIZE_MAIN, (255, 255, 255)))
+        self.old_weapon_g.add_element(Text(f"{old.name}", Text.FONT_BASE, Text.SIZE_MAIN, (255, 255, 255)))
+        self.old_weapon_g.add_element(Text(f"Tier {old.tier}", Text.FONT_BASE, Text.SIZE_MAIN, (255, 255, 255)))
+        try:
+            self.old_weapon_g.add_element(Image(old.icon_path))
+        except TypeError:
+            pass
+        self.old_weapon_g.add_element(WeaponPatternImage(old.pattern))
+        self.old_weapon_g.add_element(Text(f"{weapon.damage}dmg", Text.FONT_BASE, Text.SIZE_MAIN, (255, 255, 255)))
 
         self.logo_g.hide = True
+        self.buttons.hide = True
+        self.weapon_g.hide = True
+        self.old_weapon_g.hide = True
         self.player = player
 
         def set_visibility():
             self.logo_g.hide = False
+            self.buttons.hide = False
+            self.weapon_g.hide = False
+            self.old_weapon_g.hide = False
             self.chest_g.hide = True
             x = self.screen.get_width() / 2 + self.particle_manager.camera.rel_x
             y = self.screen.get_height() / 2 + self.particle_manager.camera.rel_y

@@ -176,7 +176,7 @@ class LoadingScreen(Scene):
             self.level = 0
         else:
             if self.level == 0:
-                pygame.mixer.music.fadeout(1000)
+                pygame.mixer.music.fadeout(100)
                 pygame.mixer.music.load("../assets/music/ambience_cave_00.ogg")
                 pygame.mixer.music.set_volume(c.MUSIC_VOLUME)
                 pygame.mixer.music.play(-1)

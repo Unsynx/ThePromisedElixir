@@ -15,7 +15,7 @@ class MainMenu(Scene):
 
     def on_scene_start(self, *args):
         if args.__contains__(True):
-            pygame.mixer.music.fadeout(500)
+            pygame.mixer.music.fadeout(100)
             pygame.mixer.music.load("../assets/music/forest_compressed.ogg")
             pygame.mixer.music.set_volume(c.MUSIC_VOLUME)
             pygame.mixer.music.play(-1)
@@ -49,7 +49,7 @@ class MainMenu(Scene):
         # ------ Version Text ------
         self.text = self.guiManager.add_guideline(
             Guide("text", None, Guide.GL_HORIZONTAL, 0.97, Guide.ALIGN_RIGHT, Guide.REL_ALIGN_TOP, 25))
-        self.text.add_element(Text("In Development    ", Text.FONT_BASE, Text.SIZE_MAIN, (255, 255, 255)))
+        self.text.add_element(Text("Version 1 - 1/10/2024    ", Text.FONT_BASE, Text.SIZE_MAIN, (255, 255, 255)))
 
     def render(self, screen):
         screen.fill((0, 0, 0))
@@ -119,7 +119,7 @@ class SplashScreen(Scene):
             self.screen.blit(self.image2, (0, 0))
 
     def on_scene_end(self):
-        self.sound.fadeout(100)
+        self.sound.fadeout(1)
         self.sceneManager.del_scene(self)
 
 
@@ -213,6 +213,11 @@ class TempLoseScreen(Scene):
         self.t3 = self.text.add_element(Text(f"Books Read: {stats.books_read}", Text.FONT_BASE, Text.SIZE_MAIN, (255, 255, 255)))
         self.t4 = self.text.add_element(Text(f"Traps Activated: {stats.traps_activated}", Text.FONT_BASE, Text.SIZE_MAIN, (255, 255, 255)))
         self.t5 = self.text.add_element(Text(f"Chests Opened: {stats.chests_opened}", Text.FONT_BASE, Text.SIZE_MAIN, (255, 255, 255)))
+        self.t1.visual_offset_x = 1000
+        self.t2.visual_offset_x = 1000
+        self.t3.visual_offset_x = 1000
+        self.t4.visual_offset_x = 1000
+        self.t5.visual_offset_x = 1000
 
     def update(self, dt: float):
         self.anim1.update()

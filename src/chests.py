@@ -76,7 +76,7 @@ class ChestScreen(Scene):
         except TypeError:
             pass
         self.old_weapon_g.add_element(WeaponPatternImage(old.pattern))
-        self.old_weapon_g.add_element(Text(f"{weapon.damage}dmg", Text.FONT_BASE, Text.SIZE_MAIN, (255, 255, 255)))
+        self.old_weapon_g.add_element(Text(f"{old.damage}dmg", Text.FONT_BASE, Text.SIZE_MAIN, (255, 255, 255)))
 
         self.logo_g.hide = True
         self.buttons.hide = True

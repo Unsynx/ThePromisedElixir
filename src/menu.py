@@ -6,6 +6,7 @@ from gui import GuiManager, Guide, BasicButton, Image, Grid, Text
 import pygame
 from gen import LoadingScreen
 import constants as c
+from save import *
 
 
 class MainMenu(Scene):
@@ -183,13 +184,17 @@ class TempLoseScreen(Scene):
             Guide("logo", None, Guide.GL_VERTICAL, 0.5, Guide.ALIGN_CENTER_PADDED, Guide.REL_ALIGN_CENTER, 0))
         self.logo_g.add_element(Text("You Lose!", Text.FONT_BASE, 128, (255, 255, 255)))
 
-        self.result = None
-
     def on_scene_start(self, *args):
-        if self.result is not None:
-            self.logo_g.delete_element(self.result)
+        self.logo_g.add_element(Text(f"You made it to floor {args[0]}", Text.FONT_BASE, Text.SIZE_HEADER, (255, 255, 255)))
 
-        self.result = self.logo_g.add_element(Text(f"You made it to floor {args[0]}", Text.FONT_BASE, Text.SIZE_HEADER, (255, 255, 255)))
+        # load highscore
+        save_template = [0]
+        data = read_save("save.txt", save_template)
+        if args[0] > data[0]:
+            save_to_file("save.txt", [args[0]])
+            self.logo_g.add_element(Text("That's a new highscore!", Text.FONT_BASE, Text.SIZE_HEADER, (255, 255, 255)))
+        else:
+            self.logo_g.add_element(Text(f"Your best is floor {data[0]}", Text.FONT_BASE, Text.SIZE_HEADER, (255, 255, 255)))
 
     def render(self, screen):
         self.guiManager.render_guidelines()

@@ -32,7 +32,6 @@ mainMenu = MainMenu(sceneManager)
 splashScreen = SplashScreen(sceneManager)
 creditsMenu = CreditsMenu(sceneManager)
 winScene = TempWinScreen(sceneManager)
-loseScene = TempLoseScreen(sceneManager)
 intro = Scene1(sceneManager)
 
 # sceneManager.set_scene(loadingScene, True)

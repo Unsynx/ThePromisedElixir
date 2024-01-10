@@ -7,7 +7,7 @@ import pygame
 from gen import LoadingScreen
 import constants as c
 from save import *
-
+from tween import Tween
 
 class MainMenu(Scene):
     background = pygame.image.load("../assets/menu/MainScreenBack.png")
@@ -182,28 +182,62 @@ class TempLoseScreen(Scene):
         self.buttons.add_element(BasicButton("Quit", 300, 75, sys.exit))
 
         self.logo_g = self.guiManager.add_guideline(
-            Guide("logo", None, Guide.GL_VERTICAL, 0.5, Guide.ALIGN_CENTER_PADDED, Guide.REL_ALIGN_CENTER, 0))
-        self.logo_g.add_element(Text("You Lose!", Text.FONT_BASE, 128, (255, 255, 255)))
+            Guide("logo", None, Guide.GL_VERTICAL, 0.5, Guide.ALIGN_LEFT_PADDING, Guide.REL_ALIGN_CENTER, 100))
+        self.logo_g.add_element(Text("You died!", Text.FONT_BASE, 128, (255, 255, 255)))
+
+        self.text = self.guiManager.add_guideline(
+            Guide("t", None, Guide.GL_VERTICAL, 0.5, Guide.ALIGN_CENTER_PADDED, Guide.REL_ALIGN_CENTER, 0))
+
+        self.anim1 = None
+        self.anim2 = None
+        self.anim3 = None
+        self.anim4 = None
+        self.anim5 = None
+
+        self.t1 = None
+        self.t2 = None
+        self.t3 = None
+        self.t4 = None
+        self.t5 = None
 
     def on_scene_start(self, *args):
-        self.logo_g.add_element(Text(f"You made it to floor {args[0]}", Text.FONT_BASE, Text.SIZE_HEADER, (255, 255, 255)))
+        self.text.add_element(Text(f"You made it to floor {args[0]}", Text.FONT_BASE, Text.SIZE_HEADER, (255, 255, 255)))
 
         # load highscore
         save_template = [0]
         data = read_save("save.txt", save_template)
         if args[0] > data[0]:
             save_to_file("save.txt", [args[0]])
-            self.logo_g.add_element(Text("That's a new highscore!", Text.FONT_BASE, Text.SIZE_HEADER, (255, 255, 255)))
+            self.text.add_element(Text("That's a new highscore!", Text.FONT_BASE, Text.SIZE_HEADER, (255, 255, 255)))
         else:
-            self.logo_g.add_element(Text(f"Your best is floor {data[0]}", Text.FONT_BASE, Text.SIZE_HEADER, (255, 255, 255)))
+            self.text.add_element(Text(f"Your best is floor {data[0]}", Text.FONT_BASE, Text.SIZE_HEADER, (255, 255, 255)))
 
         from entity import Stats
         stats = self.group.get_entity(Stats)
-        self.logo_g.add_element(Text(f"Enemies Killed: {stats.enemies_killed}", Text.FONT_BASE, Text.SIZE_MAIN, (255, 255, 255)))
-        self.logo_g.add_element(Text(f"Potions Drank: {stats.potions_drank}", Text.FONT_BASE, Text.SIZE_MAIN, (255, 255, 255)))
-        self.logo_g.add_element(Text(f"Books Read: {stats.books_read}", Text.FONT_BASE, Text.SIZE_MAIN, (255, 255, 255)))
-        self.logo_g.add_element(Text(f"Traps Activated: {stats.traps_activated}", Text.FONT_BASE, Text.SIZE_MAIN, (255, 255, 255)))
-        self.logo_g.add_element(Text(f"Chests Opened: {stats.chests_opened}", Text.FONT_BASE, Text.SIZE_MAIN, (255, 255, 255)))
+        self.anim1 = Tween(1000, 0, 250, Tween.quad_in_easing)
+        self.anim2 = Tween(1000, 0, 350, Tween.quad_in_easing)
+        self.anim3 = Tween(1000, 0, 450, Tween.quad_in_easing)
+        self.anim4 = Tween(1000, 0, 550, Tween.quad_in_easing)
+        self.anim5 = Tween(1000, 0, 650, Tween.quad_in_easing)
+
+        self.t1 = self.text.add_element(Text(f"Enemies Killed: {stats.enemies_killed}", Text.FONT_BASE, Text.SIZE_MAIN, (255, 255, 255)))
+        self.t2 = self.text.add_element(Text(f"Potions Drank: {stats.potions_drank}", Text.FONT_BASE, Text.SIZE_MAIN, (255, 255, 255)))
+        self.t3 = self.text.add_element(Text(f"Books Read: {stats.books_read}", Text.FONT_BASE, Text.SIZE_MAIN, (255, 255, 255)))
+        self.t4 = self.text.add_element(Text(f"Traps Activated: {stats.traps_activated}", Text.FONT_BASE, Text.SIZE_MAIN, (255, 255, 255)))
+        self.t5 = self.text.add_element(Text(f"Chests Opened: {stats.chests_opened}", Text.FONT_BASE, Text.SIZE_MAIN, (255, 255, 255)))
+
+    def update(self, dt: float):
+        self.anim1.update()
+        self.anim2.update()
+        self.anim3.update()
+        self.anim4.update()
+        self.anim5.update()
+
+        self.t1.visual_offset_x = self.anim1.get_current_value()
+        self.t2.visual_offset_x = self.anim2.get_current_value()
+        self.t3.visual_offset_x = self.anim3.get_current_value()
+        self.t4.visual_offset_x = self.anim4.get_current_value()
+        self.t5.visual_offset_x = self.anim5.get_current_value()
 
     def render(self, screen):
         self.guiManager.render_guidelines()

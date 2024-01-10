@@ -121,7 +121,7 @@ class GameScene(Scene):
         # Player UI
         if self.player:
             self.health_bar.set_value(self.player.health / self.player.max_health)
-            self.weapon_attack.set_value(f"{self.player.health}/{self.player.max_health}hp       {self.player.weapon.name} - {self.player.weapon.damage}dmg")
+            self.weapon_attack.set_value(f"{self.player.health}/{self.player.max_health}hp       {self.player.weapon.pretty_name} - {self.player.weapon.damage}dmg")
 
     def render(self, screen: pygame.Surface):
         screen.fill((50, 60, 57))

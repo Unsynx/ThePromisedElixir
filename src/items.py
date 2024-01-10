@@ -36,6 +36,14 @@ class Weapon:
 
     def __init__(self, icon_path: str, damage: int, pattern):
         self.name = type(self).__name__
+        self.pretty_name = ""
+        i = 0
+        for le in self.name:
+            if le.isupper() and i != 0:
+                self.pretty_name += " "
+            self.pretty_name += le
+            i += 1
+
         self.icon_path = icon_path
         self.damage = damage
         self.pattern = pattern
@@ -135,7 +143,7 @@ class Weapon:
                 group.add_entity(effect_entity).set_position(pos[0], pos[1])
 
 
-class SimpleSpearWeapon(Weapon):
+class SimpleSpear(Weapon):
     def __init__(self):
         super().__init__("../assets/weapons/spear.png", 2, R_DOUBLE)
         self.offset_x = 25

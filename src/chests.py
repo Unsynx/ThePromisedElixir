@@ -62,14 +62,14 @@ class ChestScreen(Scene):
 
         self.weapon = weapon
 
-        self.logo_g.add_element(Text(f"{weapon.name} - Tier {weapon.tier}", Text.FONT_BASE, 128, (255, 255, 255)))
+        self.logo_g.add_element(Text(f"{weapon.pretty_name} - Tier {weapon.tier}", Text.FONT_BASE, 128, (255, 255, 255)))
         self.weapon_g.add_element(Image(weapon.icon_path).scale_by(2))
         self.weapon_g.add_element(WeaponPatternImage(self.weapon.pattern))
         self.weapon_g.add_element(Text(f"{weapon.damage}dmg", Text.FONT_BASE, Text.SIZE_HEADER, (255, 255, 255)))
 
         old = player.weapon
         self.old_weapon_g.add_element(Text(f"Current Weapon:", Text.FONT_BASE, Text.SIZE_MAIN, (255, 255, 255)))
-        self.old_weapon_g.add_element(Text(f"{old.name}", Text.FONT_BASE, Text.SIZE_MAIN, (255, 255, 255)))
+        self.old_weapon_g.add_element(Text(f"{old.pretty_name}", Text.FONT_BASE, Text.SIZE_MAIN, (255, 255, 255)))
         self.old_weapon_g.add_element(Text(f"Tier {old.tier}", Text.FONT_BASE, Text.SIZE_MAIN, (255, 255, 255)))
         try:
             self.old_weapon_g.add_element(Image(old.icon_path))

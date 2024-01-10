@@ -4,6 +4,7 @@ from scene_manager import SceneManager
 from screeninfo import get_monitors
 from menu import *
 import constants as c
+from intro import Scene1
 
 from dialogue import DialogueScene
 
@@ -32,9 +33,10 @@ splashScreen = SplashScreen(sceneManager)
 creditsMenu = CreditsMenu(sceneManager)
 winScene = TempWinScreen(sceneManager)
 loseScene = TempLoseScreen(sceneManager)
+intro = Scene1(sceneManager)
 
 # sceneManager.set_scene(loadingScene, True)
-sceneManager.set_scene("splashScreen")
+sceneManager.set_scene("intro")
 # sceneManager.set_scene(DialogueScene(sceneManager), max(c.DIALOGUE.keys()))
 
 

@@ -16,6 +16,7 @@ class Scene3(Scene):
 
     def on_scene_start(self, *args):
         self.sound.play()
+        self.start = time.time()
 
     def __init__(self, manager: SceneManager):
         super().__init__(manager, "intro3")
@@ -24,7 +25,7 @@ class Scene3(Scene):
         self.g = self.guiManager.add_guideline(Guide("", None, Guide.GL_HORIZONTAL, 0.9, Guide.ALIGN_LEFT_PADDING, Guide.REL_ALIGN_BOTTOM, 30))
         self.g.add_element(BasicButton("Skip", 300, 75, manager.set_scene, "mainMenu", True))
 
-        self.start = time.time()
+        self.start = 0
 
         self.started = False
 
@@ -62,6 +63,7 @@ class Scene2(Scene):
 
     def on_scene_start(self, *args):
         self.sound.play()
+        self.start = time.time()
 
     def __init__(self, manager: SceneManager):
         super().__init__(manager, "intro2")
@@ -72,7 +74,7 @@ class Scene2(Scene):
 
         self.anim = Tween(1000, 0, 2000, Tween.quad_out_easing)
 
-        self.start = time.time()
+        self.start = 0
 
     def render(self, screen):
         t = time.time() - self.start
@@ -99,6 +101,7 @@ class Scene1(Scene):
 
     def on_scene_start(self, *args):
         self.sound.play()
+        self.start = time.time()
 
     def __init__(self, manager: SceneManager):
         super().__init__(manager, "intro")
@@ -107,7 +110,7 @@ class Scene1(Scene):
         self.g = self.guiManager.add_guideline(Guide("", None, Guide.GL_HORIZONTAL, 0.9, Guide.ALIGN_LEFT_PADDING, Guide.REL_ALIGN_BOTTOM, 30))
         self.g.add_element(BasicButton("Skip", 300, 75, manager.set_scene, "mainMenu", True))
 
-        self.start = time.time()
+        self.start = 0
 
     def render(self, screen):
         t = time.time() - self.start

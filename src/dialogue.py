@@ -7,6 +7,9 @@ import time
 
 
 class DialogueScene(Scene):
+    sound = pygame.mixer.Sound("../assets/sfx/paper.wav")
+    sound.set_volume(c.SFX_VOLUME)
+
     def __init__(self, manager: SceneManager, group):
         super().__init__(manager, "dialogue")
 
@@ -35,6 +38,7 @@ class DialogueScene(Scene):
 
     def on_scene_start(self, *args):
         self.start = time.time()
+        self.sound.play()
 
         num = args[0]
         for line in c.DIALOGUE[num]:
@@ -76,7 +80,7 @@ class Dialogue(Entity):
             return
 
         self.scene_manager.del_scene("dialogue")
-        self.scene_manager.add_scene(DialogueScene(self.scene_manager))
+        self.scene_manager.add_scene(DialogueScene(self.scene_manager, self.group))
         self.scene_manager.set_scene("dialogue", self.dialogue_number)
 
         self.group.remove(self)

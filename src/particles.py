@@ -111,6 +111,23 @@ class MaxHealthUp(ParticleSystem):
             self.add_particle(x, y, random.uniform(-0.5, 0.5), random.uniform(-0.5, 0.5), 1)
 
 
+class Hearts(ParticleSystem):
+    def __init__(self, x, y, count):
+        super().__init__(pygame.image.load("../assets/player/healthup_particle.png"))
+
+        for _ in range(count):
+            self.add_particle(x, y, random.uniform(-1, 1), random.uniform(-1, 1), random.uniform(2, 2.5))
+
+    def tick(self, index, dt):
+        self.particle_x[index] = self.particle_x[index] + self.vel_x[index] * dt
+        self.vel_x[index] = self.vel_x[index] * 0.9
+        self.particle_y[index] = self.particle_y[index] + self.vel_y[index] * dt
+        if self.lifetime[index] - time.time() > 1:
+            self.vel_y[index] = self.vel_y[index] * 0.9
+        else:
+            self.vel_y[index] = self.vel_y[index] + 0.005 * dt
+
+
 class ConfusedEffect(ParticleSystem):
     def __init__(self, x, y):
         t = Text("?", Text.FONT_BASE, 48, (255, 255, 255))
@@ -126,6 +143,20 @@ class ChestClose(ParticleSystem):
 
         for _ in range(15):
             self.add_particle(x, y, random.uniform(-2, 2), random.uniform(-2, 0), 5)
+
+    def tick(self, index, dt):
+        self.particle_x[index] = self.particle_x[index] + self.vel_x[index] * dt
+        self.vel_x[index] = self.vel_x[index] * 0.9
+        self.particle_y[index] = self.particle_y[index] + self.vel_y[index] * dt
+        self.vel_y[index] = self.vel_y[index] + 0.005 * dt
+
+
+class Dead(ParticleSystem):
+    def __init__(self, x, y, count):
+        super().__init__(pygame.image.load("../assets/player/blood.png"))
+
+        for _ in range(count):
+            self.add_particle(x, y, random.uniform(-1, 1), random.uniform(-1, 0), 3)
 
     def tick(self, index, dt):
         self.particle_x[index] = self.particle_x[index] + self.vel_x[index] * dt

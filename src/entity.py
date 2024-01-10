@@ -6,7 +6,7 @@ from constants import *
 from tween import Tween
 import sys
 from items import *
-from particles import HitEffect, PotionEffect, ConfusedEffect, MaxHealthUp
+from particles import *
 
 MOVEMENT_RADIUS = 4
 PLAYER_MOVEMENT_DELAY = 0.15
@@ -199,6 +199,7 @@ class MobileEntity(Entity):
         return False
 
     def on_death(self):
+        self.particle_manager.add_system(Dead(self.x + 64, self.y + 64, int(self.max_health * 1.5)))
         self.group.remove(self.weapon_visual)
         self.group.remove(self.health_bar)
         self.group.remove(self)
@@ -393,6 +394,7 @@ class Potion(Entity):
 
         self.sound.play()
         entity.particle_manager.add_system(PotionEffect(self.x + 64, self.y + 64, 3))
+        entity.particle_manager.add_system(Hearts(self.x + 64, self.y + 64, 2))
         self.on_death()
 
 
@@ -486,6 +488,7 @@ class HealthUp(Entity):
 
         self.sound.play()
         entity.particle_manager.add_system(MaxHealthUp(self.x + 64, self.y + 64, 3))
+        entity.particle_manager.add_system(Hearts(self.x + 64, self.y + 64, 6))
         self.on_death()
 
 

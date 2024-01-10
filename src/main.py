@@ -58,6 +58,7 @@ while running:
     sceneManager.update()
     sceneManager.scene.input(events, pygame.key.get_pressed())
     sceneManager.scene.update(dt)
+    # should probably just add this to every scene render instead
     screen.fill((0, 0, 0))
     sceneManager.scene.render(screen)
 

@@ -60,11 +60,19 @@ class EntityGroup:
         except ValueError:
             print(f"Tried to delete {e} from the group, but was not in list")
 
-    def get_entity_at(self, x, y):
+    def get_entity_at(self, x, y, return_all=False):
+        li = []
+
         for e in self.entities:
             if e.tile_x == x and e.tile_y == y:
-                return e
-        return None
+                if return_all:
+                    li.append(e)
+                else:
+                    return e
+        if return_all:
+            return li
+        else:
+            return None
 
     def get_entity(self, t: object):
         for e in self.entities:
@@ -152,6 +160,7 @@ class EntityGroup:
     def render(self):
         # Simple sort order
         movable_entity_classes = MobileEntity.__subclasses__()
+        movable_entity_classes.extend(Enemy.__subclasses__())
         follower_entity_classes = Follower.__subclasses__()
         movable_entities = []
         follower_entities = []

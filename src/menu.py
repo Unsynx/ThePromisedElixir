@@ -9,16 +9,13 @@ import constants as c
 from save import *
 from tween import Tween
 
+
 class MainMenu(Scene):
-    background = pygame.image.load("../assets/menu/MainScreenBack.png")
-    cliff = pygame.image.load("../assets/menu/MainScreenCliff.png")
-    player = pygame.image.load("../assets/menu/MainScreenFrog.png")
-    glow = pygame.image.load("../assets/menu/Glow.png")
-    glow = pygame.transform.scale_by(glow, 0.25)
+    image1 = pygame.image.load("../assets/menu/MainScreenAll.png")
 
     def on_scene_start(self, *args):
         if args.__contains__(True):
-            pygame.mixer.music.fadeout(1000)
+            pygame.mixer.music.fadeout(500)
             pygame.mixer.music.load("../assets/music/forest_compressed.ogg")
             pygame.mixer.music.set_volume(c.MUSIC_VOLUME)
             pygame.mixer.music.play(-1)
@@ -54,18 +51,9 @@ class MainMenu(Scene):
             Guide("text", None, Guide.GL_HORIZONTAL, 0.97, Guide.ALIGN_RIGHT, Guide.REL_ALIGN_TOP, 25))
         self.text.add_element(Text("In Development    ", Text.FONT_BASE, Text.SIZE_MAIN, (255, 255, 255)))
 
-    def update(self, dt):
-        pass
-
     def render(self, screen):
-        x, y = pygame.mouse.get_pos()
-        self.screen.blit(self.background, (0, 0))
-        self.screen.blit(self.cliff, (x * 0.03, 0))
-        rot_img = pygame.transform.rotate(self.glow, int(time.time() * -8) % 360)
-        offset_x = (rot_img.get_width() - self.glow.get_width()) // 2
-        offset_y = (rot_img.get_height() - self.glow.get_height()) // 2
-        self.screen.blit(rot_img, (x * 0.03 + 700 - offset_x, 125 - offset_y))
-        self.screen.blit(self.player, (x * 0.03, 0))
+        screen.fill((0, 0, 0))
+        screen.blit(self.image1, (0, 0))
         self.guiManager.render_guidelines()
 
 
@@ -100,8 +88,8 @@ class CreditsMenu(Scene):
         # ------ Button ------
         self.center.add_element(BasicButton("Main Menu", 300, 75, manager.set_scene, "mainMenu"))
 
-    def update(self, dt):
-        self.screen.fill((0, 0, 0))
+    def render(self, screen: pygame.Surface):
+        screen.fill((0, 0, 0))
 
         self.guiManager.render_guidelines()
 

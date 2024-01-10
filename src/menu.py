@@ -106,16 +106,32 @@ class CreditsMenu(Scene):
 
 
 class SplashScreen(Scene):
+    sound = pygame.mixer.Sound("../assets/jingle.wav")
+
+    image1 = pygame.image.load("../assets/splash_1.png")
+    image2 = pygame.image.load("../assets/splash_2.png")
+
     def __init__(self, manager: SceneManager):
         super().__init__(manager, "splashScreen")
 
-    def update(self, dt):
-        print("Splash")
+        self.start = time.time()
 
-        self.sceneManager.set_scene("mainMenu", True)
+    def on_scene_start(self, *args):
+        self.sound.play()
+
+    def update(self, dt):
+        if time.time() - self.start > 6:
+            self.sceneManager.set_scene("intro")
 
     def render(self, screen: pygame.Surface):
-        pass
+        if (time.time() - self.start) % 0.5 < 0.25:
+            self.screen.blit(self.image1, (0, 0))
+        else:
+            self.screen.blit(self.image2, (0, 0))
+
+    def on_scene_end(self):
+        self.sound.fadeout(100)
+        self.sceneManager.del_scene(self)
 
 
 class TempWinScreen(Scene):

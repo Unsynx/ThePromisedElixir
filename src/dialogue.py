@@ -3,10 +3,11 @@ from gui import *
 from entity import Entity, Player
 import pygame.surface
 import constants as c
+import time
 
 
 class DialogueScene(Scene):
-    def __init__(self, manager: SceneManager):
+    def __init__(self, manager: SceneManager, group):
         super().__init__(manager, "dialogue")
 
         self.guiManager = GuiManager(self.sceneManager.screen)
@@ -29,7 +30,12 @@ class DialogueScene(Scene):
             Guide("logo", None, Guide.GL_VERTICAL, 0.15, Guide.ALIGN_CENTER_PADDED, Guide.REL_ALIGN_RIGHT, 0))
         self.text = None
 
+        self.group = group
+        self.start = 0
+
     def on_scene_start(self, *args):
+        self.start = time.time()
+
         num = args[0]
         for line in c.DIALOGUE[num]:
             self.logo_g.add_element(Text(line, Text.FONT_BASE, 64, (0, 0, 0)))
@@ -47,6 +53,9 @@ class DialogueScene(Scene):
 
     def render(self, screen):
         self.guiManager.render_guidelines()
+
+    def on_scene_end(self):
+        self.group.change_queue_lifetime_by(time.time() - self.start)
 
 
 class Dialogue(Entity):

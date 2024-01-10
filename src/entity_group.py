@@ -130,6 +130,12 @@ class EntityGroup:
         self.scene_queue_scenes.append(scene)
         self.scene_queue_args.append(args)
 
+    def change_queue_lifetime_by(self, time_s):
+        print(self.queue_timer)
+        for i, _ in enumerate(self.queue_timer):
+            self.queue_timer[i] += time_s
+        print(self.queue_timer)
+
     def on_scene_start(self, scene):
         for i, sc in enumerate(self.scene_queue_scenes):
             if sc == scene:
@@ -150,6 +156,7 @@ class EntityGroup:
             if time.time() > timer:
                 self.queue[i](*self.queue_args[i])
                 delete.append(i)
+
         delete.reverse()
         for i in delete:
             self.remove_from_queue(i)

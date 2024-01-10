@@ -1,3 +1,5 @@
+import time
+
 from scene_manager import SceneManager, Scene
 from gui import *
 from entity import Entity, Player
@@ -12,7 +14,7 @@ class ChestScreen(Scene):
     sound = pygame.mixer.Sound("../assets/sfx/box_break.wav")
     sound.set_volume(c.SFX_VOLUME)
 
-    def __init__(self, manager: SceneManager, particle_manager: ParticleManager, pos):
+    def __init__(self, manager: SceneManager, particle_manager: ParticleManager, pos, group):
         super().__init__(manager, "chest")
 
         self.guiManager = GuiManager(self.sceneManager.screen)
@@ -39,8 +41,11 @@ class ChestScreen(Scene):
         self.weapon = None
         self.player = None
 
+        self.group = group
+        self.start = 0
+
     def on_scene_end(self):
-        # self.particle_manager.add_system(ChestClose(self.x, self.y))
+        self.group.change_queue_lifetime_by(time.time() - self.start)
         self.sceneManager.del_scene(self)
 
     def set_weapon(self):
@@ -48,6 +53,8 @@ class ChestScreen(Scene):
         self.sceneManager.set_scene("game", False)
 
     def on_scene_start(self, weapon, player):
+        self.start = time.time()
+
         self.weapon = weapon
 
         self.logo_g.add_element(Image(weapon.icon_path).scale_by(2))
@@ -149,5 +156,5 @@ class Chest(Entity):
         if not type(entity) is Player:
             return
 
-        self.scene_manager.set_scene(ChestScreen(self.scene_manager, self.particle_manager, (self.x, self.y)), self.loot.get_weapon(self.floor), entity)
+        self.scene_manager.set_scene(ChestScreen(self.scene_manager, self.particle_manager, (self.x, self.y), self.group), self.loot.get_weapon(self.floor), entity)
         self.group.remove(self)

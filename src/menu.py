@@ -162,10 +162,11 @@ class TempWinScreen(Scene):
 
 
 class TempLoseScreen(Scene):
-    def __init__(self, manager: SceneManager):
+    def __init__(self, manager: SceneManager, group):
         super().__init__(manager, "lose")
 
         self.guiManager = GuiManager(self.sceneManager.screen)
+        self.group = group
 
         # ------ Backdrop ------
         self.back = self.guiManager.add_guideline(
@@ -195,6 +196,14 @@ class TempLoseScreen(Scene):
             self.logo_g.add_element(Text("That's a new highscore!", Text.FONT_BASE, Text.SIZE_HEADER, (255, 255, 255)))
         else:
             self.logo_g.add_element(Text(f"Your best is floor {data[0]}", Text.FONT_BASE, Text.SIZE_HEADER, (255, 255, 255)))
+
+        from entity import Stats
+        stats = self.group.get_entity(Stats)
+        self.logo_g.add_element(Text(f"Enemies Killed: {stats.enemies_killed}", Text.FONT_BASE, Text.SIZE_MAIN, (255, 255, 255)))
+        self.logo_g.add_element(Text(f"Potions Drank: {stats.potions_drank}", Text.FONT_BASE, Text.SIZE_MAIN, (255, 255, 255)))
+        self.logo_g.add_element(Text(f"Books Read: {stats.books_read}", Text.FONT_BASE, Text.SIZE_MAIN, (255, 255, 255)))
+        self.logo_g.add_element(Text(f"Traps Activated: {stats.traps_activated}", Text.FONT_BASE, Text.SIZE_MAIN, (255, 255, 255)))
+        self.logo_g.add_element(Text(f"Chests Opened: {stats.chests_opened}", Text.FONT_BASE, Text.SIZE_MAIN, (255, 255, 255)))
 
     def render(self, screen):
         self.guiManager.render_guidelines()

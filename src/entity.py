@@ -92,6 +92,26 @@ class Entity:
             self.on_death()
 
 
+class Stats(Entity):
+    def __init__(self):
+        super().__init__()
+
+        self.enemies_killed = 0
+        self.potions_drank = 0
+        self.books_read = 0
+        self.traps_activated = 0
+        self.chests_opened = 0
+
+        self.serialize("enemies_killed", lambda: self.enemies_killed)\
+            .serialize("potions_drank", lambda: self.potions_drank)\
+            .serialize("books_read", lambda: self.books_read)\
+            .serialize("traps_activated", lambda: self.traps_activated)\
+            .serialize("chests_opened", lambda: self.chests_opened)
+
+    def render(self):
+        pass
+
+
 class Follower(Entity):
     def __init__(self, target: Entity):
         super().__init__()
@@ -218,6 +238,8 @@ class MobileEntity(Entity):
         self.particle_manager.add_system(HitEffect(self.x + 64, self.y + 64, damage))
 
         if self.health <= 0:
+            if type(entity) is Player:
+                self.group.get_entity(Stats).enemies_killed += 1
             self.on_death()
 
     def attack_logic(self, enemy, x, y):
@@ -396,6 +418,8 @@ class Potion(Entity):
         if entity.health > entity.max_health:
             entity.health = entity.max_health
 
+        self.group.get_entity(Stats).potions_drank += 1
+
         self.sound.play()
         entity.particle_manager.add_system(PotionEffect(self.x + 64, self.y + 64, 3))
         entity.particle_manager.add_system(Hearts(self.x + 64, self.y + 64, 2))
@@ -464,6 +488,9 @@ class Trap(Entity):
     def attack(self, entity, damage):
         if type(entity) not in MobileEntity.__subclasses__():
             return
+
+        if type(entity) is Player:
+            self.group.get_entity(Stats).traps_activated += 1
 
         entity.attack(self, 3)
         self.sound.play()

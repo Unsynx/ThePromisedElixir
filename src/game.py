@@ -103,7 +103,7 @@ class GameScene(Scene):
             if self.player_alive:
                 self.player_alive = False
                 from menu import TempLoseScreen
-                self.group.add_to_queue(self.sceneManager.set_scene, 1.5, TempLoseScreen(self.sceneManager), self.level)
+                self.group.add_to_queue(self.sceneManager.set_scene, 1.5, TempLoseScreen(self.sceneManager, self.group), self.level)
 
         self.group.update(dt)
         self.camera.update(dt)

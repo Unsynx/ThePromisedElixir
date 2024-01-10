@@ -285,9 +285,15 @@ def generate_dungeon(chunk_size, event, level):
 
     if level == 1:
         group.add_entity(Player).set_position(x, y)
+        group.add_entity(Stats)
     else:
-        group.load(True)
-        group[0].set_position(x, y)
+        group.load()
+        player = group.get_entity(Player)
+        stats = group.get_entity(Stats)
+        group.clear()
+        player.set_position(x, y)
+        group.add_complete_entity(player)
+        group.add_complete_entity(stats)
 
     # Staircase
     spawner.spawn_entity(Staircase, 1, specific_spawn_tile="ground")

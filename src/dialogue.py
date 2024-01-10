@@ -1,6 +1,6 @@
 from scene_manager import SceneManager, Scene
 from gui import *
-from entity import Entity, Player
+from entity import Entity, Player, Stats
 import pygame.surface
 import constants as c
 import time
@@ -79,6 +79,7 @@ class Dialogue(Entity):
         if not type(entity) is Player:
             return
 
+        self.group.get_entity(Stats).books_read += 1
         self.scene_manager.del_scene("dialogue")
         self.scene_manager.add_scene(DialogueScene(self.scene_manager, self.group))
         self.scene_manager.set_scene("dialogue", self.dialogue_number)

@@ -37,6 +37,12 @@ class EntityGroup:
     def __getitem__(self, item):
         return self.entities[item]
 
+    def clear(self):
+        self.entities = []
+
+    def add_complete_entity(self, e):
+        self.entities.append(e)
+
     def add_entity(self, entity, *args, **kwargs):
         e = entity(*args)
         for item, value in kwargs.items():

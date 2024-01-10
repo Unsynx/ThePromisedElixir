@@ -2,7 +2,7 @@ import time
 
 from scene_manager import SceneManager, Scene
 from gui import *
-from entity import Entity, Player
+from entity import Entity, Player, Stats
 import pygame.surface
 from particles import ChestClose, ParticleManager
 import constants as c
@@ -178,5 +178,6 @@ class Chest(Entity):
         if not type(entity) is Player:
             return
 
+        self.group.get_entity(Stats).chests_opened += 1
         self.scene_manager.set_scene(ChestScreen(self.scene_manager, self.particle_manager, (self.x, self.y), self.group), self.loot.get_weapon(self.floor), entity)
         self.group.remove(self)

@@ -41,12 +41,14 @@ class ParticleSystem:
         for i in range(len(self.particle_x)):
             self.tick(i, dt)
 
+        delete_p = []
         for i in range(len(self.particle_x)):
             if self.lifetime[i] < time.time() or -100 > self.particle_y[i] > self.screen.get_height() + 100:
-                self.delete_particle(i)
-                i -= 1
-                if i < 0:
-                    return
+                delete_p.append(i)
+
+        delete_p.reverse()
+        for p in delete_p:
+            self.delete_particle(p)
 
     def tick(self, index, dt: float):
         self.particle_x[index] = self.particle_x[index] + self.vel_x[index] * dt

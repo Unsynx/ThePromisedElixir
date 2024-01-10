@@ -133,6 +133,9 @@ class WeaponVisual(Follower):
 
 
 class MobileEntity(Entity):
+    death_sound = pygame.mixer.Sound("../assets/sfx/death.wav")
+    death_sound.set_volume(c.SFX_VOLUME)
+
     def __init__(self):
         super().__init__()
 
@@ -199,6 +202,7 @@ class MobileEntity(Entity):
         return False
 
     def on_death(self):
+        self.death_sound.play()
         self.particle_manager.add_system(Dead(self.x + 64, self.y + 64, int(self.max_health * 1.5)))
         self.group.remove(self.weapon_visual)
         self.group.remove(self.health_bar)

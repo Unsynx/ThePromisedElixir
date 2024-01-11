@@ -101,7 +101,7 @@ DIALOGUE = {
          "able to save Mary. I'm tired. There are so,",
          "so, many enemies."],
     13: ["This morning I woke up and Simon was gone.",
-         "Well, he was still here, but he wasn't the"
+         "Well, he was still here, but he wasn't the",
          "same. There are green growths on his arms,",
          "and his spirits are down. He's yelling at me to",
          "leave him behind, to find the elixir and save",

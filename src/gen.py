@@ -326,7 +326,7 @@ def generate_dungeon(chunk_size, event, level):
         case 4:
             n = 4
         case _:
-            n = min(math.floor(level * 1.5), 12)
+            n = min(math.floor(level * 1.25), 8)
 
     enemies = spawner.spawn_entity(Enemy, n)
     loot = Loot()
@@ -341,7 +341,9 @@ def generate_dungeon(chunk_size, event, level):
         case 3:
             spawner.spawn_entity(Rat, 1, neighbors=2)
         case _:
-            if level > 9:
+            if 6 < level < 9:
+                spawner.spawn_entity(Rat, 2, neighbors=2)
+            elif level > 9:
                 spawner.spawn_entity(Rat, 3, neighbors=2)
 
     # mini boss
@@ -350,18 +352,18 @@ def generate_dungeon(chunk_size, event, level):
 
     # tier 2
     if level > 12:
-        n = min(math.floor((level - 12) * 2), 12)
+        n = min(math.floor((level - 12) * 2), 8)
 
         enemies = spawner.spawn_entity(Enemy2, n)
         loot = Loot()
         for e in enemies:
-            if randint(0, 10) < level - 9:
+            if randint(0, 20) < level - 9:
                 e.set_weapon(loot.get_weapon(level, 9))
 
     # ------------------------------------------------------------
     # Traps
     if level > 5:
-        spawner.spawn_entity(Trap, min(10, (level - 5) * 2), neighbors=2,
+        spawner.spawn_entity(Trap, min(6, (level - 5) * 2), neighbors=2,
                              specific_spawn_tile=["ground", "ground2", "ground3"])
 
     if level in c.DIALOGUE.keys():

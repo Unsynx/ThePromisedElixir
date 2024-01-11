@@ -357,7 +357,7 @@ class BasicButton(Button):
 
 class Image(GuiElement):
     def __init__(self, path: str):
-        super().__init__(pygame.image.load(path))
+        super().__init__(pygame.image.load(path).convert_alpha())
 
     def scale_by(self, factor):
         self.surface = pygame.transform.scale_by(self.surface, factor)

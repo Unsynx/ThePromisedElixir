@@ -115,7 +115,7 @@ class MaxHealthUp(ParticleSystem):
 
 class Hearts(ParticleSystem):
     def __init__(self, x, y, count):
-        super().__init__(pygame.image.load("../assets/player/healthup_particle.png"))
+        super().__init__(pygame.image.load("../assets/player/healthup_particle.png").convert_alpha())
 
         for _ in range(count):
             self.add_particle(x, y, random.uniform(-1, 1), random.uniform(-1, 1), random.uniform(2, 2.5))
@@ -141,7 +141,7 @@ class ConfusedEffect(ParticleSystem):
 
 class ChestClose(ParticleSystem):
     def __init__(self, x, y):
-        super().__init__(pygame.image.load("../assets/player/Plank.png"))
+        super().__init__(pygame.image.load("../assets/player/Plank.png").convert_alpha())
 
         for _ in range(15):
             self.add_particle(x, y, random.uniform(-2, 2), random.uniform(-2, 0), 5)
@@ -155,7 +155,7 @@ class ChestClose(ParticleSystem):
 
 class Dead(ParticleSystem):
     def __init__(self, x, y, count):
-        super().__init__(pygame.image.load("../assets/player/blood.png"))
+        super().__init__(pygame.image.load("../assets/player/blood.png").convert_alpha())
 
         for _ in range(count):
             self.add_particle(x, y, random.uniform(-1, 1), random.uniform(-1, 0), 3)

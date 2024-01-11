@@ -49,7 +49,7 @@ class MainMenu(Scene):
         # ------ Version Text ------
         self.text = self.guiManager.add_guideline(
             Guide("text", None, Guide.GL_HORIZONTAL, 0.97, Guide.ALIGN_RIGHT, Guide.REL_ALIGN_TOP, 25))
-        self.text.add_element(Text("Version 1 - 1/10/2024    ", Text.FONT_BASE, Text.SIZE_MAIN, (255, 255, 255)))
+        self.text.add_element(Text("Version 1.1 - 1/11/2024    ", Text.FONT_BASE, Text.SIZE_MAIN, (255, 255, 255)))
 
     def render(self, screen):
         screen.fill((0, 0, 0))

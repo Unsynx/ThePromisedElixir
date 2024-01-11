@@ -54,7 +54,7 @@ DIALOGUE = {
     6: ["The dungeon seems to be only getting more",
         "dangerous. The sixth floor has been filled with",
         "traps, and the adventurers here are even more",
-        "hostile than before. Some of the are welding",
+        "hostile than before. Some of the are weilding",
         "strange weapons of the like I've never seen.",
         "The ones with icicle like blades are the",
         "most terrifying. They trap you by conjuring",

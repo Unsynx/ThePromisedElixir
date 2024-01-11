@@ -23,7 +23,7 @@ class ChestScreen(Scene):
 
         self.back = self.guiManager.add_guideline(
             Guide("img", None, Guide.GL_VERTICAL, 0, Guide.ALIGN_LEFT, Guide.REL_ALIGN_BOTTOM, 0))
-        self.back.add_element(Image("../assets/gui/images/backdrop1.png"))
+        self.back.add_element(Image("../assets/gui/images/backdrop2.png"))
 
         # ------ Buttons ------
         self.buttons = self.guiManager.add_guideline(

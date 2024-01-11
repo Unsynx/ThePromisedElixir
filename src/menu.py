@@ -88,9 +88,11 @@ class CreditsMenu(Scene):
         # ------ Button ------
         self.center.add_element(BasicButton("Main Menu", 300, 75, manager.set_scene, "mainMenu"))
 
+        self.back = pygame.image.load("../assets/gui/images/backdrop2.png").convert()
+
     def render(self, screen: pygame.Surface):
         screen.fill((0, 0, 0))
-
+        self.screen.blit(self.back, (0, 0))
         self.guiManager.render_guidelines()
 
 
@@ -159,7 +161,7 @@ class TempLoseScreen(Scene):
         # ------ Backdrop ------
         self.back = self.guiManager.add_guideline(
             Guide("img", None, Guide.GL_VERTICAL, 0, Guide.ALIGN_LEFT, Guide.REL_ALIGN_BOTTOM, 0))
-        self.back.add_element(Image("../assets/gui/images/backdrop1.png"))
+        self.back.add_element(Image("../assets/gui/images/backdrop2.png"))
 
         # ------ Buttons ------
         self.buttons = self.guiManager.add_guideline(

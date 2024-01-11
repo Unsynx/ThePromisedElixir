@@ -486,6 +486,7 @@ class LevelIntro(Text):
         self.width, self.height = self.surface.get_size()
 
         self.anim = None
+        self.can_hide = False
         self.visual_offset_y = -250
 
     def start(self):
@@ -493,11 +494,13 @@ class LevelIntro(Text):
 
     def update(self):
         if self.anim is not None:
+            self.can_hide = True
             self.hide = False
             self.anim.update()
             self.visual_offset_y = self.anim.get_current_value()
             if self.visual_offset_y == self.anim.end_value:
                 self.hide = True
         else:
-            self.hide = True
+            if self.can_hide:
+                self.hide = True
 

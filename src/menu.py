@@ -27,7 +27,7 @@ class MainMenu(Scene):
 
         # ------ Buttons ------
         self.buttons = self.guiManager.add_guideline(
-            Guide("buttons", None, Guide.GL_VERTICAL, 0.25, Guide.ALIGN_CENTER_PADDED, Guide.REL_ALIGN_CENTER, 50))
+            Guide("buttons", None, Guide.GL_VERTICAL, 0.3, Guide.ALIGN_CENTER_PADDED, Guide.REL_ALIGN_CENTER, 50))
         self.buttons.offset_y = 300
 
         self.sceneManager.del_scene("loadingScreen")
@@ -43,8 +43,8 @@ class MainMenu(Scene):
 
         # ------ Logo ------
         self.logo_g = self.guiManager.add_guideline(
-            Guide("logo", None, Guide.GL_VERTICAL, 0.25, Guide.ALIGN_LEFT_PADDING, Guide.REL_ALIGN_CENTER, 100))
-        self.logo_g.add_element(Image("../assets/gui/images/logo_shadow.png"))
+            Guide("logo", None, Guide.GL_VERTICAL, 0.3, Guide.ALIGN_LEFT_PADDING, Guide.REL_ALIGN_CENTER, 200))
+        self.logo_g.add_element(Image("../assets/gui/images/alternatelogo.png").scale_by(0.75))
 
         # ------ Version Text ------
         self.text = self.guiManager.add_guideline(

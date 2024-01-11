@@ -169,7 +169,8 @@ class MobileEntity(Entity):
         self.animation_y = None
 
         self.serialize("health", lambda: self.health) \
-            .serialize("weapon", lambda: self.weapon.name)
+            .serialize("weapon", lambda: self.weapon.name)\
+            .serialize("max_health", lambda: self.max_health)
 
     def on_entity_ready(self):
         self.set_weapon(self.weapon)

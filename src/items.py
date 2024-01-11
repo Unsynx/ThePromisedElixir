@@ -263,7 +263,7 @@ class Icicle(Weapon):
 
 class LargeAxe(Weapon):
     def __init__(self):
-        super().__init__("../assets/weapons/LargeAxe.png", 4, R_SWIRL)
+        super().__init__("../assets/weapons/LargeAxe.png", 6, R_SWIRL)
         self.offset_x = 55
         self.tier = c.TIER_2
 
@@ -284,16 +284,16 @@ class RustyAxe(Weapon):
 
 class SpectreBlade(Weapon):
     def __init__(self):
-        super().__init__("../assets/weapons/SpectreBlade.png", 7, R_SWIPE)
+        super().__init__("../assets/weapons/SpectreBlade.png", 8, R_SWIPE)
         self.offset_x = 45
         self.tier = c.TIER_3
 
 
 class WoodenClub(Weapon):
     def __init__(self):
-        super().__init__("../assets/weapons/WoodenClub.png", 5, R_STAR)
+        super().__init__("../assets/weapons/WoodenClub.png", 7, R_STAR)
         self.offset_x = 65
-        self.tier = c.TIER_2
+        self.tier = c.TIER_3
 
 
 class FirePolearm(Weapon):
@@ -312,7 +312,7 @@ class FirePolearm(Weapon):
 
 class FireKatana(Weapon):
     def __init__(self):
-        super().__init__("../assets/weapons/FireKatana.png", 7, R_SWIPE)
+        super().__init__("../assets/weapons/FireKatana.png", 8, R_SWIPE)
         self.offset_x = 45
         self.offset_y = -10
         self.tier = c.TIER_3

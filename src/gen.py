@@ -420,20 +420,26 @@ for i in range(25):
 """
 
 """
+
 loot = Loot()
 for w in loot.tier0_weapons:
     w = w()
     print(f"tier0 {w.name}, {w.damage}dmg")
+print()
 for w in loot.tier1_weapons:
     w = w()
     print(f"tier1 {w.name}, {w.damage}dmg")
+print()
 for w in loot.tier2_weapons:
     w = w()
     print(f"tier2 {w.name}, {w.damage}dmg")
+print()
 for w in loot.tier3_weapons:
     w = w()
     print(f"tier3 {w.name}, {w.damage}dmg")
+print()
 for w in loot.tier4_weapons:
     w = w()
     print(f"tier4 {w.name}, {w.damage}dmg")
+    
 """

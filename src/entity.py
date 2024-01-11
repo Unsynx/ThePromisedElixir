@@ -518,7 +518,7 @@ class HealthUp(Entity):
         entity.health = entity.max_health
 
         self.sound.play()
-        entity.particle_manager.add_system(MaxHealthUp(self.x + 64, self.y + 64, 3))
+        entity.particle_manager.add_system(MaxHealthUp(self.x + 64, self.y + 64, 5))
         entity.particle_manager.add_system(Hearts(self.x + 64, self.y + 64, 6))
         self.on_death()
 

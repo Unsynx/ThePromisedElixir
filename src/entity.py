@@ -514,7 +514,7 @@ class HealthUp(Entity):
         if not type(entity) is Player:
             return
 
-        entity.max_health += 3
+        entity.max_health += 5
         entity.health = entity.max_health
 
         self.sound.play()

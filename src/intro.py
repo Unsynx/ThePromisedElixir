@@ -1,5 +1,5 @@
 from scene_manager import Scene, SceneManager
-from gui import GuiManager, Guide, BasicButton, Image, Text
+from gui import GuiManager, Guide, BasicButton
 import pygame
 from tween import Tween
 import time

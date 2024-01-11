@@ -1,12 +1,10 @@
 import copy
-import random
 import threading
 import os
 import math
 
-import src.dialogue
 from scene_manager import Scene, SceneManager
-from gui import GuiManager, Guide, Text
+from gui import GuiManager, Guide
 from tiles import TILE_SIZE, TILE_DATA, CHUNK_SIZE
 from entity import *
 from chests import Chest, Loot
